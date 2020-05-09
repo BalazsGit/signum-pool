@@ -14,6 +14,7 @@ external interface PoolConfig {
     val defaultMinimumPayout: String
     val minPayoutsPerTransaction: Int
     val transactionFee: Double
+    val siteExplorerLink: String
 }
 
 external interface BestDeadline {

@@ -73,8 +73,8 @@ object Util {
         return capacity.round(3).toString() + " TB"
     }
 
-    fun getAccountExplorerLink(id: String): String {
-        return "https://explorer.burstcoin.network/?action=account&account=$id"
+    fun getAccountExplorerLink(explorerLink: String, id: String): String {
+        return "$explorerLink?action=account&account=$id"
     }
 }
 

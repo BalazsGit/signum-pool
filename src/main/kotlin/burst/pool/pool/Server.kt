@@ -145,6 +145,7 @@ class Server(private val storageService: StorageService, private val propertySer
                 response.addProperty(Props.minimumMinimumPayout.name, propertyService.get(Props.minimumMinimumPayout))
                 response.addProperty(Props.minPayoutsPerTransaction.name, propertyService.get(Props.minPayoutsPerTransaction))
                 response.addProperty(Props.transactionFee.name, propertyService.get(Props.transactionFee))
+                response.addProperty(Props.siteExplorerLink.name, propertyService.get(Props.siteExplorerLink))
                 response.toString()
             }
             session.uri.startsWith("/api/getCurrentRound") -> {
@@ -308,6 +309,8 @@ class Server(private val storageService: StorageService, private val propertySer
                     .replace("{PUBLICNODE}", propertyService.get(Props.siteNodeAddress))
                     .replace("{SOFTWARE}", propertyService.get(Props.softwarePackagesAddress))
                     .replace("{DISCORD}", propertyService.get(Props.siteDiscordLink))
+                    .replace("{EXPLORER}", propertyService.get(Props.siteExplorerLink))
+                    .replace("{INFO}", propertyService.get(Props.siteInfo))
         }
         fileCache.put(session.uri, response)
         return newFixedLengthResponse(Response.Status.OK, URLConnection.guessContentTypeFromName(session.uri), response)

@@ -13,6 +13,7 @@ object PoolClient {
     private var chart: Chart? = null
     private var roundStart: Int = 0
     private var lastSelectedMinerRS: String = ""
+    private var explorerLink = "https://explorer.burstcoin.network/"
 
     private const val noneFoundYet = "None found yet!"
     private const val loadingText =  "Loading..."
@@ -61,9 +62,9 @@ object PoolClient {
         name = name?.escapeHtml()
         var rs = providedRS.escapeHtml()
         if (includeLink) {
-            rs = "<a href=\"" + Util.getAccountExplorerLink(id) + "\">" + rs + "</a>"
+            return "<a href=\"" + Util.getAccountExplorerLink(explorerLink, id) + "\">" + (if (!name!!.isEmpty()) name else rs) + "</a>"
         }
-        return if (name == null || name?.isEmpty() == true) rs else "$rs ($name)"
+        return if (name == null || name?.isEmpty() == true) rs else name!!
     }
 
     private fun getPoolInfo() {
@@ -74,6 +75,7 @@ object PoolClient {
             }
             this.maxSubmissions = poolConfig.nAvg
             this.processLag = poolConfig.processLag
+            this.explorerLink = poolConfig.siteExplorerLink
             if (this.maxSubmissionsText == "Unknown") { // If this is the first fetch, don't leave it lingering as "Unknown", refresh the miners table
                 getMiners()
             }
@@ -108,7 +110,8 @@ object PoolClient {
             }
             val bestDeadline = currentRound.bestDeadline
             if (bestDeadline != null) {
-                document.getElementById("bestDeadline")?.textContent = Util.formatTime(bestDeadline.deadline)
+                val deadline = (kotlin.math.ln(bestDeadline.deadline.toDouble())*240/kotlin.math.ln(240.0)).toInt()
+                document.getElementById("bestDeadline")?.textContent = Util.formatTime(deadline)
                 document.getElementById("bestMiner")?.innerHTML = formatMinerName(bestDeadline.minerRS, bestDeadline.miner, null, true)
                 document.getElementById("bestNonce")?.textContent = bestDeadline.nonce
             } else {

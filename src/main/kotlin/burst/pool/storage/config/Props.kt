@@ -16,7 +16,7 @@ object Props {
     val tMin = Prop("tMin", 20) // Must be ?
     val maxDeadline = Prop("maxDeadline", Long.MAX_VALUE) // Must be > 0
     val processLag = Prop("processLag", 10) // Must be > 0
-    val feeRecipient = Prop<BurstAddress?>("feeRecipient", null) // Must be non null
+    val feeRecipient = Prop<BurstAddress?>("feeRecipient", BurstAddress.fromId(0)) // Must be non null
     val poolFeePercentage = Prop("poolFeePercentage", 0f) // Must be 0-1
     val winnerRewardPercentage = Prop("winnerRewardPercentage", 0f) // Must be 0-1
     val defaultMinimumPayout = Prop("defaultMinimumPayout", 100f) // Must be > 0
@@ -31,6 +31,8 @@ object Props {
     val siteNodeAddress = Prop("site.nodeAddress", "https://wallet.burst-alliance.org:8125/")
     val softwarePackagesAddress = Prop("site.softwarePackagesAddress", "https://github.com/burst-apps-team")
     val siteDiscordLink = Prop("site.discord", "https://discord.gg/ms6eagX")
+    val siteExplorerLink = Prop("site.explorer", "https://explorer.burstcoin.network/")
+    val siteInfo = Prop("site.info", "Information about this pool.")
     fun validateProperties(propertyService: PropertyService) {
         val serverPort = propertyService.get(serverPort)
         require(!(serverPort <= 0 || serverPort >= 2.0.pow(16.0))) { "Illegal server port: $serverPort (Must be 0-2^16 exclusive)" }
@@ -50,7 +52,8 @@ object Props {
         require(maxDeadline > 0) { "Illegal maxDeadline: $maxDeadline (Must be > 0)" }
         val processLag = propertyService.get(processLag)
         require(processLag >= 0) { "Illegal processLag: $processLag (Must be > 0)" }
-        val feeRecipient = propertyService.get(feeRecipient) ?: throw IllegalArgumentException("Illegal feeRecipient (not set)")
+        val feeRecipient = propertyService.get(feeRecipient) ?: throw IllegalArgumentException("Illegal feeRecipient")
+        require(feeRecipient.signedLongId != 0L) { "Illegal feeRecipient (not set)" }
         val poolFeePercentage = propertyService.get(poolFeePercentage)
         require(!(poolFeePercentage < 0f || poolFeePercentage > 1f)) { "Illegal poolFeePercentage: $poolFeePercentage (Must be 0-1)" }
         val winnerRewardPercentage = propertyService.get(winnerRewardPercentage)
