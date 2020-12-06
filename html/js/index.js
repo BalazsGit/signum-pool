@@ -6,6 +6,18 @@ const genesisBaseTarget = 4398046511104 / 240;
 
 let maxSubmissions = "Unknown";
 
+/*
+Show the Wallet address g_name = true
+Show the Wallet name g_name = false
+*/
+var g_name = true;
+
+/*
+Show expolorer link g_link = true
+Not show expolorer link g_link = false
+*/
+var g_link = true;
+
 let miners = new Array(0);
 const colors = [
     "#3366CC",
@@ -87,14 +99,14 @@ function getPoolInfo() {
     }).then(response => {
         maxSubmissions = response.nAvg + response.processLag;
         document.getElementById("poolName").innerText = response.poolName;
-        document.getElementById("poolAccount").innerHTML = formatMinerName(response.explorer, response.poolAccountRS, response.poolAccount, null, true);
+        document.getElementById("poolAccount").innerHTML = formatMinerName(response.explorer, response.poolAccountRS, response.poolAccount, null, g_link, g_name);
         document.getElementById("nAvg").innerText = response.nAvg;
         document.getElementById("nMin").innerText = response.nMin;
         document.getElementById("maxDeadline").innerText = response.maxDeadline;
         document.getElementById("processLag").innerText = response.processLag + " Blocks";
-        document.getElementById("feeRecipient").innerHTML = formatMinerName(response.explorer, response.feeRecipientRS, response.feeRecipient, null, true);
+        document.getElementById("feeRecipient").innerHTML = formatMinerName(response.explorer, response.feeRecipientRS, response.feeRecipient, null, g_link, g_name);
         document.getElementById("poolFee").innerText = (parseFloat(response.poolFeePercentage)*100).toFixed(2) + " %";
-        document.getElementById("donationRecipient").innerHTML = formatMinerName(response.explorer, response.donationRecipientRS, response.donationRecipient, null, true);
+        document.getElementById("donationRecipient").innerHTML = formatMinerName(response.explorer, response.donationRecipientRS, response.donationRecipient, null, g_link, g_name);
         document.getElementById("donationPercent").innerText = parseFloat(response.donationPercent).toFixed(2) + " %"; + " %";
         document.getElementById("poolShare").innerText = (100 - parseFloat(response.winnerRewardPercentage)*100).toFixed(2) + " %";
         document.getElementById("minimumPayout").innerText = response.defaultMinimumPayout + " BURST";
@@ -119,8 +131,8 @@ function getCurrentRound() {
         document.getElementById("netDiff").innerText = formatBaseTarget(response.miningInfo.baseTarget);
         if (response.bestDeadline != null) {
             document.getElementById("bestDeadline").innerText = formatTime(response.bestDeadline.deadline);
-            document.getElementById("bestMiner").innerHTML = formatMinerName(response.explorer, response.bestDeadline.minerRS, response.bestDeadline.miner, response.bestDeadline.name, true);
-            /* document.getElementById("bestNonce").innerText = response.bestDeadline.nonce;*/
+            document.getElementById("bestMiner").innerHTML = formatMinerName(response.bestDeadline.explorer, response.bestDeadline.minerRS, response.bestDeadline.miner, response.bestDeadline.name, g_link, g_name);
+			/* document.getElementById("bestNonce").innerText = response.bestDeadline.nonce;*/
         } else {
             document.getElementById("bestDeadline").innerText = noneFoundYet;
             document.getElementById("bestMiner").innerText = noneFoundYet;
@@ -133,13 +145,20 @@ function getAccountExplorerLink(explorer, id) {
     return explorer + id;
 }
 
-function formatMinerName(explorer, rs, id, name, includeLink) {
+function formatMinerName(explorer, rs, id, name, includeLink, includeName) {
     name = escapeHtml(name);
     rs = escapeHtml(rs);
+	if(includeName)
+	{
+		name = name == null || name === "" ? rs : name;
+	}
+	else{
+		name = rs;
+	}
     if (includeLink) {
-        return "<a href=\"" + getAccountExplorerLink(explorer, id) + "\" target=\"_blank\">" + (name == null || name === "" ? rs : name) + "</a>";
+        return "<a href=\"" + getAccountExplorerLink(explorer, id) + "\" target=\"_blank\">" + name + "</a>";
     }
-    return name == null || name === "" ? rs : name;
+    return name;
 }
 
 function getTop10Miners() {
@@ -152,7 +171,7 @@ function getTop10Miners() {
         let minerColors = colors.slice(0, topTenMiners.length + 1);
         for (let i = 0; i < topTenMiners.length; i++) {
             let miner = topTenMiners[i];
-            topMinerNames.push(formatMinerName(response.explorer, miner.addressRS, miner.address, miner.name, false));
+            topMinerNames.push(formatMinerName(response.explorer, miner.addressRS, miner.address, miner.name, false, g_name));
             topMinerData.push({value: miner.share * 100, name: topMinerNames[topMinerNames.length - 1]});
         }
         topMinerNames.push("Other");
@@ -160,9 +179,9 @@ function getTop10Miners() {
         if (chart == null) {
             chart = echarts.init(document.getElementById("sharesChart"));
         }
-        
+
         var option = {
-            
+
             textStyle: {
                  color: 'rgba(255, 255, 255, 0.8)'
                        },
@@ -184,7 +203,7 @@ function getTop10Miners() {
                 {
                     name: 'Pool Shares',
                     type: 'pie',
-		    radius: '80%', 
+		    radius: '80%',
                     center: ['30%', '50%'],
                     avoidLabelOverlap: true,
                     label: {
@@ -205,7 +224,7 @@ function getTop10Miners() {
             ]
         };
         chart.setOption(option);
-        
+
     });
 }
 
@@ -218,7 +237,7 @@ function getMiners() {
         for (let i = 0; i < response.miners.length; i++) {
             let miner = response.miners[i];
             let currentRoundDeadline = miner.currentRoundBestDeadline == null ? "" : formatTime(miner.currentRoundBestDeadline);
-            let minerAddress = formatMinerName(response.explorer, miner.addressRS, miner.address, miner.name, true);
+            let minerAddress = formatMinerName(response.explorer, miner.addressRS, miner.address, miner.name, g_link, g_name);
             let userAgent = escapeHtml(miner.userAgent == null? "Unknown" : miner.userAgent);
             table.innerHTML += "<tr><td>"+minerAddress+"</td>"
               +"<td class=\"d-none d-sm-table-cell\">"+currentRoundDeadline+"</td>"
@@ -233,7 +252,7 @@ function getMiners() {
               +"</tr>";
         }
         document.getElementById("minerCount").innerText = response.miners.length;
-        document.getElementById("poolCapacity").innerText = formatCapacity(response.poolCapacity);
+        document.getElementById("poolTotalCapacity").innerText = formatCapacity(response.poolTotalCapacity);
         miners = response.miners;
     });
 }
@@ -251,7 +270,7 @@ function prepareMinerInfo(address) {
     let minerNConf = escapeHtml(document.getElementById("minerNConf"));
     let minerShare = escapeHtml(document.getElementById("minerShare"));
     let minerSoftware = escapeHtml(document.getElementById("minerSoftware"));
-    
+
     minerAddress.innerText = address;
     minerName.innerText = loading;
     minerPending.innerText = loading;
@@ -337,7 +356,7 @@ function getWonBlocks() {
             let id = escapeHtml(wonBlock.id);
             let reward = escapeHtml(wonBlock.reward);
             let poolShare = escapeHtml(wonBlock.poolShare);
-            let minerName = formatMinerName(response.explorer, wonBlock.generatorRS, wonBlock.generator, wonBlock.name, true);
+            let minerName = formatMinerName(wonBlock.explorer, wonBlock.generatorRS, wonBlock.generator, wonBlock.name, g_link, g_name);
             table.innerHTML += "<tr><td>"+height+"</td><td class=\"d-none d-sm-table-cell\">"+id+"</td><td>"+minerName+"</td><td>"+reward+"</td><td class=\"d-none d-sm-table-cell\">"+poolShare+"</td></tr>";
         }
     });
@@ -370,5 +389,6 @@ getTop10Miners();
 
 setInterval(updateRoundElapsed, 1000);
 setInterval(getCurrentRound, 10000);
+setInterval(getPoolInfo, 10000);
 setInterval(getMiners, 60000); /* TODO only refresh this when we detect that we forged a block */
 setInterval(getTop10Miners, 60000);

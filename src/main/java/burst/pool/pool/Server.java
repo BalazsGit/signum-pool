@@ -14,20 +14,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.ehcache.Cache;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-
 import burst.kit.crypto.BurstCrypto;
 import burst.kit.entity.BurstAddress;
 import burst.kit.entity.BurstValue;
@@ -124,21 +121,24 @@ public class Server extends NanoHTTPD {
 
     private String handleApiCall(IHTTPSession session, Map<String, String> params) {
         int maxNConf = propertyService.getInt(Props.processLag) + propertyService.getInt(Props.nAvg);
-        
+
         if (session.getUri().startsWith("/api/getMiners")) {
             JsonArray minersJson = new JsonArray();
-            AtomicReference<Double> poolCapacity = new AtomicReference<>(0d);
+            AtomicReference<Double> poolTotalCapacity = new AtomicReference<>(0d);
+            AtomicReference<Double> poolSharedCapacity = new AtomicReference<>(0d);
             storageService.getMinersFiltered()
                     .stream()
                     .sorted(Comparator.comparing(Miner::getSharedCapacity).reversed())
                     .forEach(miner -> {
-                        poolCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
+                        poolTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
+                        poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
                         minersJson.add(minerToJson(miner, maxNConf));
                     });
             JsonObject jsonObject = new JsonObject();
             jsonObject.add("miners", minersJson);
             jsonObject.addProperty("explorer", propertyService.getString(Props.siteExplorerURL) + propertyService.getString(Props.siteExplorerAccount));
-            jsonObject.addProperty("poolCapacity", poolCapacity.get());
+            jsonObject.addProperty("poolTotalCapacity", poolTotalCapacity.get());
+            jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
             return jsonObject.toString();
         } else if (session.getUri().startsWith("/api/getMiner/")) {
             BurstAddress minerAddress = BurstAddress.fromEither(session.getUri().substring(14));
@@ -173,7 +173,7 @@ public class Server extends NanoHTTPD {
             JsonArray topMiners = new JsonArray();
             storageService.getMinersFiltered().stream()
                     .sorted((m1, m2) -> Double.compare(m2.getShare(), m1.getShare())) // Reverse order - highest to lowest
-                    .limit(10)
+                    .limit(propertyService.getInt(Props.limit))
                     .forEach(miner -> {
                         topMiners.add(minerToJson(miner, maxNConf));
                         othersShare.updateAndGet(share -> share - miner.getShare());
@@ -185,9 +185,9 @@ public class Server extends NanoHTTPD {
             return response.toString();
         } else if (session.getUri().startsWith("/api/getWonBlocks")) {
             JsonArray wonBlocks = new JsonArray();
-            storageService.getWonBlocks(100)
+            storageService.getWonBlocks(propertyService.getInt(Props.limitWonBlocks))
                     .forEach(wonBlock -> {
-                        
+
                         JsonObject wonBlockJson = new JsonObject();
                         wonBlockJson.addProperty("height", wonBlock.getBlockHeight());
                         wonBlockJson.addProperty("id", wonBlock.getBlockId().getID());
