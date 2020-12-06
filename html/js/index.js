@@ -253,6 +253,7 @@ function getMiners() {
         }
         document.getElementById("minerCount").innerText = response.miners.length;
         document.getElementById("poolTotalCapacity").innerText = formatCapacity(response.poolTotalCapacity);
+		document.getElementById("poolSharedCapacity").innerText = formatCapacity(response.poolSharedCapacity);
         miners = response.miners;
     });
 }
@@ -390,5 +391,5 @@ getTop10Miners();
 setInterval(updateRoundElapsed, 1000);
 setInterval(getCurrentRound, 10000);
 setInterval(getPoolInfo, 10000);
-setInterval(getMiners, 60000); /* TODO only refresh this when we detect that we forged a block */
-setInterval(getTop10Miners, 60000);
+setInterval(getMiners, 10000);
+setInterval(getTop10Miners, 10000);
