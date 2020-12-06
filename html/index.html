@@ -1,361 +1,750 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{TITLE}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js"></script>
-    <script type="text/javascript" rel="script" src="js/index.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+  <meta charset="UTF-8">
+  <title>{TITLE}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js"></script>
+  <script type="text/javascript" rel="script" src="js/index.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/main.css" />
+
 </head>
 <body onload="onPageLoad();">
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">
+  <a class="navbar-brand" href="#">
     <img id="icon" src="img/poolIcon.png" width="30" height="30" class="d-inline-block align-top" alt="">
     {TITLE}
-    </a>
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
-    <div class="collapse navbar-collapse" id="navbarContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#" onclick="getWonBlocks()" data-toggle="modal" data-target="#wonBlocksModal"><i class="fa fa-trophy" title="BLOCKS WON"></i> BLOCKS WON</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#infoModal"><i class="fa fa-sign-in"></i> HOW TO JOIN</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="modal" data-target="#confModal"><i class="fa fa-sliders"></i> CONFIGURE</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{EXPLORER}" target="_blank"><i class="fa fa-external-link"></i> EXPLORER</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{FAUCET}" target="_blank"><i class="fa fa-shower"></i> FAUCET</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="https://github.com/jjos2372/babel-pool" target="_blank"><i class="fa fa-github"></i> CODE</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{PUBLICNODE}" target="_blank">
-                    <i class="fa fa-money"></i> WALLET
-                </a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="{DISCORD}" target="_blank">
-                	<i class="fa fa-comment"></i> DISCORD
-                </a>
-            </li>
-        </ul>
-    </div>
+  </a>
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+  <div class="collapse navbar-collapse" id="navbarContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#" onclick="getWonBlocks()" data-toggle="modal" data-target="#wonBlocksModal"><i class="fa fa-trophy" title="BLOCKS WON"></i> BLOCKS WON</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#infoModal"><i class="fa fa-sign-in"></i> <mark>HOW TO JOIN</mark></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#confModal"><i class="fa fa-sliders"></i> CONFIGURE</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{EXPLORER}" target="_blank"><i class="fa fa-external-link"></i> EXPLORER</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#faucetModal"><i class="fa fa-shower"></i> FAUCET</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="https://github.com/jjos2372/babel-pool" target="_blank"><i class="fa fa-github"></i> CODE</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{PUBLICNODE}" target="_blank">
+          <i class="fa fa-money"></i> WALLET
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#socialmediaModal">
+          <i class="fa fa-comment"></i> SOCIAL MEDIA
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#tokenModal">
+          <i class=""></i> TOKEN
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#marketModal">
+          <i class=""></i> MARKET
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#exchangeModal">
+          <i class=""></i> EXCHANGE
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#chartModal">
+          <i class=""></i> CHART
+        </a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#downloadModal">
+          <i class=""></i> DOWNLOAD
+        </a>
+      </li>
+    </ul>
+  </div>
 </nav>
+
+
+
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-6 text-center">
-            <div class="row">
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Elapsed</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="currentRoundElapsed">Loading...</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Best Deadline</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="bestDeadline">Loading...</p>
-                    </div>
-                </div>
-                <!--
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Best Nonce</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="bestNonce">Loading...</p>
-                    </div>
-                </div>
-                -->
-                <div class="col-lg-6 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Best Miner</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="bestMiner">Loading...</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Block Height</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="blockHeight">Loading...</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Network Size</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="netDiff">Loading...</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Miners</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="minerCount">Loading...</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 p-3">
-                    <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-                        <p class="d-inline">Pool Capacity</p>
-                    </div>
-                    <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
-                        <p class="d-inline" id="poolTotalCapacity">Loading...</p>
-                    </div>
-                </div>
-                <div class="col-xl-12">
-                    <div class="row">
-                        <div class="col-xl-6 col-lg-6 col-md-8 p-3">
-                            <input type="text" id="addressInput" class="form-control" placeholder="BURST-XXXX-XXXX-XXXX-XXXXX">
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-2 col-6 overflow-auto text-nowrap p-3">
-                            <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#minerInfoModal" id="getMinerButton">MINER DETAILS</button>
-                        </div>
-                        <div class="col-xl-3 col-lg-3 col-md-2 col-6 overflow-auto text-nowrap p-3">
-                            <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#poolInfoModal">POOL INFO</button>
-                        </div>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="col-lg-12 text-center">
+      <div class="mySlides" style="height: 150px">
+        <a href="https://gdp-mining.com" target="blanc"><img src="./img/GDPbanner1.png" height = "150"/></a>
+      </div>
+      <div class="mySlides" style="height: 150px">
+        <a href="https://gdp-mining.com" target="blanc"><img src="./img/GDPbanner2.png" height = "150"/></a>
+      </div>
+      <div class="mySlides" style="height: 150px">
+        <a href="http://btdex.trade" target="blanc"><img src="./img/BTDEXbanner.png" height = "150"/></a>
+      </div>
+      <script>
+				var slideIndex = 0;
+				carousel();
+
+				function carousel() {
+				  var i;
+				  var x = document.getElementsByClassName("mySlides");
+				  for (i = 0; i < x.length; i++) {
+					x[i].style.display = "none";
+				  }
+				  slideIndex++;
+				  if (slideIndex > x.length) {slideIndex = 1}
+				  x[slideIndex-1].style.display = "block";
+				  setTimeout(carousel, 10000);
+				}
+			</script>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-6 p-3 nav-link">
+      <h4>Pool address: BURST-HW9R-3VCP-Y46P-DA5W8</h4>
+      <h3>Announcements</h3>
+      <p>The brand new <strong>http://openburstpool.ddns.net:8126</strong> is open for miners!</p>
+      <p><mark>New 25 burst bonus will be assigned to every miner with at least 1.5% pool share at UTC 20:00 2020.12.12.<br/></mark></p>
+      <p>Pool fee is 0.5%<br/>
+        Default donation to developers are 1% (you can change it between 0-100% any time)<br/>
+        For more infos click to <a href="#" data-toggle="modal" data-target="#confModal">CONFIGURE</a></p>
+    </div>
+    <div class="col-lg-6 p-3 nav-link">
+      <!--
+        <iframe scrolling="no" id="hearthis_at_user_nivok-spilkommen" width="100%" height="350" src="https://hearthis.at/nivok-spilkommen/embed/" frameborder="0" allowtransparency></iframe>
+      -->
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-lg-6">
+      <div class="row text-center">
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Elapsed</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="currentRoundElapsed">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Best Deadline</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="bestDeadline">Loading...</p>
+          </div>
+        </div>
+        <!--
+        <div class="col-lg-3 col-md-6 p-3">
+            <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+                <p class="d-inline">Best Nonce</p>
+            </div>
+            <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+                <p class="d-inline" id="bestNonce">Loading...</p>
             </div>
         </div>
-        <div class="col-lg-6 position-relative w-100" style="min-height: 300px;">
-            <canvas id="sharesChart" width="600" height="300"></canvas>
+        -->
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Best Miner</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="bestMiner">Loading...</p>
+          </div>
         </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Miners</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="minerCount">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Block Height</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="blockHeight">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Network Size</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="netDiff">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Total Capacity</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolTotalCapacity">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Shared Capacity</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolSharedCapacity">Loading...</p>
+          </div>
+        </div>
+        <div class="col-xl-12">
+          <div class="row">
+            <div class="col-xl-6 col-lg-6 col-md-8 p-3">
+              <input type="text" id="addressInput" class="form-control" placeholder="BURST-XXXX-XXXX-XXXX-XXXXX">
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-2 col-6 overflow-auto text-nowrap p-3">
+              <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#minerInfoModal" id="getMinerButton">MINER DETAILS</button>
+            </div>
+            <div class="col-xl-3 col-lg-3 col-md-2 col-6 overflow-auto text-nowrap p-3">
+              <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#poolInfoModal">POOL INFO</button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6 position-relative w-100" style="min-height: 300px;">
+              <!-- TradingView Widget BEGIN -->
+              <div class="tradingview-widget-container" style="margin: 40px auto;">
+                <div class="tradingview-widget-container__widget"></div>
+                <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Rates</span></a> by TradingView</div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+							  {
+							  "symbol": "BITTREX:BURSTBTC",
+							  "width": 350,
+							  "height": 220,
+							  "locale": "en",
+							  "dateRange": "12M",
+							  "colorTheme": "dark",
+							  "trendLineColor": "#37a6ef",
+							  "underLineColor": "rgba(55, 166, 239, 0.15)",
+							  "isTransparent": false,
+							  "autosize": false,
+							  "largeChartUrl": ""
+							}
+							  </script>
+              </div>
+              <!-- TradingView Widget END -->
+            </div>
+            <div class="col-lg-6 position-relative w-100" style="min-height: 300px;">
+              <canvas id="sharesChart" width="600" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <div class="col-lg-6">
+      <div class="row text-center">
+        <div class="col-lg-12 p-3 nav-link">
+          <widgetbot server="777095251806388249" channel="777104740626464829" width="100%" height="600"></widgetbot>
+          <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-<br />
 <div class="table-responsive p-lg-3 w-100">
-    <table id="miners" class="table table-striped table-bordered">
-        <tr>
-            <td colspan="6">Loading...</td>
-        </tr>
-    </table>
-    <p><a href="https://github.com/burst-apps-team" target="_blank">Powered by the Burst Apps Team.</a> Copyright ©
+  <table id="miners" class="table table-striped table-bordered">
+    <tr>
+      <td colspan="6">Loading...</td>
+    </tr>
+  </table>
+  <p><a href="https://github.com/burst-apps-team" target="_blank">Powered by the Burst Apps Team.</a> Copyright ©
     2019 <a href="https://github.com/harry1453" target="_blank">Harry Phillips</a>;
     2020 <a href="https://github.com/jjos2372" target="_blank">jjos</a>
-    </p>
+  </p>
 </div>
-
+<div>
+  <!-- hitwebcounter Code START -->
+  <a href="https://www.hitwebcounter.com" target="_blank">Unique visitors<br/>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7701950&style=0001&nbdigits=5&type=ip&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/></a><br/>
+  <!-- hitwebcounter Code START -->
+  <a href="https://www.hitwebcounter.com" target="_blank">All visitors<br/>
+    <img src="https://hitwebcounter.com/counter/counter.php?page=7701951&style=0001&nbdigits=5&type=page&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/></a>
+</div>
 <!-- Modals -->
 <div class="modal fade" id="minerInfoModal" tabindex="-1" role="dialog" aria-labelledby="minerInfoTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="minerInfoTitle">MINER DETAILS</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive w-100">
-                    <table class="table table-striped">
-                        <tr>
-                            <td>Miner Address</td><td><span id="minerAddress">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Miner Name</td><td><span id="minerName">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Pending Balance</td><td><span id="minerPending">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Minimum Payout</td><td><span id="minerMinimumPayout">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Share Model</td><td><span id="minerSharePercent">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Donation Percent</td><td><span id="minerDonationPercent">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Total Capacity</td><td><span id="minerCapacity">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Shared Capacity</td><td><span id="minerSharedCapacity">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Confirmed Deadlines</td><td><span id="minerNConf">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Share</td><td><span id="minerShare">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Software</td><td><span id="minerSoftware">Loading...</span></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="minerInfoTitle">MINER DETAILS</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive w-100">
+          <table class="table table-striped">
+            <tr>
+              <td>Miner Address</td><td><span id="minerAddress">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Miner Name</td><td><span id="minerName">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Pending Balance</td><td><span id="minerPending">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Minimum Payout</td><td><span id="minerMinimumPayout">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Share Model</td><td><span id="minerSharePercent">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Donation Percent</td><td><span id="minerDonationPercent">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Total Capacity</td><td><span id="minerCapacity">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Shared Capacity</td><td><span id="minerSharedCapacity">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Confirmed Deadlines</td><td><span id="minerNConf">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Share</td><td><span id="minerShare">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Software</td><td><span id="minerSoftware">Loading...</span></td>
+            </tr>
+          </table>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
 </div>
+
 <div class="modal fade" id="poolInfoModal" tabindex="-1" role="dialog" aria-labelledby="poolInfoTitle" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="poolInfoTitle">POOL INFO</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive w-100">
-                    <table class="table table-striped">
-                        <tr>
-                            <td>Pool Name</td><td><span id="poolName">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Pool Account</td><td><span id="poolAccount">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Number of Blocks for Averages</td><td><span id="nAvg">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Number of Blocks to Show a Miner</td><td><span id="nMin">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Max Deadline</td><td><span id="maxDeadline">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Process Lag</td><td><span id="processLag">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Fee Recipient</td><td><span id="feeRecipient">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Pool Fee</td><td><span id="poolFee">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Donation Recipient</td><td><span id="donationRecipient">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Default Donation (configurable)</td><td><span id="donationPercent">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Default Pool Share (configurable)</td><td><span id="poolShare">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Default Minimum Payout (configurable)</td><td><span id="minimumPayout">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Minimum Payouts at once</td><td><span id="minPayoutsAtOnce">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Payout Transaction Fee</td><td><span id="payoutTxFee">Loading...</span></td>
-                        </tr>
-                        <tr>
-                            <td>Pool Software Version</td><td><span id="poolVersion">Loading...</span></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="poolInfoTitle">POOL INFO</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive w-100">
+          <table class="table table-striped">
+            <tr>
+              <td>Pool Name</td><td><span id="poolName">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Pool Account</td><td><span id="poolAccount">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Number of Blocks for Averages</td><td><span id="nAvg">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Number of Blocks to Show a Miner</td><td><span id="nMin">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Max Deadline</td><td><span id="maxDeadline">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Process Lag</td><td><span id="processLag">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Fee Recipient</td><td><span id="feeRecipient">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Pool Fee</td><td><span id="poolFee">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Donation Recipient</td><td><span id="donationRecipient">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Default Donation (configurable)</td><td><span id="donationPercent">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Default Pool Share (configurable)</td><td><span id="poolShare">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Default Minimum Payout (configurable)</td><td><span id="minimumPayout">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Minimum Payouts at once</td><td><span id="minPayoutsAtOnce">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Payout Transaction Fee</td><td><span id="payoutTxFee">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Pool Software Version</td><td><span id="poolVersion">Loading...</span></td>
+            </tr>
+          </table>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
 </div>
+
 <div class="modal fade" id="wonBlocksModal" tabindex="-1" role="dialog" aria-labelledby="wonBlocksTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="wonBlocksTitle">BLOCKS WON</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive w-100">
-                    <table class="table table-striped" id="wonBlocksTable"></table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">BLOCKS WON</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="table-responsive w-100">
+          <table class="table table-striped" id="wonBlocksTable"></table>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
 </div>
-<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="helpTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="helpTitle">HOW TO JOIN</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                {INFO}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+
+<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">HOW TO JOIN</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="margin: 0 auto;">
+        <h1>Pool and Miner configuration</h1> <br/><br/>
+
+        <h3>Set Reward Assigment</h3><br/>
+        <p>Before start pool mining you should set the pool recipient address to the official pool address <br/> <i>BURST-HW9R-3VCP-Y46P-DA5W8</i></p>
+        <p>This is important regarding the reward distribution between pool miners and also precondition of pool mining</p> <br/>
+        <p>Open Your Burst Wallet <br/>Go to <strong>Reward Assigement</strong> <br/> <br/> <img src="./img/RA1.png"/> <br/> <br/> </p>
+        <p>Set <strong>Recipient</strong> to <br/> <strong class="poolBurstAddress">BURST-HW9R-3VCP-Y46P-DA5W8</strong> <br/> <br/> <img src="./img/RA2.png"/> <br/> </p>
+        <p>Wait <strong>4</strong> blocks </p> <br/><br/>
+
+        <h3>Set Name</h3><br/>
+        <p>It is recommended to set the name of the account to customize it <br/> You can set it by clicking the No Name Set text on the upper left side of the wallet</p>
+        <img src="./img/set_name1.png"/> <br/><br/>
+        <img src="./img/set_name2.png"/> <br/><br/>
+
+        <h3>Plotting</h3><br/>
+        <p>Plotting free storage capacity on your HDD or SSD is essential for mining</p>
+        <p>Plots contains hashes which are using during deadline calculation</p>
+        <p>Deadline is a verifiable value which is calculated from your plots by a special algorithm to decide who can mine the next block</p>
+        <p>If your deadline is the lowest you mine the new block and win the reward</p>
+        <p>Deadline calculation is similar like winning the raffle where the lowest number win<br/>You have a bounch of raffle amoung others, but the chance to win depends how much raffle you have compare to the whole amount of raffle</p>
+        <p>The more raffle you have the more chance to win</p>
+        <p>You can plott your HDD with <a href="https://blackpawn.com/tp/">TurboPlotter_0.10.1v</a></p> <br/><br/>
+
+        <h3>Mining</h3><br/>
+        <p>Download the latest scavenger 1.7.8 miner from here <br/><a href="https://github.com/PoC-Consortium/scavenger/releases">https://github.com/PoC-Consortium/scavenger/releases</a></p>
+        <p>Unzip it</p>
+        <p>Open config.yaml file with text editor (e.g. notepad++) and set the proper configuration</p>
+        <p>url: 'http://openburstpool.ddns.net:8126'</p>
+        <p>target_deadline: 10000000000</p>
+        <p>Run miner</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
 </div>
-<div class="modal fade" id="confModal" tabindex="-1" role="dialog" aria-labelledby="helpTitle" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confTitle">CONFIGURE</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>If you have already joined the pool, you can further configure it by sending text messages from your miner account to the pool account:<br>
-                <code><b>{POOL_ACCOUNT}</b></code></p>
 
-                <h5 class="modal-title">Share Model</h5>
-                <p>Change your share model to 80 % by sending the following text message (any number from 0 up to 100 is accepted):<br>
-                <code>share 80</code><br>
-                </p>
+<div class="modal fade" id="confModal" tabindex="-1" role="dialog" aria-labelledby="confTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CONFIGURE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>If you have already joined the pool, you can further configure it by sending text messages from your miner account to the pool account:<br>
+          <code><b>{POOL_ACCOUNT}</b></code></p>
 
-                <h5 class="modal-title">Donation Percent</h5>
-                <p>Change your donation percent to 5 % by sending the following text message (any number from 0 up to 100 is accepted):<br>
-                <code>donate 5</code><br>
-                </p>
+        <h5 class="modal-title">Share Model</h5>
+        <p>Change your share model to 80 % by sending the following text message (any number from 0 up to 100 is accepted):<br>
+          <code>share 80</code><br>
+        </p>
 
-                <h5 class="modal-title">Minimum Payout</h5>
-                <p>Change your minimum payout to 100 BURST by sending the following text message (any number higher than {MIN_PAYOUT} is accepted):<br>
-                <code>pay 100</code><br>
-                </p>
+        <h5 class="modal-title">Donation Percent</h5>
+        <p>Change your donation percent to 5 % by sending the following text message (any number from 0 up to 100 is accepted):<br>
+          <code>donate 5</code><br>
+        </p>
 
-                <p>You can also configure multiple parameters with a single message, for instance:<br>
-                <code>share 80 donate 5 pay 100</code><br>
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
+        <h5 class="modal-title">Minimum Payout</h5>
+        <p>Change your minimum payout to 100 BURST by sending the following text message (any number higher than {MIN_PAYOUT} is accepted):<br>
+          <code>pay 100</code><br>
+        </p>
+
+        <p>You can also configure multiple parameters with a single message, for instance:<br>
+          <code>share 80 donate 5 pay 100</code><br>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="modal fade" id="faucetModal" tabindex="-1" role="dialog" aria-labelledby="faucetTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">FAUCETS</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>Burstcoin Faucet</h4>
+        <h5><a href="http://burstcoin.cc:3333">http://burstcoin.cc:3333</a></h5><br/>
+
+        <h4>Burstpay</h4>
+        <h5><a href="https://faucet.burstpay.net">https://faucet.burstpay.net</a></h5><br/>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="socialmediaModal" tabindex="-1" role="dialog" aria-labelledby="socialmediaTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="helpTitle">SOCIAL MEDIA</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="margin: 0 auto;">
+        <h4>Twitter</h4>
+        <h5>Burst Apps Team: <a href="https://twitter.com/burstappsteam">https://twitter.com/burstappsteam</a></h5>
+        <h5>getBurst: <a href="https://twitter.com/getBURST">https://twitter.com/getBURST</a></h5><br/>
+
+        <h4>Telegramm</h4>
+        <h5>BRS Official: <a href="https://t.me/burstcoin">https://t.me/burstcoin</a></h5><br/>
+
+        <h4>Discord</h4>
+        <h5><a href="https://discord.gg/ms6eagX">https://discord.gg/ms6eagX</a></h5><br/>
+
+        <h4>Reddit</h4>
+        <h5><a href="reddit.com/r/BURST">reddit.com/r/BURST</a></h5><br/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="tokenModal" tabindex="-1" role="dialog" aria-labelledby="tokenTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">TOKEN</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>GDP</h4>
+        <h5>Account ID: BURST-G66D-D4NH-LDEP-4FSWA</h5>
+        <h5>Asset ID: 11280075245570987091</h5>
+        <h5>Website: <a href="https://gdp-mining.com">https://gdp-mining.com</a></h5>
+        <h5>Discord: <a href=""></a></h5><br/>
+
+        <h4>LMSI</h4>
+        <h5>Account ID: BURST-T2ZH-KHVS-V3N7-FPUMS</h5>
+        <h5>Asset ID: 16296102952444293762</h5>
+        <h5>Website: <a href=""></a></h5>
+        <h5>Discord: <a href="https://discord.gg/KGsxvTa">https://discord.gg/KGsxvTa</a></h5><br/>
+
+        <h4>TRT</h4>
+        <h5>Account ID: BURST-ECS4-KDE2-NMSY-H2YKJ</h5>
+        <h5>Asset ID: 12402415494995249540</h5>
+        <h5>Website: <a href="https://btdex.trade">https://btdex.trade</a></h5>
+        <h5>Discord: <a href="https://discord.gg/KGsxvTa">https://discord.com/invite/VQ6sFAY</a></h5><br/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="marketModal" tabindex="-1" role="dialog" aria-labelledby="marketTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">MARKET RANK</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>Coingecko</h4>
+        <h5><a href="https://www.coingecko.com/hu/coins/burst">https://www.coingecko.com/hu/coins/burst</a></h5><br/>
+
+        <h4>CoinMarketCap</h4>
+        <h5><a href="https://coinmarketcap.com/currencies">https://coinmarketcap.com/currencies/burst</a></h5><br/>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exchangeModal" tabindex="-1" role="dialog" aria-labelledby="exchangeTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confTitle">EXCHANGE</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <h4 style="text-align: center">CEX</h4>
+
+        <h4>Bittrex</h4>
+        <h5><a href="https://global.bittrex.com/Market/Index?MarketName=BTC-BURST">https://global.bittrex.com/Market/Index?MarketName=BTC-BURST</a></h5><br/>
+
+        <h4>Livecoin</h4>
+        <h5><a href="https://www.livecoinwatch.com/price/Burst-BURST">https://www.livecoinwatch.com/price/Burst-BURST</a></h5><br/>
+
+        <h4>Stex</h4>
+        <h5><a href="https://app.stex.com/en/trade/pair/BTC/BURST">https://app.stex.com/en/trade/pair/BTC/BURST</a></h5><br/>
+        <!--
+        <h4>Eterbase</h4>
+        <h5>Currently under maintenance<h5><br/>
+        -->
+        <h4 style="text-align: center">DEX</h4>
+
+        <h4>BTDEX</h4>
+        <h5><a href="https://btdex.trade/">https://btdex.trade/</a></h5><br/>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="chartModal" tabindex="-1" role="dialog" aria-labelledby="chartTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">CHART</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="tradingview-widget-container">
+          <div id="tradingview_37b32"></div>
+          <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script type="text/javascript">
+					new TradingView.widget(
+					  {
+					  "width": 1000,
+					  "height": 600,
+					  "symbol": "BITTREX:BURSTBTC",
+					  "timezone": "Etc/UTC",
+					  "theme": "dark",
+					  "style": "1",
+					  "locale": "en",
+					  "toolbar_bg": "#f1f3f6",
+					  "enable_publishing": false,
+					  "withdateranges": true,
+					  "range": "YTD",
+					  "hide_side_toolbar": false,
+					  "allow_symbol_change": true,
+					  "details": false,
+					  "show_popup_button": true,
+					  "popup_width": "1200",
+					  "popup_height": "800",
+					  "container_id": "tradingview_37b32"
+					}
+					  );
+					  </script>
+        </div>
+
+        <div class="tradingview-widget-container" style="margin: 0 auto;">
+          <div class="tradingview-widget-container__widget"></div>
+          <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/technicals/" rel="noopener" target="_blank"><span class="blue-text">Technical Analysis for BURSTBTC</span></a> by TradingView</div>
+          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+				  {
+				  "interval": "1m",
+				  "width": 425,
+				  "isTransparent": false,
+				  "height": 450,
+				  "symbol": "BITTREX:BURSTBTC",
+				  "showIntervalTabs": true,
+				  "locale": "en",
+				  "colorTheme": "dark"
+				}
+				  </script>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="wonBlocksTitle">DOWNLOAD</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <a href="https://drive.google.com/file/d/1bBWsaaiKVW51HcAAGAQJ1vEJfDH1MPrw/view?usp=sharing" download><mark>burstcoin-2.5.3 with MariaDB</mark></a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>
