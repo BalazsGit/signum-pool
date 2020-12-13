@@ -7,8 +7,8 @@ const genesisBaseTarget = 4398046511104 / 240;
 let maxSubmissions = "Unknown";
 
 /*
-Show the Wallet address g_name = true
-Show the Wallet name g_name = false
+Show the Wallet name g_name = true
+Show the Wallet address g_name = false
 */
 var g_name = true;
 
