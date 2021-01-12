@@ -125,7 +125,7 @@ public class Props {
 
         float defaultMinimumPayout = propertyService.getFloat(Props.defaultMinimumPayout);
         if (defaultMinimumPayout < minimumMinimumPayout) {
-            throw new IllegalArgumentException("Illegal defaultMinimumPayout: " + processLag + " (Must be > minimumMinimumPayout)");
+            throw new IllegalArgumentException("Illegal defaultMinimumPayout: " + processLag + " (Must be >= minimumMinimumPayout)");
         }
 
         int minPayoutsPerTransaction = propertyService.getInt(Props.minPayoutsPerTransaction);
