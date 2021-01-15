@@ -7,13 +7,13 @@ const genesisBaseTarget = 4398046511104 / 240;
 let maxSubmissions = "Unknown";
 
 /*
-Show the Wallet name g_name = true
+Show the Wallet name g_name = true 
 Show the Wallet address g_name = false
 */
 var g_name = true;
 
 /*
-Show expolorer link g_link = true
+Show expolorer link g_link = true 
 Not show expolorer link g_link = false
 */
 var g_link = true;
@@ -179,9 +179,9 @@ function getTop10Miners() {
         if (chart == null) {
             chart = echarts.init(document.getElementById("sharesChart"));
         }
-
+        
         var option = {
-
+            
             textStyle: {
                  color: 'rgba(255, 255, 255, 0.8)'
                        },
@@ -195,7 +195,7 @@ function getTop10Miners() {
                  color: 'rgba(255, 255, 255, 0.8)'
                        },
                 orient: 'vertical',
-                left: 320,
+                left: 290,
                 top: 10,
                 data: topMinerNames
             },
@@ -203,8 +203,8 @@ function getTop10Miners() {
                 {
                     name: 'Pool Shares',
                     type: 'pie',
-		    radius: '80%',
-                    center: ['30%', '50%'],
+		    radius: '80%', 
+                    center: ['160px', '150px'],
                     avoidLabelOverlap: true,
                     label: {
                         show: false,
@@ -224,7 +224,7 @@ function getTop10Miners() {
             ]
         };
         chart.setOption(option);
-
+        
     });
 }
 
@@ -271,7 +271,7 @@ function prepareMinerInfo(address) {
     let minerNConf = escapeHtml(document.getElementById("minerNConf"));
     let minerShare = escapeHtml(document.getElementById("minerShare"));
     let minerSoftware = escapeHtml(document.getElementById("minerSoftware"));
-
+    
     minerAddress.innerText = address;
     minerName.innerText = loading;
     minerPending.innerText = loading;
