@@ -2,20 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{TITLE}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  
+  <title>{TITLE}</title>
+   
+  <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
+  <script type="text/javascript" rel="script" src="js/jquery-3.3.1.slim.min.js"></script>
+  
+  <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>-->
+  <script type="text/javascript" rel="script" src="js/popper.min.js"></script>
+  
+  <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>-->
+  <script type="text/javascript" rel="script" src="js/bootstrap.min.js"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js"></script>
+  <!--<script type="text/javascript" rel="script" src="js/echarts-en.min.js"></script>-->
+  <!--
+  offline not working: 
+  echarts-en.min.js:formatted:1 Uncaught SyntaxError: Invalid or unexpected token (/u0)
+  index.js:1 Uncaught (in promise) ReferenceError: echarts is not defined
+  -->
+  
   <script type="text/javascript" rel="script" src="js/index.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" />
+  
+  <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />-->
+  
+  <link rel="stylesheet" type="text/css" href="css/bootstrap_4.3.1_custom_xxxxl.css" />
+  
+  <!--<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" />-->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="css/main.css" />
+  
 
 </head>
 <body onload="onPageLoad();">
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-xxl navbar-light bg-light">
   <a class="navbar-brand" href="#">
     <img id="icon" src="img/poolIcon.png" width="30" height="30" class="d-inline-block align-top" alt="">
     {TITLE}
@@ -84,8 +105,6 @@
   </div>
 </nav>
 
-
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-12 text-center">
@@ -99,41 +118,38 @@
         <a href="http://btdex.trade" target="blanc"><img src="./img/BTDEXbanner.png" height = "150"/></a>
       </div>
       <script>
-				var slideIndex = 0;
-				carousel();
+			var slideIndex = 0;
+			carousel();
 
-				function carousel() {
-				  var i;
-				  var x = document.getElementsByClassName("mySlides");
-				  for (i = 0; i < x.length; i++) {
+			function carousel() {
+				var i;
+				var x = document.getElementsByClassName("mySlides");
+				for (i = 0; i < x.length; i++) {
 					x[i].style.display = "none";
-				  }
-				  slideIndex++;
-				  if (slideIndex > x.length) {slideIndex = 1}
-				  x[slideIndex-1].style.display = "block";
-				  setTimeout(carousel, 10000);
 				}
-			</script>
+				slideIndex++;
+				if (slideIndex > x.length) {slideIndex = 1}
+				x[slideIndex-1].style.display = "block";
+				setTimeout(carousel, 10000);
+			}
+		</script>
     </div>
   </div>
   <div class="row">
     <div class="col-lg-6 p-3 nav-link">
       <h4>Pool address: BURST-HW9R-3VCP-Y46P-DA5W8</h4>
       <h3>Announcements</h3>
-      <p>The brand new <strong>http://openburstpool.ddns.net:8126</strong> is open for miners!</p>
-      <p><mark>New 25 burst bonus will be assigned to every miner with at least 1.5% pool share at UTC 20:00 2020.12.12.<br/></mark></p>
+      <p>Pool <strong>http://openburstpool.ddns.net:8126</strong> welcomes new miners!</p>
+	  <p>Burstcoin wallet: <a href="https://burstcoinwallet.ddns.net:8128" target="blanc"><strong>https://burstcoinwallet.ddns.net:8128</strong></a></p>
       <p>Pool fee is 0.5%<br/>
         Default donation to developers are 1% (you can change it between 0-100% any time)<br/>
         For more infos click to <a href="#" data-toggle="modal" data-target="#confModal">CONFIGURE</a></p>
     </div>
     <div class="col-lg-6 p-3 nav-link">
-      <!--
-        <iframe scrolling="no" id="hearthis_at_user_nivok-spilkommen" width="100%" height="350" src="https://hearthis.at/nivok-spilkommen/embed/" frameborder="0" allowtransparency></iframe>
-      -->
     </div>
   </div>
   <div class="row text-center">
-    <div class="col-lg-6">
+    <div class="col-xxxxl-6">
       <div class="row text-center">
         <div class="col-lg-3 col-md-6 p-3">
           <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
@@ -211,18 +227,18 @@
         </div>
         <div class="col-xl-12">
           <div class="row">
-            <div class="col-xl-6 col-lg-6 col-md-8 p-3">
+            <div class="col-xl-6 col-lg-6 col-md-6 p-3">
               <input type="text" id="addressInput" class="form-control" placeholder="BURST-XXXX-XXXX-XXXX-XXXXX">
             </div>
-            <div class="col-xl-3 col-lg-3 col-md-2 col-6 overflow-auto text-nowrap p-3">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-6 text-nowrap p-3">
               <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#minerInfoModal" id="getMinerButton">MINER DETAILS</button>
             </div>
-            <div class="col-xl-3 col-lg-3 col-md-2 col-6 overflow-auto text-nowrap p-3">
+            <div class="col-xl-3 col-lg-3 col-md-3 col-6 text-nowrap p-3">
               <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#poolInfoModal">POOL INFO</button>
             </div>
           </div>
           <div class="row">
-            <div class="col-lg-6 position-relative w-100" style="min-height: 300px;">
+            <div class="col-xl-6">
               <!-- TradingView Widget BEGIN -->
               <div class="tradingview-widget-container" style="margin: 40px auto;">
                 <div class="tradingview-widget-container__widget"></div>
@@ -245,14 +261,14 @@
               </div>
               <!-- TradingView Widget END -->
             </div>
-            <div class="col-lg-6 position-relative w-100" style="min-height: 300px;">
-              <canvas id="sharesChart" width="600" height="300"></canvas>
+            <div class="col-xl-6">
+              <canvas id="sharesChart" width="450" height="300"></canvas>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-6">
+    <div class="col-xxxxl-6">
       <div class="row text-center">
         <div class="col-lg-12 p-3 nav-link">
           <widgetbot server="777095251806388249" channel="777104740626464829" width="100%" height="600"></widgetbot>
@@ -415,7 +431,11 @@
       </div>
       <div class="modal-body">
         <div class="table-responsive w-100">
-          <table class="table table-striped" id="wonBlocksTable"></table>
+          <table class="table table-striped" id="wonBlocksTable">
+			<tr>
+				<td>Loading...</td>
+			</tr>
+		  </table>
         </div>
       </div>
       <div class="modal-footer">
@@ -430,11 +450,8 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">HOW TO JOIN</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
       </div>
-      <div class="modal-body" style="margin: 0 auto;">
+      <div class="modal-body" style="overflow: auto;">
         <h1>Pool and Miner configuration</h1> <br/><br/>
 
         <h3>Set Reward Assigment</h3><br/>
@@ -498,7 +515,9 @@
         </p>
 
         <h5 class="modal-title">Minimum Payout</h5>
-        <p>Change your minimum payout to 100 BURST by sending the following text message (any number higher than {MIN_PAYOUT} is accepted):<br>
+        
+		<p><code>Default minimum payout is 1 Burstcoin</code></br>
+		  Change your minimum payout to 100 BURST by sending the following text message (any number higher than {MIN_PAYOUT} is accepted):<br>
           <code>pay 100</code><br>
         </p>
 
