@@ -113,7 +113,7 @@ public class Miner implements Payable {
     public double getSharedCapacity() {
         return store.getSharedCapacity();
     }
-    
+
 
     public double getTotalCapacity() {
         return store.getTotalCapacity();
@@ -125,7 +125,7 @@ public class Miner implements Payable {
     public void setSharePercent(int sharePercent) {
         store.setSharePercent(sharePercent);
     }
-    
+
     public int getDonationPercent() {
         return store.getDonationPercent();
     }
@@ -158,23 +158,23 @@ public class Miner implements Payable {
     public void setName(String name) {
         store.setName(name);
     }
-    
+
     public void setCommitment(BurstValue commitment, int height) {
         this.commitment.set(commitment);
         this.commitmentHeight = height;
     }
-    
+
     public BurstValue getCommitment() {
         BurstValue value = commitment.get();
         if(value == null)
             value = BurstValue.fromBurst(0);
         return value;
     }
-    
+
     public int getCommitmentHeight() {
         return this.commitmentHeight;
     }
-    
+
     public String getUserAgent() {
         return store.getUserAgent();
     }

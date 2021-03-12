@@ -29,10 +29,10 @@ import burst.kit.crypto.BurstCrypto;
 import burst.kit.entity.BurstAddress;
 import burst.kit.entity.BurstValue;
 import burst.kit.entity.response.MiningInfo;
-import burst.kit.entity.response.http.MiningInfoResponse;
 import burst.kit.util.BurstKitUtils;
 import burst.pool.Constants;
 import burst.pool.miners.Miner;
+import burst.pool.miners.MinerTracker;
 import burst.pool.storage.config.PropertyService;
 import burst.pool.storage.config.Props;
 import burst.pool.storage.persistent.StorageService;
@@ -104,6 +104,7 @@ public class Server extends NanoHTTPD {
                 if (submission.getNonce() == null) {
                     throw new SubmissionException("Nonce not set or invalid");
                 }
+
                 String userAgent = session.getHeaders().get("user-agent");
                 if (userAgent == null) userAgent = "";
                 return gson.toJson(new NonceSubmissionResponse("success", pool.checkNewSubmission(submission, userAgent)));
@@ -113,7 +114,14 @@ public class Server extends NanoHTTPD {
         } else if (Objects.equals(params.get("requestType"), "getMiningInfo")) {
             MiningInfo miningInfo = pool.getMiningInfo();
             if (miningInfo == null) return gson.toJson(JsonNull.INSTANCE);
-            return gson.toJson(new MiningInfoResponse(burstCrypto.toHexString(miningInfo.getGenerationSignature()), miningInfo.getBaseTarget(), miningInfo.getHeight(), miningInfo.getAverageCommitmentNQT()));
+            JsonObject miningInfoObj = new JsonObject();
+            miningInfoObj.addProperty("height", Long.toUnsignedString(miningInfo.getHeight()));
+            miningInfoObj.addProperty("generationSignature", burstCrypto.toHexString(miningInfo.getGenerationSignature()));
+            miningInfoObj.addProperty("baseTarget", Long.toUnsignedString(miningInfo.getBaseTarget()));
+            miningInfoObj.addProperty("averageCommitmentNQT", Long.toUnsignedString(miningInfo.getAverageCommitmentNQT()));
+
+            return miningInfoObj.toString();
+            // return gson.toJson(new MiningInfoResponse(burstCrypto.toHexString(miningInfo.getGenerationSignature()), miningInfo.getBaseTarget(), miningInfo.getHeight(), miningInfo.getAverageCommitmentNQT()));
         } else {
             return "404 not found";
         }
@@ -295,11 +303,16 @@ public class Server extends NanoHTTPD {
 
     private JsonElement minerToJson(Miner miner, int maxNConf) {
         if (miner == null) return JsonNull.INSTANCE;
+
+        MiningInfo miningInfo = pool.getMiningInfo();
         JsonObject minerJson = new JsonObject();
         minerJson.addProperty("address", miner.getAddress().getID());
         minerJson.addProperty("addressRS", miner.getAddress().getFullAddress());
         minerJson.addProperty("pendingBalance", miner.getPending().toFormattedString());
         minerJson.addProperty("totalCapacity", miner.getTotalCapacity());
+        minerJson.addProperty("commitment", miner.getCommitment().toFormattedString());
+        minerJson.addProperty("commitmentRatio", (double)miner.getCommitment().longValue()/miningInfo.getAverageCommitmentNQT());
+        minerJson.addProperty("commitmentFactor", MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
         minerJson.addProperty("sharedCapacity", miner.getSharedCapacity());
         minerJson.addProperty("sharePercent", miner.getSharePercent());
         minerJson.addProperty("donationPercent", miner.getDonationPercent());
