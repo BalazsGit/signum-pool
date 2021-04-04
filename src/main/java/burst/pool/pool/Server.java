@@ -285,6 +285,7 @@ public class Server extends NanoHTTPD {
                     .replace("{DISCORD}", propertyService.getString(Props.siteDiscordLink))
                     .replace("{INFO}", propertyService.getString(Props.siteInfo))
                     .replace("{POOL_ACCOUNT}", burstCrypto.getBurstAddressFromPassphrase(propertyService.getString(Props.passphrase)).getFullAddress())
+                    .replace("{LAG}", Integer.toString(propertyService.getInt(Props.processLag)))
                     .replace("{MIN_PAYOUT}", BurstValue.fromBurst(propertyService.getFloat(Props.minimumMinimumPayout)).toUnformattedString())
                     .replace("{FAUCET}", propertyService.getString(Props.siteFaucetURL))
                     .replace("{EXPLORER}", propertyService.getString(Props.siteExplorerURL));
@@ -311,6 +312,7 @@ public class Server extends NanoHTTPD {
         minerJson.addProperty("pendingBalance", miner.getPending().toFormattedString());
         minerJson.addProperty("totalCapacity", miner.getTotalCapacity());
         minerJson.addProperty("commitment", miner.getCommitment().toFormattedString());
+        minerJson.addProperty("committedBalance", miner.getCommittedBalance().toFormattedString());
         minerJson.addProperty("commitmentRatio", (double)miner.getCommitment().longValue()/miningInfo.getAverageCommitmentNQT());
         minerJson.addProperty("commitmentFactor", MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
         minerJson.addProperty("sharedCapacity", miner.getSharedCapacity());
