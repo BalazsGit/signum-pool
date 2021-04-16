@@ -147,9 +147,6 @@ public class Server extends NanoHTTPD {
                         poolTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity() / MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
                         poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity() / MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
                         poolCommittedBalance.updateAndGet(v -> v + miner.getCommittedBalance().doubleValue());
-                        //average boost
-                        //commitment ratio on pool
-                        //pool committed
                         minersJson.add(minerToJson(miner, maxNConf));
                     });
             JsonObject jsonObject = new JsonObject();
