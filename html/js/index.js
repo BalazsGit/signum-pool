@@ -13,8 +13,8 @@ Show the Wallet address g_name = false
 var g_name = true;
 
 /*
-Show expolorer link g_link = true
-Not show expolorer link g_link = false
+Show explorer link g_link = true
+Not show explorer link g_link = false
 */
 var g_link = true;
 
