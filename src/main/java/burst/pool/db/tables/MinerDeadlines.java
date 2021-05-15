@@ -25,6 +25,7 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 
@@ -85,6 +86,12 @@ public class MinerDeadlines extends TableImpl<MinerDeadlinesRecord> {
      * The column <code>miner_deadlines.share_percent</code>.
      */
     public final TableField<MinerDeadlinesRecord, Integer> SHARE_PERCENT = createField("share_percent", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("100", org.jooq.impl.SQLDataType.INTEGER)), this, "");
+
+    /**
+     * The column <code>miner_deadlines.commitment_factor</code>.
+     */
+    public final TableField<MinerDeadlinesRecord, Double> COMMITMENT_FACTOR = createField("commitment_factor", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("1", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
+
 
     /**
      * Create a <code>miner_deadlines</code> table reference
