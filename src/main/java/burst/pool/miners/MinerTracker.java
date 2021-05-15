@@ -71,7 +71,7 @@ public class MinerTracker {
 
             deadline = BigInteger.valueOf((long)newDeadline);
         }
-        miner.processNewDeadline(new Deadline(deadline, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight), commitmentFactor);
+        miner.processNewDeadline(new Deadline(deadline, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight, commitmentFactor), commitmentFactor);
 
         return deadline;
     }

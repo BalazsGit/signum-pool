@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS miner_deadlines (
   height BIGINT,
   deadline BIGINT,
   base_target BIGINT,
+  commitment_factor DOUBLE,
   PRIMARY KEY (db_id)
 );
 CREATE UNIQUE INDEX miner_deadlines_index ON miner_deadlines (account_id, height);

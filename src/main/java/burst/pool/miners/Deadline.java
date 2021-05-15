@@ -7,12 +7,14 @@ public class Deadline {
     private final BigInteger baseTarget;
     private final int sharePercent;
     private final long height;
+    private final double commitmentFactor;
 
-    public Deadline(BigInteger deadline, BigInteger baseTarget, int sharePercent, long height) {
+    public Deadline(BigInteger deadline, BigInteger baseTarget, int sharePercent, long height, double commitmentFactor) {
         this.deadline = deadline;
         this.baseTarget = baseTarget;
         this.sharePercent = sharePercent;
         this.height = height;
+        this.commitmentFactor = commitmentFactor;
     }
 
     public BigInteger getDeadline() {
@@ -26,7 +28,11 @@ public class Deadline {
     public long getHeight() {
         return height;
     }
-    
+
+    public double getCommitmentFactor() {
+        return commitmentFactor;
+    }
+
     public int getSharePercent() {
       return sharePercent;
     }

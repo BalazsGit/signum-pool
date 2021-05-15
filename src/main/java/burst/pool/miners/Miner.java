@@ -42,6 +42,7 @@ public class Miner implements Payable {
         List<Deadline> deadlines = store.getDeadlines();
         deadlines.forEach(deadline -> {
             BigInteger hit = deadline.calculateHit();
+            //BigInteger hitWoFactor = deadline.calculateHit() * deadline.getCommitmentFactor();
             hitSum.set(hitSum.get().add(hit));
             if(deadline.getSharePercent() > 0) {
                 hit = hit.divide(BigInteger.valueOf(deadline.getSharePercent()))
@@ -55,8 +56,12 @@ public class Miner implements Payable {
         });
         // Calculate estimated capacity
         try {
+            //Estimated capacity calculation
             store.setSharedCapacity(minerMaths.estimatedEffectivePlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
             store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
+            //Effective capacity calculation
+            //store.setSharedCapacity(minerMaths.estimatedEffectivePlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
+            //store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
         } catch (ArithmeticException ignored) {
         }
     }
