@@ -662,10 +662,10 @@ public class DbStorageService implements StorageService {
         }
 
         @Override
-        public void setOrUpdateDeadline(long height, Deadline deadline) {
-            useDslContextVoid(context -> context.mergeInto(MINER_DEADLINES, MINER_DEADLINES.ACCOUNT_ID, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.BASE_TARGET)
+        public void setOrUpdateDeadline(long height, Deadline deadline, double commitmentFactor) {
+            useDslContextVoid(context -> context.mergeInto(MINER_DEADLINES, MINER_DEADLINES.ACCOUNT_ID, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.COMMITMENT_FACTOR)
                     .key(MINER_DEADLINES.ACCOUNT_ID, MINER_DEADLINES.HEIGHT)
-                    .values(accountId, deadline.getSharePercent(), height, deadline.getDeadline().longValue(), deadline.getBaseTarget().longValue())
+                    .values(accountId, deadline.getSharePercent(), height, deadline.getDeadline().longValue(), deadline.getBaseTarget().longValue(), commitmentFactor)
                     .execute());
             storeInCache(MINER_DEADLINES, accountIdStr + "deadline" + Long.toString(height), deadline);
             recalculateCacheDeadlineCount();

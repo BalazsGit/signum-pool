@@ -98,7 +98,7 @@ public class Miner implements Payable {
         return share;
     }
 
-    public void processNewDeadline(Deadline deadline) {
+    public void processNewDeadline(Deadline deadline, double commitmentFactor) {
         // Check if deadline is for an older block
         List<Deadline> deadlines = store.getDeadlines();
         boolean previousDeadlineExists = false;
@@ -110,10 +110,10 @@ public class Miner implements Payable {
         if (previousDeadlineExists) {
             Deadline previousDeadline = store.getDeadline(deadline.getHeight());
             if (previousDeadline == null || deadline.getDeadline().compareTo(previousDeadline.getDeadline()) < 0) { // If new deadline is better
-                store.setOrUpdateDeadline(deadline.getHeight(), deadline);
+                store.setOrUpdateDeadline(deadline.getHeight(), deadline, commitmentFactor);
             }
         } else {
-            store.setOrUpdateDeadline(deadline.getHeight(), deadline);
+            store.setOrUpdateDeadline(deadline.getHeight(), deadline, commitmentFactor);
         }
     }
 

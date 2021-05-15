@@ -59,17 +59,19 @@ public class MinerTracker {
             }
         }
 
+        double commitmentFactor = 1;
+
         if(blockHeight >= propertyService.getInt(Props.pocPlusBlock)) {
             // PoC+ logic
             BurstValue commitment = miner.getCommitment();
 
-            double commitmentFactor = getCommitmentFactor(commitment, miningInfo);
+            commitmentFactor = getCommitmentFactor(commitment, miningInfo);
 
             double newDeadline = deadline.longValue()/commitmentFactor;
 
             deadline = BigInteger.valueOf((long)newDeadline);
         }
-        miner.processNewDeadline(new Deadline(deadline, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight));
+        miner.processNewDeadline(new Deadline(deadline, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight), commitmentFactor);
 
         return deadline;
     }
