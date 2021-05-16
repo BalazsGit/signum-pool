@@ -156,8 +156,8 @@ public class Server extends NanoHTTPD {
             JsonObject jsonObject = new JsonObject();
             jsonObject.add("miners", minersJson);
             jsonObject.addProperty("explorer", propertyService.getString(Props.siteExplorerURL) + propertyService.getString(Props.siteExplorerAccount));
-            //jsonObject.addProperty("poolEffectiveTotalCapacity", poolEffectiveTotalCapacity.get());
-            //jsonObject.addProperty("poolEffectiveSharedCapacity", poolEffectiveSharedCapacity.get());
+            jsonObject.addProperty("poolEffectiveTotalCapacity", poolEffectiveTotalCapacity.get());
+            jsonObject.addProperty("poolEffectiveSharedCapacity", poolEffectiveSharedCapacity.get());
             jsonObject.addProperty("poolTotalCapacity", poolTotalCapacity.get());
             jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
             jsonObject.addProperty("poolCommittedBalance", poolCommittedBalance.get());
