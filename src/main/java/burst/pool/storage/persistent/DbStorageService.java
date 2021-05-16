@@ -624,11 +624,11 @@ public class DbStorageService implements StorageService {
 
         @Override
         public List<Deadline> getDeadlines() { // TODO cache
-            return useDslContext(context -> context.select(MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.COMMITMENT_FACTOR)
+            return useDslContext(context -> context.select(MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.COMMITMENT_FACTOR, MINER_DEADLINES.DEADLINE_WITHOUT_FACTOR)
                     .from(MINER_DEADLINES)
                     .where(MINER_DEADLINES.ACCOUNT_ID.eq(accountId))
                     .fetch()
-                    .map(record -> new Deadline(BigInteger.valueOf(record.get(MINER_DEADLINES.DEADLINE)), BigInteger.valueOf(record.get(MINER_DEADLINES.BASE_TARGET)), record.get(MINER_DEADLINES.SHARE_PERCENT), record.get(MINER_DEADLINES.HEIGHT), record.get(MINER_DEADLINES.COMMITMENT_FACTOR))));
+                    .map(record -> new Deadline(BigInteger.valueOf(record.get(MINER_DEADLINES.DEADLINE)), BigInteger.valueOf(record.get(MINER_DEADLINES.DEADLINE_WITHOUT_FACTOR)), BigInteger.valueOf(record.get(MINER_DEADLINES.BASE_TARGET)), record.get(MINER_DEADLINES.SHARE_PERCENT), record.get(MINER_DEADLINES.HEIGHT), record.get(MINER_DEADLINES.COMMITMENT_FACTOR))));
         }
 
         @Override
@@ -651,21 +651,21 @@ public class DbStorageService implements StorageService {
         @Override
         public Deadline getDeadline(long height) {
             try {
-                return getFromCacheOr(MINER_DEADLINES, accountIdStr + "deadline" + Long.toString(height), () -> useDslContext(context -> context.select(MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE)
+                return getFromCacheOr(MINER_DEADLINES, accountIdStr + "deadline" + Long.toString(height), () -> useDslContext(context -> context.select(MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.COMMITMENT_FACTOR, MINER_DEADLINES.DEADLINE_WITHOUT_FACTOR)
                         .from(MINER_DEADLINES)
                         .where(MINER_DEADLINES.ACCOUNT_ID.eq(accountId), MINER_DEADLINES.HEIGHT.eq(height))
                         .fetchAny()
-                        .map(record -> new Deadline(BigInteger.valueOf(record.get(MINER_DEADLINES.DEADLINE)), BigInteger.valueOf(record.get(MINER_DEADLINES.BASE_TARGET)), record.get(MINER_DEADLINES.SHARE_PERCENT), height, record.get(MINER_DEADLINES.COMMITMENT_FACTOR)))));
+                        .map(record -> new Deadline(BigInteger.valueOf(record.get(MINER_DEADLINES.DEADLINE)), BigInteger.valueOf(record.get(MINER_DEADLINES.DEADLINE_WITHOUT_FACTOR)), BigInteger.valueOf(record.get(MINER_DEADLINES.BASE_TARGET)), record.get(MINER_DEADLINES.SHARE_PERCENT), height, record.get(MINER_DEADLINES.COMMITMENT_FACTOR)))));
             } catch (NullPointerException e) {
                 return null;
             }
         }
 
         @Override
-        public void setOrUpdateDeadline(long height, Deadline deadline, double commitmentFactor) {
-            useDslContextVoid(context -> context.mergeInto(MINER_DEADLINES, MINER_DEADLINES.ACCOUNT_ID, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.COMMITMENT_FACTOR)
+        public void setOrUpdateDeadline(long height, Deadline deadline) {
+            useDslContextVoid(context -> context.mergeInto(MINER_DEADLINES, MINER_DEADLINES.ACCOUNT_ID, MINER_DEADLINES.SHARE_PERCENT, MINER_DEADLINES.HEIGHT, MINER_DEADLINES.DEADLINE, MINER_DEADLINES.BASE_TARGET, MINER_DEADLINES.COMMITMENT_FACTOR, MINER_DEADLINES.DEADLINE_WITHOUT_FACTOR)
                     .key(MINER_DEADLINES.ACCOUNT_ID, MINER_DEADLINES.HEIGHT)
-                    .values(accountId, deadline.getSharePercent(), height, deadline.getDeadline().longValue(), deadline.getBaseTarget().longValue(), commitmentFactor)
+                    .values(accountId, deadline.getSharePercent(), height, deadline.getDeadline().longValue(), deadline.getBaseTarget().longValue(), deadline.getCommitmentFactor(), deadline.getDeadlineWithoutFactor().longValue())
                     .execute());
             storeInCache(MINER_DEADLINES, accountIdStr + "deadline" + Long.toString(height), deadline);
             recalculateCacheDeadlineCount();

@@ -44,6 +44,7 @@ public class MinerTracker {
         waitUntilNotProcessingBlock();
         Miner miner = getOrCreate(storageService, minerAddress);
 
+        BigInteger deadlineWithoutFactor = deadline;
         long baseTarget = miningInfo.getBaseTarget();
         int blockHeight = (int) miningInfo.getHeight();
 
@@ -71,7 +72,7 @@ public class MinerTracker {
 
             deadline = BigInteger.valueOf((long)newDeadline);
         }
-        miner.processNewDeadline(new Deadline(deadline, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight, commitmentFactor), commitmentFactor);
+        miner.processNewDeadline(new Deadline(deadline, deadlineWithoutFactor, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight, commitmentFactor));
 
         return deadline;
     }

@@ -20,6 +20,7 @@ public class Miner implements Payable {
     private int commitmentHeight;
     private AtomicReference<BurstValue> commitment = new AtomicReference<>();
     private AtomicReference<BurstValue> committedBalance = new AtomicReference<>();
+    private AtomicReference<Double> averageCommitmentFactor = new AtomicReference<>((double) 0);
 
     public Miner(MinerMaths minerMaths, PropertyService propertyService, BurstAddress address, MinerStore store) {
         this.minerMaths = minerMaths;
@@ -38,27 +39,38 @@ public class Miner implements Payable {
         // Calculate hitSum
         AtomicReference<BigInteger> hitSumShared = new AtomicReference<>(BigInteger.ZERO);
         AtomicReference<BigInteger> hitSum = new AtomicReference<>(BigInteger.ZERO);
+        AtomicReference<BigInteger> hitWithoutFactorSumShared = new AtomicReference<>(BigInteger.ZERO);
+        AtomicReference<BigInteger> hitWithoutFactorSum = new AtomicReference<>(BigInteger.ZERO);
         AtomicInteger deadlineCount = new AtomicInteger(store.getDeadlineCount());
         List<Deadline> deadlines = store.getDeadlines();
         deadlines.forEach(deadline -> {
+            averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
             BigInteger hit = deadline.calculateHit();
-            //BigInteger hitWoFactor = deadline.calculateHit() * deadline.getCommitmentFactor();
+            BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
+            hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
             hitSum.set(hitSum.get().add(hit));
             if(deadline.getSharePercent() > 0) {
                 hit = hit.divide(BigInteger.valueOf(deadline.getSharePercent()))
+                    .multiply(BigInteger.valueOf(100L));
+                hitWithoutFactor = hitWithoutFactor.divide(BigInteger.valueOf(deadline.getSharePercent()))
                     .multiply(BigInteger.valueOf(100L));
             }
             else {
                 // Set a very high hit to produce a zero shared capacity
                 hit = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
+                hitWithoutFactor = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
             }
-            hitSumShared.set(hitSumShared.get().add(hit));
+            //hitSumShared.set(hitSumShared.get().add(hit));
+            hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
+            averageCommitmentFactor.set(averageCommitmentFactor.get()/deadlineCount.get());
         });
         // Calculate estimated capacity
         try {
             //Estimated capacity calculation
-            store.setSharedCapacity(minerMaths.estimatedEffectivePlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
-            store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
+            //store.setEffectiveSharedCapacity(minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
+            //store.setEffectiveTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
+            store.setSharedCapacity(minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get()));
+            store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get()));
             //Effective capacity calculation
             //store.setSharedCapacity(minerMaths.estimatedEffectivePlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
             //store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
@@ -103,7 +115,7 @@ public class Miner implements Payable {
         return share;
     }
 
-    public void processNewDeadline(Deadline deadline, double commitmentFactor) {
+    public void processNewDeadline(Deadline deadline) {
         // Check if deadline is for an older block
         List<Deadline> deadlines = store.getDeadlines();
         boolean previousDeadlineExists = false;
@@ -115,10 +127,10 @@ public class Miner implements Payable {
         if (previousDeadlineExists) {
             Deadline previousDeadline = store.getDeadline(deadline.getHeight());
             if (previousDeadline == null || deadline.getDeadline().compareTo(previousDeadline.getDeadline()) < 0) { // If new deadline is better
-                store.setOrUpdateDeadline(deadline.getHeight(), deadline, commitmentFactor);
+                store.setOrUpdateDeadline(deadline.getHeight(), deadline);
             }
         } else {
-            store.setOrUpdateDeadline(deadline.getHeight(), deadline, commitmentFactor);
+            store.setOrUpdateDeadline(deadline.getHeight(), deadline);
         }
     }
 
@@ -126,9 +138,12 @@ public class Miner implements Payable {
         return store.getSharedCapacity();
     }
 
-
     public double getTotalCapacity() {
         return store.getTotalCapacity();
+    }
+
+    public double getAverageCommitmentFactor() {
+        return averageCommitmentFactor.get();
     }
 
     public int getSharePercent() {

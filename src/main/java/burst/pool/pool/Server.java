@@ -135,25 +135,29 @@ public class Server extends NanoHTTPD {
             MiningInfo miningInfo = pool.getMiningInfo();
             AtomicReference<Double> poolTotalCapacity = new AtomicReference<>(0d);
             AtomicReference<Double> poolSharedCapacity = new AtomicReference<>(0d);
-            AtomicReference<Double> poolEffectiveTotalCapacity = new AtomicReference<>(0d);
-            AtomicReference<Double> poolEffectiveSharedCapacity = new AtomicReference<>(0d);
+            //AtomicReference<Double> poolEffectiveTotalCapacity = new AtomicReference<>(0d);
+            //AtomicReference<Double> poolEffectiveSharedCapacity = new AtomicReference<>(0d);
+            AtomicReference<Double> poolBoostedTotalCapacity = new AtomicReference<>(0d);
+            AtomicReference<Double> poolBoostedSharedCapacity = new AtomicReference<>(0d);
             AtomicReference<Double> poolCommittedBalance = new AtomicReference<>(0d);
             storageService.getMinersFiltered()
                     .stream()
                     .sorted(Comparator.comparing(Miner::getSharedCapacity).reversed())
                     .forEach(miner -> {
-                        poolEffectiveTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
-                        poolEffectiveSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
-                        poolTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity() / MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
-                        poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity() / MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
+                        //poolEffectiveTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
+                        //poolEffectiveSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
+                        poolBoostedTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity() * miner.getAverageCommitmentFactor());
+                        poolBoostedSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity() * miner.getAverageCommitmentFactor());
+                        poolTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
+                        poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
                         poolCommittedBalance.updateAndGet(v -> v + miner.getCommittedBalance().doubleValue());
                         minersJson.add(minerToJson(miner, maxNConf));
                     });
             JsonObject jsonObject = new JsonObject();
             jsonObject.add("miners", minersJson);
             jsonObject.addProperty("explorer", propertyService.getString(Props.siteExplorerURL) + propertyService.getString(Props.siteExplorerAccount));
-            jsonObject.addProperty("poolEffectiveTotalCapacity", poolEffectiveTotalCapacity.get());
-            jsonObject.addProperty("poolEffectiveSharedCapacity", poolEffectiveSharedCapacity.get());
+            //jsonObject.addProperty("poolEffectiveTotalCapacity", poolEffectiveTotalCapacity.get());
+            //jsonObject.addProperty("poolEffectiveSharedCapacity", poolEffectiveSharedCapacity.get());
             jsonObject.addProperty("poolTotalCapacity", poolTotalCapacity.get());
             jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
             jsonObject.addProperty("poolCommittedBalance", poolCommittedBalance.get());
@@ -321,12 +325,14 @@ public class Server extends NanoHTTPD {
         minerJson.addProperty("addressRS", miner.getAddress().getFullAddress());
         minerJson.addProperty("pendingBalance", miner.getPending().toFormattedString());
        // minerJson.addProperty("effectiveTotalCapacity", miner.getEffectiveTotalCapacity());
+        minerJson.addProperty("boostedTotalCapacity", miner.getTotalCapacity() * miner.getAverageCommitmentFactor());
         minerJson.addProperty("totalCapacity", miner.getTotalCapacity());
         minerJson.addProperty("commitment", miner.getCommitment().toFormattedString());
         minerJson.addProperty("committedBalance", miner.getCommittedBalance().toFormattedString());
         minerJson.addProperty("commitmentRatio", (double)miner.getCommitment().longValue() / miningInfo.getAverageCommitmentNQT());
         minerJson.addProperty("commitmentFactor", MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
         //minerJson.addProperty("effectiveSharedCapacity", miner.getEffectiveSharedCapacity());
+        minerJson.addProperty("boostedSharedCapacity", miner.getSharedCapacity() * miner.getAverageCommitmentFactor());
         minerJson.addProperty("sharedCapacity", miner.getSharedCapacity());
         minerJson.addProperty("sharePercent", miner.getSharePercent());
         minerJson.addProperty("donationPercent", miner.getDonationPercent());
