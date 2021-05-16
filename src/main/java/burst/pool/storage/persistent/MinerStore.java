@@ -37,7 +37,7 @@ public interface MinerStore {
     int getDeadlineCount();
     void removeDeadline(long height);
     Deadline getDeadline(long height);
-    void setOrUpdateDeadline(long height, Deadline deadline);
+    void setOrUpdateDeadline(long height, Deadline deadline, double commitmentFactor);
 
     interface FeeRecipientStore {
         BurstValue getPendingBalance();
