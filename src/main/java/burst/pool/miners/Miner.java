@@ -22,6 +22,15 @@ public class Miner implements Payable {
     private AtomicReference<BurstValue> committedBalance = new AtomicReference<>();
     private AtomicReference<Double> averageCommitmentFactor = new AtomicReference<>((double) 0);
 
+    private double totalCapacity = 0;
+    private double sharedCapacity = 0;
+
+    private double boostedTotalCapacity = 0;
+    private double boostedSharedCapacity = 0;
+
+    private double effectiveTotalCapacity = 0;
+    private double effectiveSharedCapacity = 0;
+
     public Miner(MinerMaths minerMaths, PropertyService propertyService, BurstAddress address, MinerStore store) {
         this.minerMaths = minerMaths;
         this.propertyService = propertyService;
@@ -60,20 +69,26 @@ public class Miner implements Payable {
                 hit = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
                 hitWithoutFactor = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
             }
-            //hitSumShared.set(hitSumShared.get().add(hit));
+            hitSumShared.set(hitSumShared.get().add(hit));
             hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
             averageCommitmentFactor.set(averageCommitmentFactor.get()/deadlineCount.get());
         });
         // Calculate estimated capacity
         try {
+
             //Estimated capacity calculation
-            //store.setEffectiveSharedCapacity(minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
-            //store.setEffectiveTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
-            store.setSharedCapacity(minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get()));
-            store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get()));
-            //Effective capacity calculation
-            //store.setSharedCapacity(minerMaths.estimatedEffectivePlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get()));
-            //store.setTotalCapacity(minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get()));
+            effectiveTotalCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get());
+            effectiveSharedCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get());
+
+            totalCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get());
+            sharedCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get());
+
+            boostedTotalCapacity = totalCapacity * averageCommitmentFactor.get();
+            boostedSharedCapacity = sharedCapacity * averageCommitmentFactor.get();
+
+            store.setSharedCapacity(totalCapacity);
+            store.setTotalCapacity(sharedCapacity);
+
         } catch (ArithmeticException ignored) {
         }
     }
@@ -135,11 +150,28 @@ public class Miner implements Payable {
     }
 
     public double getSharedCapacity() {
+
         return store.getSharedCapacity();
     }
 
     public double getTotalCapacity() {
         return store.getTotalCapacity();
+    }
+
+    public double getEffectiveTotalCapacity() {
+        return effectiveTotalCapacity;
+    }
+    public double getEffectiveSharedCapacity() {
+        return effectiveSharedCapacity;
+    }
+
+
+    public double getBoostedTotalCapacity() {
+        return boostedTotalCapacity;
+    }
+
+    public double getBoostedSharedCapacity() {
+        return boostedSharedCapacity;
     }
 
     public double getAverageCommitmentFactor() {
