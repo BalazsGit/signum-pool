@@ -97,6 +97,10 @@ public class MinerDeadlines extends TableImpl<MinerDeadlinesRecord> {
      */
     public final TableField<MinerDeadlinesRecord, Long> DEADLINE_WITHOUT_FACTOR = createField("deadline_without_factor", org.jooq.impl.SQLDataType.BIGINT.defaultValue(org.jooq.impl.DSL.field("NULL", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
+    /**
+     * The column <code>miner_deadlines.deadline_without_factor</code>.
+     */
+    public final TableField<MinerDeadlinesRecord, Double> COMMITMENT = createField("commitment", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
 
     /**
      * Create a <code>miner_deadlines</code> table reference

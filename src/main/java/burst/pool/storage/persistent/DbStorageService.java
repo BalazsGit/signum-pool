@@ -513,6 +513,77 @@ public class DbStorageService implements StorageService {
             storeInCache(MINERS, accountIdStr + "estimated", estimatedCapacity);
         }
 
+        @Override
+        public double getEffectiveTotalCapacity() {
+            return getFromCacheOr(MINERS, accountIdStr + "effectiveTotal", () -> useDslContext(context -> context.select(MINERS.EFFECTIVE_TOTAL_CAPACITY)
+                .from(MINERS)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .fetchAny()
+                .get(MINERS.EFFECTIVE_TOTAL_CAPACITY)));
+        }
+
+        @Override
+        public void setEffectiveTotalCapacity(double effectiveTotalCapacity) {
+            useDslContextVoid(context -> context.update(MINERS)
+                .set(MINERS.EFFECTIVE_TOTAL_CAPACITY, effectiveTotalCapacity)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .execute());
+            storeInCache(MINERS, accountIdStr + "effectiveTotal", effectiveTotalCapacity);
+        }
+
+        @Override
+        public double getEffectiveSharedCapacity() {
+            return getFromCacheOr(MINERS, accountIdStr + "effectiveShared", () -> useDslContext(context -> context.select(MINERS.EFFECTIVE_SHARED_CAPACITY)
+                .from(MINERS)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .fetchAny()
+                .get(MINERS.EFFECTIVE_SHARED_CAPACITY)));
+        }
+
+        @Override
+        public void setEffectiveSharedCapacity(double effectiveSharedCapacity) {
+            useDslContextVoid(context -> context.update(MINERS)
+                .set(MINERS.EFFECTIVE_SHARED_CAPACITY, effectiveSharedCapacity)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .execute());
+            storeInCache(MINERS, accountIdStr + "effectiveShared", effectiveSharedCapacity);
+        }
+
+        @Override
+        public double getBoostedTotalCapacity() {
+            return getFromCacheOr(MINERS, accountIdStr + "boostedTotal", () -> useDslContext(context -> context.select(MINERS.BOOSTED_TOTAL_CAPACITY)
+                .from(MINERS)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .fetchAny()
+                .get(MINERS.BOOSTED_TOTAL_CAPACITY)));
+        }
+
+        @Override
+        public void setBoostedTotalCapacity(double boostedTotalCapacity) {
+            useDslContextVoid(context -> context.update(MINERS)
+                .set(MINERS.BOOSTED_TOTAL_CAPACITY, boostedTotalCapacity)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .execute());
+            storeInCache(MINERS, accountIdStr + "boostedTotal", boostedTotalCapacity);
+        }
+
+        @Override
+        public double getBoostedSharedCapacity() {
+            return getFromCacheOr(MINERS, accountIdStr + "boostedShared", () -> useDslContext(context -> context.select(MINERS.BOOSTED_SHARED_CAPACITY)
+                .from(MINERS)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .fetchAny()
+                .get(MINERS.BOOSTED_SHARED_CAPACITY)));
+        }
+
+        @Override
+        public void setBoostedSharedCapacity(double boostedSharedCapacity) {
+            useDslContextVoid(context -> context.update(MINERS)
+                .set(MINERS.BOOSTED_SHARED_CAPACITY, boostedSharedCapacity)
+                .where(MINERS.ACCOUNT_ID.eq(accountId))
+                .execute());
+            storeInCache(MINERS, accountIdStr + "boostedShared", boostedSharedCapacity);
+        }
 
         @Override
         public int getSharePercent() {

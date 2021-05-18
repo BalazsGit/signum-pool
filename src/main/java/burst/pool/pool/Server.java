@@ -158,6 +158,8 @@ public class Server extends NanoHTTPD {
             jsonObject.addProperty("explorer", propertyService.getString(Props.siteExplorerURL) + propertyService.getString(Props.siteExplorerAccount));
             jsonObject.addProperty("poolEffectiveTotalCapacity", poolEffectiveTotalCapacity.get());
             jsonObject.addProperty("poolEffectiveSharedCapacity", poolEffectiveSharedCapacity.get());
+            jsonObject.addProperty("poolBoostedTotalCapacity", poolBoostedTotalCapacity.get());
+            jsonObject.addProperty("poolBoostedSharedCapacity", poolBoostedSharedCapacity.get());
             jsonObject.addProperty("poolTotalCapacity", poolTotalCapacity.get());
             jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
             jsonObject.addProperty("poolCommittedBalance", poolCommittedBalance.get());
@@ -321,13 +323,14 @@ public class Server extends NanoHTTPD {
 
         MiningInfo miningInfo = pool.getMiningInfo();
         JsonObject minerJson = new JsonObject();
+
         minerJson.addProperty("address", miner.getAddress().getID());
         minerJson.addProperty("addressRS", miner.getAddress().getFullAddress());
         minerJson.addProperty("pendingBalance", miner.getPending().toFormattedString());
         minerJson.addProperty("effectiveTotalCapacity", miner.getEffectiveTotalCapacity());
         minerJson.addProperty("boostedTotalCapacity", miner.getBoostedTotalCapacity());
         minerJson.addProperty("totalCapacity", miner.getTotalCapacity());
-        minerJson.addProperty("commitment", miner.getCommitment().toFormattedString());
+        minerJson.addProperty("commitment", miner.getCommitment().doubleValue());
         minerJson.addProperty("committedBalance", miner.getCommittedBalance().toFormattedString());
         minerJson.addProperty("commitmentRatio", (double)miner.getCommitment().longValue() / miningInfo.getAverageCommitmentNQT());
         minerJson.addProperty("commitmentFactor", MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));

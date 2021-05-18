@@ -112,6 +112,27 @@ public class Miners extends TableImpl<MinersRecord> {
     public final TableField<MinersRecord, Integer> DONATION_PERCENT = createField("donation_percent", org.jooq.impl.SQLDataType.INTEGER.defaultValue(org.jooq.impl.DSL.field("1", org.jooq.impl.SQLDataType.INTEGER)), this, "");
 
     /**
+     * The column <code>miners.donation_percent</code>.
+     */
+    public final TableField<MinersRecord, Double> EFFECTIVE_TOTAL_CAPACITY = createField("effective_total_capacity", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
+
+    /**
+     * The column <code>miners.donation_percent</code>.
+     */
+    public final TableField<MinersRecord, Double> EFFECTIVE_SHARED_CAPACITY = createField("effective_shared_capacity", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
+
+    /**
+     * The column <code>miners.donation_percent</code>.
+     */
+    public final TableField<MinersRecord, Double> BOOSTED_TOTAL_CAPACITY = createField("boosted_total_capacity", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
+
+    /**
+     * The column <code>miners.donation_percent</code>.
+     */
+    public final TableField<MinersRecord, Double> BOOSTED_SHARED_CAPACITY = createField("boosted_shared_capacity", org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
+
+
+    /**
      * Create a <code>miners</code> table reference
      */
     public Miners() {

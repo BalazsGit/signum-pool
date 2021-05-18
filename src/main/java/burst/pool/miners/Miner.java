@@ -77,17 +77,24 @@ public class Miner implements Payable {
         try {
 
             //Estimated capacity calculation
-            effectiveTotalCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get());
-            effectiveSharedCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get());
 
             totalCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get());
             sharedCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get());
 
+            store.setSharedCapacity(totalCapacity);
+            store.setTotalCapacity(sharedCapacity);
+
+            effectiveTotalCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get());
+            effectiveSharedCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get());
+
+            store.setEffectiveTotalCapacity(effectiveTotalCapacity);
+            store.setEffectiveSharedCapacity(effectiveSharedCapacity);
+
             boostedTotalCapacity = totalCapacity * averageCommitmentFactor.get();
             boostedSharedCapacity = sharedCapacity * averageCommitmentFactor.get();
 
-            store.setSharedCapacity(totalCapacity);
-            store.setTotalCapacity(sharedCapacity);
+            store.setBoostedTotalCapacity(boostedTotalCapacity);
+            store.setBoostedSharedCapacity(boostedSharedCapacity);
 
         } catch (ArithmeticException ignored) {
         }
