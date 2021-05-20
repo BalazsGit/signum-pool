@@ -21,6 +21,7 @@ public class Miner implements Payable {
     private AtomicReference<BurstValue> commitment = new AtomicReference<>();
     private AtomicReference<BurstValue> committedBalance = new AtomicReference<>();
     private AtomicReference<Double> averageCommitmentFactor = new AtomicReference<>((double) 0);
+    private AtomicReference<Double> averageCommitment = new AtomicReference<>((double) 0);
 
     private double totalCapacity = 0;
     private double sharedCapacity = 0;
@@ -52,8 +53,11 @@ public class Miner implements Payable {
         AtomicReference<BigInteger> hitWithoutFactorSum = new AtomicReference<>(BigInteger.ZERO);
         AtomicInteger deadlineCount = new AtomicInteger(store.getDeadlineCount());
         List<Deadline> deadlines = store.getDeadlines();
+        averageCommitmentFactor.set(0d);
+        averageCommitment.set(0d);
         deadlines.forEach(deadline -> {
             averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
+            averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
             BigInteger hit = deadline.calculateHit();
             BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
             hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
@@ -71,18 +75,22 @@ public class Miner implements Payable {
             }
             hitSumShared.set(hitSumShared.get().add(hit));
             hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
-            averageCommitmentFactor.set(averageCommitmentFactor.get()/deadlineCount.get());
+
         });
+
         // Calculate estimated capacity
         try {
 
+            averageCommitmentFactor.set(averageCommitmentFactor.get()/deadlineCount.get());
+            averageCommitment.set(averageCommitment.get()/deadlineCount.get());
+
             //Estimated capacity calculation
 
-            totalCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get());
-            sharedCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get());
+            totalCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get());
+            sharedCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get());
 
-            store.setSharedCapacity(totalCapacity);
-            store.setTotalCapacity(sharedCapacity);
+            store.setTotalCapacity(totalCapacity);
+            store.setSharedCapacity(sharedCapacity);
 
             effectiveTotalCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitSum.get());
             effectiveSharedCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitSumShared.get());
@@ -100,12 +108,12 @@ public class Miner implements Payable {
         }
     }
 
-    public void recalculateShare(double poolCapacity) {
+    public void recalculateShare(double poolCapacity, double sharedCapacity) {
         if (poolCapacity == 0d) {
             store.setShare(0d);
             return;
         }
-        double newShare = getSharedCapacity() / poolCapacity;
+        double newShare = sharedCapacity / poolCapacity;
         if (Double.isNaN(newShare)) newShare = 0d;
         store.setShare(newShare);
     }
@@ -166,23 +174,26 @@ public class Miner implements Payable {
     }
 
     public double getEffectiveTotalCapacity() {
-        return effectiveTotalCapacity;
+        return store.getEffectiveTotalCapacity();
     }
     public double getEffectiveSharedCapacity() {
-        return effectiveSharedCapacity;
+        return store.getEffectiveSharedCapacity();
     }
 
 
     public double getBoostedTotalCapacity() {
-        return boostedTotalCapacity;
+        return store.getBoostedTotalCapacity();
     }
 
     public double getBoostedSharedCapacity() {
-        return boostedSharedCapacity;
+        return store.getBoostedSharedCapacity();
     }
 
     public double getAverageCommitmentFactor() {
         return averageCommitmentFactor.get();
+    }
+    public double getAverageCommitment() {
+        return averageCommitment.get();
     }
 
     public int getSharePercent() {

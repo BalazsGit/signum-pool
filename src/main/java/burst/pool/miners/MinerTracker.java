@@ -72,7 +72,7 @@ public class MinerTracker {
 
             deadline = BigInteger.valueOf((long)newDeadline);
         }
-        miner.processNewDeadline(new Deadline(deadline, deadlineWithoutFactor, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight, commitmentFactor));
+        miner.processNewDeadline(new Deadline(deadline, deadlineWithoutFactor, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight, commitmentFactor, miner.getCommitment().doubleValue()));
 
         return deadline;
     }
@@ -143,15 +143,40 @@ public class MinerTracker {
     }
 
     private void updateMiners(List<Miner> miners, long blockHeight) {
-        // Update each miner's effective capacity
-        miners.forEach(miner -> miner.recalculateCapacity(blockHeight));
 
-        // Calculate pool capacity
-        AtomicReference<Double> poolCapacity = new AtomicReference<>(0d);
-        miners.forEach(miner -> poolCapacity.updateAndGet(v -> (double) (v + miner.getSharedCapacity())));
 
-        // Update each miner's share
-        miners.forEach(miner -> miner.recalculateShare(poolCapacity.get()));
+                // Update each miner's effective capacity
+                miners.forEach(miner -> miner.recalculateCapacity(blockHeight));
+
+        switch (propertyService.getInt(Props.paymentModel)) {
+
+            case 0:
+                // Calculate pool capacity
+                AtomicReference<Double> poolSharedCapacity = new AtomicReference<>(0d);
+                miners.forEach(miner -> poolSharedCapacity.updateAndGet(v -> (double) (v + miner.getSharedCapacity())));
+
+                // Update each miner's share
+                miners.forEach(miner -> miner.recalculateShare(poolSharedCapacity.get(), miner.getSharedCapacity()));
+                break;
+            case 1:
+                // Calculate pool capacity
+                AtomicReference<Double> poolEffectiveSharedCapacity = new AtomicReference<>(0d);
+                miners.forEach(miner -> poolEffectiveSharedCapacity.updateAndGet(v -> (double) (v + miner.getEffectiveSharedCapacity())));
+
+                // Update each miner's share
+                miners.forEach(miner -> miner.recalculateShare(poolEffectiveSharedCapacity.get(), miner.getEffectiveSharedCapacity()));
+                break;
+            case 2:
+                // Calculate pool capacity
+                AtomicReference<Double> poolBoostedSharedCapacity = new AtomicReference<>(0d);
+                miners.forEach(miner -> poolBoostedSharedCapacity.updateAndGet(v -> (double) (v + miner.getBoostedSharedCapacity())));
+
+                // Update each miner's share
+                miners.forEach(miner -> miner.recalculateShare(poolBoostedSharedCapacity.get(), miner.getBoostedSharedCapacity()));
+                break;
+
+        }
+
     }
 
     public void setMinerMinimumPayout(StorageService storageService, BurstAddress minerAddress, BurstValue amount) {

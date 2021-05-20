@@ -51,6 +51,7 @@ public class Props {
     public static final Prop<Long> reload = new Prop<>("reload", 60000l);
     public static final Prop<Integer> limit = new Prop<>("limit", 10);
     public static final Prop<Integer> limitWonBlocks = new Prop<>("limitWonBlocks", 100);
+    public static final Prop<Integer> paymentModel = new Prop<>("paymentModel", 2);
 
     public static void validateProperties(PropertyService propertyService) {
         int serverPort = propertyService.getInt(Props.serverPort);

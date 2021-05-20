@@ -140,6 +140,8 @@ public class Server extends NanoHTTPD {
             AtomicReference<Double> poolBoostedTotalCapacity = new AtomicReference<>(0d);
             AtomicReference<Double> poolBoostedSharedCapacity = new AtomicReference<>(0d);
             AtomicReference<Double> poolCommittedBalance = new AtomicReference<>(0d);
+            AtomicReference<Double> averageCommitmentFactor = new AtomicReference<>(0d);
+            AtomicReference<Double> averageCommitment = new AtomicReference<>((double) 0);
             storageService.getMinersFiltered()
                     .stream()
                     .sorted(Comparator.comparing(Miner::getSharedCapacity).reversed())
@@ -150,7 +152,8 @@ public class Server extends NanoHTTPD {
                         poolBoostedSharedCapacity.updateAndGet(v -> v + miner.getBoostedSharedCapacity());
                         poolTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
                         poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
-                        poolCommittedBalance.updateAndGet(v -> v + miner.getCommittedBalance().doubleValue());
+                        //averageCommitmentFactor.updateAndGet(v -> v + miner.getAverageCommitmentFactor());
+                        //averageCommitment.updateAndGet(v -> v + miner.getAverageCommitment());
                         minersJson.add(minerToJson(miner, maxNConf));
                     });
             JsonObject jsonObject = new JsonObject();
@@ -163,6 +166,8 @@ public class Server extends NanoHTTPD {
             jsonObject.addProperty("poolTotalCapacity", poolTotalCapacity.get());
             jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
             jsonObject.addProperty("poolCommittedBalance", poolCommittedBalance.get());
+            //jsonObject.addProperty("averageCommitmentFactor", averageCommitmentFactor.get());
+            //jsonObject.addProperty("averageCommitment", averageCommitment.get());
             return jsonObject.toString();
         } else if (session.getUri().startsWith("/api/getMiner/")) {
             BurstAddress minerAddress = BurstAddress.fromEither(session.getUri().substring(14));
@@ -331,9 +336,11 @@ public class Server extends NanoHTTPD {
         minerJson.addProperty("boostedTotalCapacity", miner.getBoostedTotalCapacity());
         minerJson.addProperty("totalCapacity", miner.getTotalCapacity());
         minerJson.addProperty("commitment", miner.getCommitment().doubleValue());
+        minerJson.addProperty("averageCommitment", miner.getAverageCommitment());
         minerJson.addProperty("committedBalance", miner.getCommittedBalance().toFormattedString());
         minerJson.addProperty("commitmentRatio", (double)miner.getCommitment().longValue() / miningInfo.getAverageCommitmentNQT());
         minerJson.addProperty("commitmentFactor", MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
+        minerJson.addProperty("averageCommitmentFactor", miner.getAverageCommitmentFactor());
         minerJson.addProperty("effectiveSharedCapacity", miner.getEffectiveSharedCapacity());
         minerJson.addProperty("boostedSharedCapacity", miner.getBoostedSharedCapacity());
         minerJson.addProperty("sharedCapacity", miner.getSharedCapacity());
