@@ -140,8 +140,6 @@ public class Server extends NanoHTTPD {
             AtomicReference<Double> poolBoostedTotalCapacity = new AtomicReference<>(0d);
             AtomicReference<Double> poolBoostedSharedCapacity = new AtomicReference<>(0d);
             AtomicReference<Double> poolCommittedBalance = new AtomicReference<>(0d);
-            AtomicReference<Double> averageCommitmentFactor = new AtomicReference<>(0d);
-            AtomicReference<Double> averageCommitment = new AtomicReference<>((double) 0);
             storageService.getMinersFiltered()
                     .stream()
                     .sorted(Comparator.comparing(Miner::getSharedCapacity).reversed())
@@ -152,8 +150,7 @@ public class Server extends NanoHTTPD {
                         poolBoostedSharedCapacity.updateAndGet(v -> v + miner.getBoostedSharedCapacity());
                         poolTotalCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
                         poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
-                        //averageCommitmentFactor.updateAndGet(v -> v + miner.getAverageCommitmentFactor());
-                        //averageCommitment.updateAndGet(v -> v + miner.getAverageCommitment());
+                        poolCommittedBalance.updateAndGet(v -> v + miner.getCommittedBalance().doubleValue());
                         minersJson.add(minerToJson(miner, maxNConf));
                     });
             JsonObject jsonObject = new JsonObject();
@@ -166,8 +163,6 @@ public class Server extends NanoHTTPD {
             jsonObject.addProperty("poolTotalCapacity", poolTotalCapacity.get());
             jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
             jsonObject.addProperty("poolCommittedBalance", poolCommittedBalance.get());
-            //jsonObject.addProperty("averageCommitmentFactor", averageCommitmentFactor.get());
-            //jsonObject.addProperty("averageCommitment", averageCommitment.get());
             return jsonObject.toString();
         } else if (session.getUri().startsWith("/api/getMiner/")) {
             BurstAddress minerAddress = BurstAddress.fromEither(session.getUri().substring(14));
