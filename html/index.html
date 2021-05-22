@@ -3,36 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
+
   <title>{TITLE}</title>
-   
+
   <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>-->
   <script type="text/javascript" rel="script" src="js/jquery-3.3.1.slim.min.js"></script>
-  
+
   <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>-->
   <script type="text/javascript" rel="script" src="js/popper.min.js"></script>
-  
+
   <!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>-->
   <script type="text/javascript" rel="script" src="js/bootstrap.min.js"></script>
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.6.0/echarts-en.min.js"></script>
   <!--<script type="text/javascript" rel="script" src="js/echarts-en.min.js"></script>-->
   <!--
-  offline not working: 
+  offline not working:
   echarts-en.min.js:formatted:1 Uncaught SyntaxError: Invalid or unexpected token (/u0)
   index.js:1 Uncaught (in promise) ReferenceError: echarts is not defined
   -->
-  
+
   <script type="text/javascript" rel="script" src="js/index.js"></script>
-  
+
   <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />-->
-  
+
   <link rel="stylesheet" type="text/css" href="css/bootstrap_4.3.1_custom_xxxxl.css" />
-  
+
   <!--<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootswatch/4.3.1/darkly/bootstrap.min.css" />-->
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
   <link rel="stylesheet" type="text/css" href="css/main.css" />
-  
+
 
 </head>
 <body onload="onPageLoad();">
@@ -51,8 +51,13 @@
       <li class="nav-item active">
         <a class="nav-link" href="#" onclick="getWonBlocks()" data-toggle="modal" data-target="#wonBlocksModal"><i class="fa fa-trophy" title="BLOCKS WON"></i> BLOCKS WON</a>
       </li>
-      <li class="nav-item active">
-        <a class="nav-link" href="#" data-toggle="modal" data-target="#infoModal"><i class="fa fa-sign-in"></i> <mark>HOW TO JOIN</mark></a>
+      <li class="dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-sign-in"></i> <mark>HOW TO JOIN</mark></a>
+        <ul class="dropdown-menu">
+          <li><a class="nav-link" href="#" data-toggle="modal" onclick="infoModalLoad();" data-target="#infoModalClassic"><i title="BURST CLASSIC"></i> BURST CLASSIC</a></li>
+          <!--<li><a class="nav-link" href="#" data-toggle="modal" data-target="#infoModalPhoenix"><i title="BURST CLASSIC"></i> PHOENIX</a></li>-->
+          <li><a class="nav-link" href="#" data-toggle="modal" onclick="infoModalBTDEXLoad();" data-target="#infoModalBTDEX"><i title="BTDEX"></i> BTDEX</a></li>
+        </ul>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="#" data-toggle="modal" data-target="#confModal"><i class="fa fa-sliders"></i> CONFIGURE</a>
@@ -108,14 +113,16 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-12 text-center">
-      <div class="mySlides" style="height: 150px">
-        <a href="https://gdp-mining.com" target="blanc"><img src="./img/GDPbanner1.png" height = "150"/></a>
+      <!--
+	  <div class="mySlides" style="height: 150px">
+        <a href="https://gdp-mining.com" target="blank"><img src="./img/GDPbanner1.png" height = "150"/></a>
       </div>
       <div class="mySlides" style="height: 150px">
-        <a href="https://gdp-mining.com" target="blanc"><img src="./img/GDPbanner2.png" height = "150"/></a>
+        <a href="https://gdp-mining.com" target="blank"><img src="./img/GDPbanner2.png" height = "150"/></a>
       </div>
+	  -->
       <div class="mySlides" style="height: 150px">
-        <a href="http://btdex.trade" target="blanc"><img src="./img/BTDEXbanner.png" height = "150"/></a>
+        <a href="http://btdex.trade" target="blank"><img src="./img/Banner/BTDEXbanner.png" height = "150"/></a>
       </div>
       <script>
 			var slideIndex = 0;
@@ -139,13 +146,77 @@
     <div class="col-lg-6 p-3 nav-link">
       <h4>Pool address: BURST-HW9R-3VCP-Y46P-DA5W8</h4>
       <h3>Announcements</h3>
-      <p>Pool <strong>http://openburstpool.ddns.net:8126</strong> welcomes new miners!</p>
-	  <p>Burstcoin wallet: <a href="https://burstcoinwallet.ddns.net:8128" target="blanc"><strong>https://burstcoinwallet.ddns.net:8128</strong></a></p>
-      <p>Pool fee is 0.5%<br/>
+      <h4>Pool updated to BRS 3.0.0!</h4>
+      <h4>Please restart your miner in case lost connection with pool!</h4>
+      <p>
+        Pool: <a href="http://openburstpool.ddns.net:8126" target="blank"><strong>http://openburstpool.ddns.net:8126</strong></a></br>
+        Burstcoin wallet: <a href="https://burstcoinwallet.ddns.net:8128" target="blank"><strong>https://burstcoinwallet.ddns.net:8128</strong></a></br>
+        API calls: <a href="https://burstcoinwallet.ddns.net:8128/api-doc" target="blank"><strong>https://burstcoinwallet.ddns.net:8128/api-doc</strong></a>
+      </p>
+      <p>Pool fee is 1.00%<br/>
         Default donation to developers are 1% (you can change it between 0-100% any time)<br/>
         For more infos click to <a href="#" data-toggle="modal" data-target="#confModal">CONFIGURE</a></p>
+      <p>Project: <a href="https://github.com/BalazsGit/ASTRO" target="blank">https://github.com/BalazsGit/ASTRO</a></p>
+      <p>
+        Calculation is valid after "confirmed deadlines" value reach 120/120.</br>
+        Pool displayed values are just informative and estimated values from statistical informations which are fluctuated and some times indipendent.</br>
+        The BRS node behind make the exact calculation using your committed balace and the deadline value shared by your miner, </br>
+        so independent from the displayed values on the Pool.
+      </p>
+      <p>
+        "Eff. Total Capacity" = "Total Cpacity" x "Boost"</br>
+        "Eff. Shared Capacity" = "Shared Cpacity" x "Boost"</br>
+        "Commitment" = "Committed Ballance" / "Estimated Capacity"*</br>
+        "Commitment Ratio" = "Commitment" / "Network Commitment"</br>
+        "Boost" = "Commitment Ratio" <sup>ln(8)/ln(100)</sup> [0.125; 8.0]</br></br>
+        *<a href="https://github.com/burst-apps-team/CIPs/blob/master/cip-0027.md" target="blank">https://github.com/burst-apps-team/CIPs/blob/master/cip-0027.md</a></br>
+        If you have no forged block within the last 32400 blocks your "Estimated Capacity" is 1 TiB.
+      </p>
+      <p style="color:red">Important miner settings:</br>
+        url: 'http://openburstpool.ddns.net:8126'</br>
+        target_deadline: 10000000000</br>
+        get_mining_info_interval: 30000</br>
+        timeout: 240000
+      </p>
     </div>
     <div class="col-lg-6 p-3 nav-link">
+      <div class="row text-center">
+        <div class="col-xl-12">
+          <div class="tradingview-widget-container">
+            <div id="tradingview_37b32"></div>
+            <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
+            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+            <script type="text/javascript">
+							new TradingView.widget(
+							  {
+							  "symbol": "BITTREX:BURSTBTC",
+							  "timezone": "Etc/UTC",
+							  "theme": "dark",
+							  "style": "1",
+							  "locale": "en",
+							  "toolbar_bg": "#f1f3f6",
+							  "enable_publishing": false,
+							  "withdateranges": true,
+							  "range": "YTD",
+							  "hide_side_toolbar": false,
+							  "allow_symbol_change": true,
+							  "details": false,
+							  "show_popup_button": true,
+							  "popup_width": "1200",
+							  "popup_height": "800",
+							  "container_id": "tradingview_37b32"
+							}
+							  );
+					</script>
+          </div>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-xl-12">
+          <p><a href="https://hearthis.at/nivok-spilkommen/drop-zone/" target="blank">Music from Nivok</a></p>
+          <iframe scrolling="no" id="hearthis_at_user_nivok-spilkommen" width="100%" height="250" src="https://app.hearthis.at/nivok-spilkommen/embed/?hcolor=303030" frameborder="0" allowtransparency></iframe>
+        </div>
+      </div>
     </div>
   </div>
   <div class="row text-center">
@@ -203,10 +274,26 @@
         </div>
         <div class="col-lg-3 col-md-6 p-3">
           <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
-            <p class="d-inline">Network Size</p>
+            <p class="d-inline">Eff. Network Capacity</p>
           </div>
           <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
             <p class="d-inline" id="netDiff">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Pool Commitment Ratio</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolCommitmentRatio">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Pool Boost</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolBoost">Loading...</p>
           </div>
         </div>
         <div class="col-lg-3 col-md-6 p-3">
@@ -225,13 +312,61 @@
             <p class="d-inline" id="poolSharedCapacity">Loading...</p>
           </div>
         </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Eff. Total Capacity</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolEffectiveTotalCapacity">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Eff. Shared Capacity</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolEffectiveSharedCapacity">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Network Committed Balance</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="newtworkCommittedBalance">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Pool Committed Balance</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolCommittedBalance">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Network Commitment</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="avComm">Loading...</p>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 p-3">
+          <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
+            <p class="d-inline">Pool Commitment</p>
+          </div>
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+            <p class="d-inline" id="poolCommitment">Loading...</p>
+          </div>
+        </div>
         <div class="col-xl-12">
           <div class="row">
             <div class="col-xl-6 col-lg-6 col-md-6 p-3">
-              <input type="text" id="addressInput" class="form-control" placeholder="BURST-XXXX-XXXX-XXXX-XXXXX">
+              <input type="text" id="addressInput" class="form-control" placeholder="BURST-XXXX-XXXX-XXXX-XXXXX or Name">
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3 col-6 text-nowrap p-3">
-              <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#minerInfoModal" id="getMinerButton">MINER DETAILS</button>
+              <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#minerInfoModal" id="getMinerButton" onclick="prepareMinerInfo(document.getElementById('addressInput').value);">MINER DETAILS</button>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-3 col-6 text-nowrap p-3">
               <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#poolInfoModal">POOL INFO</button>
@@ -271,32 +406,38 @@
     <div class="col-xxxxl-6">
       <div class="row text-center">
         <div class="col-lg-12 p-3 nav-link">
-          <widgetbot server="777095251806388249" channel="777104740626464829" width="100%" height="600"></widgetbot>
+          <widgetbot server="777095251806388249" channel="777104740626464829" width="100%" height="900"></widgetbot>
           <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
         </div>
       </div>
     </div>
   </div>
 </div>
-<div class="table-responsive p-lg-3 w-100">
+
+<div class="p-lg-3 w-100">
   <table id="miners" class="table table-striped table-bordered">
+    <thead id="minersThead">
+    </thead>
+    <tbody id="minersTbody">
     <tr>
-      <td colspan="6">Loading...</td>
+      <td style="border-top: 1px solid #dee2e6;">Loading...</td>
     </tr>
+    </tbody>
   </table>
-  <p><a href="https://github.com/burst-apps-team" target="_blank">Powered by the Burst Apps Team.</a> Copyright ©
-    2019 <a href="https://github.com/harry1453" target="_blank">Harry Phillips</a>;
-    2020 <a href="https://github.com/jjos2372" target="_blank">jjos</a>
-  </p>
+  <p><a href="https://github.com/burst-apps-team" target="_blank">Powered by the Burst Apps Team.</a></p>
+  <p>Copyright © 2019 <a href="https://github.com/harry1453" target="_blank">harry</a>; 2020-2021 <a href="https://github.com/jjos2372" target="_blank">jjos</a></p>
+  <div>
+    <!-- hitwebcounter Code START -->
+    <a href="https://www.hitwebcounter.com" target="_blank">Unique visitors<br/>
+      <img src="https://hitwebcounter.com/counter/counter.php?page=7701950&style=0001&nbdigits=5&type=ip&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/>
+    </a><br/>
+    <!-- hitwebcounter Code START -->
+    <a href="https://www.hitwebcounter.com" target="_blank">All visitors<br/>
+      <img src="https://hitwebcounter.com/counter/counter.php?page=7701951&style=0001&nbdigits=5&type=page&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/>
+    </a>
+  </div>
 </div>
-<div>
-  <!-- hitwebcounter Code START -->
-  <a href="https://www.hitwebcounter.com" target="_blank">Unique visitors<br/>
-    <img src="https://hitwebcounter.com/counter/counter.php?page=7701950&style=0001&nbdigits=5&type=ip&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/></a><br/>
-  <!-- hitwebcounter Code START -->
-  <a href="https://www.hitwebcounter.com" target="_blank">All visitors<br/>
-    <img src="https://hitwebcounter.com/counter/counter.php?page=7701951&style=0001&nbdigits=5&type=page&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/></a>
-</div>
+
 <!-- Modals -->
 <div class="modal fade" id="minerInfoModal" tabindex="-1" role="dialog" aria-labelledby="minerInfoTitle" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
@@ -329,10 +470,28 @@
               <td>Donation Percent</td><td><span id="minerDonationPercent">Loading...</span></td>
             </tr>
             <tr>
-              <td>Total Capacity</td><td><span id="minerCapacity">Loading...</span></td>
+              <td>Total Capacity</td><td><span id="minerTotalCapacity">Loading...</span></td>
             </tr>
             <tr>
               <td>Shared Capacity</td><td><span id="minerSharedCapacity">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Eff. Total Capacity</td><td><span id="minerEffectiveTotalCapacity">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Eff. Shared Capacity</td><td><span id="minerEffectiveSharedCapacity">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Commited Balance</td><td><span id="minerCommittedBalance">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Commitment</td><td><span id="minerCommitment">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Commitment Ratio</td><td><span id="minerCommitmentRatio">Loading...</span></td>
+            </tr>
+            <tr>
+              <td>Boost</td><td><span id="minerBoost">Loading...</span></td>
             </tr>
             <tr>
               <td>Confirmed Deadlines</td><td><span id="minerNConf">Loading...</span></td>
@@ -432,10 +591,10 @@
       <div class="modal-body">
         <div class="table-responsive w-100">
           <table class="table table-striped" id="wonBlocksTable">
-			<tr>
-				<td>Loading...</td>
-			</tr>
-		  </table>
+            <tr>
+              <td>Loading...</td>
+            </tr>
+          </table>
         </div>
       </div>
       <div class="modal-footer">
@@ -445,26 +604,27 @@
   </div>
 </div>
 
-<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoTitle" aria-hidden="true">
+<div class="modal fade" id="infoModalClassic" tabindex="-1" role="dialog" aria-labelledby="infoTitle" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">HOW TO JOIN</h5>
       </div>
       <div class="modal-body" style="overflow: auto;">
+        <h1>BURST Classic</h1>
         <h1>Pool and Miner configuration</h1> <br/><br/>
 
         <h3>Set Reward Assigment</h3><br/>
         <p>Before start pool mining you should set the pool recipient address to the official pool address <br/> <i>BURST-HW9R-3VCP-Y46P-DA5W8</i></p>
         <p>This is important regarding the reward distribution between pool miners and also precondition of pool mining</p> <br/>
-        <p>Open Your Burst Wallet <br/>Go to <strong>Reward Assigement</strong> <br/> <br/> <img src="./img/RA1.png"/> <br/> <br/> </p>
-        <p>Set <strong>Recipient</strong> to <br/> <strong class="poolBurstAddress">BURST-HW9R-3VCP-Y46P-DA5W8</strong> <br/> <br/> <img src="./img/RA2.png"/> <br/> </p>
+        <p>Open Your Burst Wallet <br/>Go to <strong>Reward Assigement</strong> <br/> <br/> <img id="RA1"/> <br/> <br/> </p>
+        <p>Set <strong>Recipient</strong> to <br/> <strong class="poolBurstAddress">BURST-HW9R-3VCP-Y46P-DA5W8</strong> <br/> <br/> <img id="RA2"/> <br/> </p>
         <p>Wait <strong>4</strong> blocks </p> <br/><br/>
 
         <h3>Set Name</h3><br/>
         <p>It is recommended to set the name of the account to customize it <br/> You can set it by clicking the No Name Set text on the upper left side of the wallet</p>
-        <img src="./img/set_name1.png"/> <br/><br/>
-        <img src="./img/set_name2.png"/> <br/><br/>
+        <img id="set_name1"/> <br/><br/>
+        <img id="set_name2"/> <br/><br/>
 
         <h3>Plotting</h3><br/>
         <p>Plotting free storage capacity on your HDD or SSD is essential for mining</p>
@@ -473,7 +633,66 @@
         <p>If your deadline is the lowest you mine the new block and win the reward</p>
         <p>Deadline calculation is similar like winning the raffle where the lowest number win<br/>You have a bounch of raffle amoung others, but the chance to win depends how much raffle you have compare to the whole amount of raffle</p>
         <p>The more raffle you have the more chance to win</p>
-        <p>You can plott your HDD with <a href="https://blackpawn.com/tp/">TurboPlotter_0.10.1v</a></p> <br/><br/>
+        <p>You can plott your HDD with <a href="https://blackpawn.com/tp/">TurboPlotter_0.10.1v</a></p> <br/><br/>https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0
+        <p>You can plott your HDD with:</p>
+        <ul>
+          <li><a href="https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0" target="blank">Engraver 2.4.0</a></li>
+          <li><a href="https://blackpawn.com/tp/" target="blank">TurboPlotter_0.10.1v</a></li>
+        </ul><br/><br/>
+
+        <h3>Mining</h3><br/>
+        <p>Download the latest scavenger 1.7.8 miner from here <br/><a href="https://github.com/PoC-Consortium/scavenger/releases">https://github.com/PoC-Consortium/scavenger/releases</a></p>
+        <p>Unzip it</p>
+        <p>Open config.yaml file with text editor (e.g. notepad++) and set the proper configuration</p>
+        <p>url: 'http://openburstpool.ddns.net:8126'</p>
+        <p>target_deadline: 10000000000</p>
+        <p>get_mining_info_interval: 30000</p>
+        <p>timeout: 50000</p>
+        <p>Run miner</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="infoModalPhoenix" tabindex="-1" role="dialog" aria-labelledby="infoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">HOW TO JOIN</h5>
+      </div>
+      <div class="modal-body" style="overflow: auto;">
+        <h1>Phoenix</h1>
+        <h1>Pool and Miner configuration</h1> <br/><br/>
+
+        <h3>Set Reward Assigment</h3><br/>
+        <p>Before start pool mining you should set the pool recipient address to the official pool address <br/> <i>BURST-HW9R-3VCP-Y46P-DA5W8</i></p>
+        <p>This is important regarding the reward distribution between pool miners and also precondition of pool mining</p> <br/>
+        <p>Open Your Burst Wallet <br/>Go to <strong>Reward Assigement</strong> <br/> <br/> <img src="./img/BURST_Classic/RA1.png"/> <br/> <br/> </p>
+        <p>Set <strong>Recipient</strong> to <br/> <strong class="poolBurstAddress">BURST-HW9R-3VCP-Y46P-DA5W8</strong> <br/> <br/> <img src="./img/BURST_Classic/RA2.png"/> <br/> </p>
+        <p>Wait <strong>4</strong> blocks </p> <br/><br/>
+
+        <h3>Set Name</h3><br/>
+        <p>It is recommended to set the name of the account to customize it <br/> You can set it by clicking the No Name Set text on the upper left side of the wallet</p>
+        <img src="./img/BURST_Classic/set_name1.png"/> <br/><br/>
+        <img src="./img/BURST_Classic/set_name2.png"/> <br/><br/>
+
+        <h3>Plotting</h3><br/>
+        <p>Plotting free storage capacity on your HDD or SSD is essential for mining</p>
+        <p>Plots contains hashes which are using during deadline calculation</p>
+        <p>Deadline is a verifiable value which is calculated from your plots by a special algorithm to decide who can mine the next block</p>
+        <p>If your deadline is the lowest you mine the new block and win the reward</p>
+        <p>Deadline calculation is similar like winning the raffle where the lowest number win<br/>You have a bounch of raffle amoung others, but the chance to win depends how much raffle you have compare to the whole amount of raffle</p>
+        <p>The more raffle you have the more chance to win</p>
+        <p>You can plott your HDD with <a href="https://blackpawn.com/tp/">TurboPlotter_0.10.1v</a></p> <br/><br/>https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0
+        <p>You can plott your HDD with:</p>
+        <ul>
+          <li><a href="https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0" target="blank">Engraver 2.4.0</a></li>
+          <li><a href="https://blackpawn.com/tp/" target="blank">TurboPlotter_0.10.1v</a></li>
+        </ul><br/><br/>
 
         <h3>Mining</h3><br/>
         <p>Download the latest scavenger 1.7.8 miner from here <br/><a href="https://github.com/PoC-Consortium/scavenger/releases">https://github.com/PoC-Consortium/scavenger/releases</a></p>
@@ -482,6 +701,125 @@
         <p>url: 'http://openburstpool.ddns.net:8126'</p>
         <p>target_deadline: 10000000000</p>
         <p>Run miner</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="infoModalBTDEX" tabindex="-1" role="dialog" aria-labelledby="infoTitle" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">HOW TO JOIN</h5>
+      </div>
+      <div class="modal-body">
+        <h1>BTDEX</h1>
+        <h1>Pool and Miner configuration</h1> <br/><br/>
+
+        <p>
+          Source:<br/>
+          <a href ="https://jjos2372.medium.com/mining-with-your-hard-drive-in-2021-19d9f4a1368"><i>https://jjos2372.medium.com/mining-with-your-hard-drive-in-2021-19d9f4a1368</i></a>
+        </p>
+
+        <p>
+          <a href="https://github.com/btdex/btdex/releases" target="blank">Download BTDEX</a>
+        </p>
+
+        <p>
+          For Windows users BTDEX is just an executable file. Move it to any folder you want and run the executable.
+          All configurations you make are stored in a file on the same folder of your executable, so you need to remember where you put it.
+          After running it, you should be welcomed with a dialogue to create your account:
+        </p>
+
+        <p>
+          <img id="BTDEX_1" class="img-fluid"/>
+        </p>
+
+        <p>
+          Make sure you write down your recovery phrase on a piece of paper and choose a PIN.
+          With the recovery phrase you can access your account even if you lose access to your computer or forget your PIN.
+          No one should see your recovery phrase, so store it somewhere safe, just as you would cash or jewelry.
+        </p>
+
+        <p>
+          Now you go to the MINING tab to prepare your disks, also known as plotting:
+        </p>
+
+        <p>
+          <img id="BTDEX_2" class="img-fluid"/>
+        </p>
+
+        <p>
+          You should select one folder per disk you want to use.
+          This folder will store the so-called plot files.
+          For every disk you selected, use the corresponding slider to the right of it to select the amount of space you want to use:
+        <p>
+
+        <p>
+          <img id="BTDEX_3" class="img-fluid"/>
+        </p>
+
+        <p>
+          You can start with a small fraction of your free disk space and plot more later if you want.
+          Now just click the “Start Plotting” button and it will start plotting:
+        <p/>
+
+        <p>
+          <img id="BTDEX_4" class="img-fluid"/>
+        </p>
+
+        <p>
+          This plotting step is when the heavy computations are executed and it can take many hours (depending on your hardware specs).
+          So if you want to plot many TiB of space, it is better to let it run overnight.
+          Start plotting a few GiBs so you can get the taste of it.
+          You can also select the number of CPU cores it should use and also if it should run with low priority.
+          Be sure to select the “Run with low priority” and not all your CPU cores, if you need to use the PC before plotting is done. In any case, you can stop the process any time with the “Stop Plotting” button and then resume later.
+        </p>
+
+        <p>
+          If you have an external SMR disk (they can be very slow when writing plot files) then you should use a cache disk, just click the “Select a SSD cache…” button and select a folder of a faster disk. There is no actual need to be a SSD, but the faster the cache disk is to write data, the better. SSDs are perfect for this task.
+          Now you can join a mining pool, select one and click “Join Pool”:
+        </p>
+
+        <p>
+          <img id="BTDEX_5" class="img-fluid"/>
+        </p>
+
+        <p>
+          To join a pool you need to make a transaction and for that you need some BURST to pay for the transaction fee.
+          Luckily, every new account created with BTDEX already receives 0.0147 BURST, which is enough to make this transaction.
+          After you make this join pool transaction, you need to wait around 16 minutes (4 block confirmations) then you can click on “Start Mining”:
+        </p>
+
+        <p>
+          <img id="BTDEX_6" class="img-fluid"/>
+        </p>
+
+        <p>
+          On the bottom “Plotting/Mining logs” panel, you should see some messages, which means you are already mining.
+          Now you can open your pool website (just press the button on the right of the pool selector menu) to check on your performance and pending balance.
+        </p>
+
+        <p>
+          If you close the BTDEX application window, it will keep running in the background. Check your System Tray (usually on the bottom right corner of your desktop) for more options and how to quit it.
+          The BTDEX mining tab also has a built-in calculator, that estimates mining earnings based on the current network state:
+        </p>
+
+        <p>
+          <img id="BTDEX_7" class="img-fluid"/>
+        </p>
+
+        <p>
+          At the time of writing, the total network capacity is about 100'000 TiB and with 1 TiB you should get 0.59 BURST per day.
+          This tool also shows you what would be the rewards after the PoC+ upgrade. With this upgraded consensus you can boost your mining power by up to 8 times by also adding commitment.
+          This commitment is defined by the amount of BURST a miner locks to be used in the mining process (similar to stake for those familiar with the term).
+          This way you can boost your mining capacity without having to buy new equipment or plotting new files, you just have to lock some BURST.
+          Think about it, this is even greener and more sustainable.
+        </p>
 
       </div>
       <div class="modal-footer">
@@ -501,7 +839,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>If you have already joined the pool, you can further configure it by sending text messages from your miner account to the pool account:<br>
+        <p>If you have already joined the pool, you can further configure it by sending text messages from your miner account to the pool account (effective after {LAG} blocks):<br>
           <code><b>{POOL_ACCOUNT}</b></code></p>
 
         <h5 class="modal-title">Share Model</h5>
@@ -515,9 +853,9 @@
         </p>
 
         <h5 class="modal-title">Minimum Payout</h5>
-        
-		<p><code>Default minimum payout is 1 Burstcoin</code></br>
-		  Change your minimum payout to 100 BURST by sending the following text message (any number higher than {MIN_PAYOUT} is accepted):<br>
+
+        <p><code>Default minimum payout is 1 Burstcoin</code></br>
+          Change your minimum payout to 100 BURST by sending the following text message (any number higher than {MIN_PAYOUT} is accepted):<br>
           <code>pay 100</code><br>
         </p>
 
@@ -543,11 +881,7 @@
       </div>
       <div class="modal-body">
         <h4>Burstcoin Faucet</h4>
-        <h5><a href="http://burstcoin.cc:3333">http://burstcoin.cc:3333</a></h5><br/>
-
-        <h4>Burstpay</h4>
-        <h5><a href="https://faucet.burstpay.net">https://faucet.burstpay.net</a></h5><br/>
-
+        <h5><a href="http://burstcoin.cc:3333" target="blank">http://burstcoin.cc:3333</a></h5><br/>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -596,12 +930,6 @@
         </button>
       </div>
       <div class="modal-body">
-        <h4>GDP</h4>
-        <h5>Account ID: BURST-G66D-D4NH-LDEP-4FSWA</h5>
-        <h5>Asset ID: 11280075245570987091</h5>
-        <h5>Website: <a href="https://gdp-mining.com">https://gdp-mining.com</a></h5>
-        <h5>Discord: <a href=""></a></h5><br/>
-
         <h4>LMSI</h4>
         <h5>Account ID: BURST-T2ZH-KHVS-V3N7-FPUMS</h5>
         <h5>Asset ID: 16296102952444293762</h5>
@@ -659,13 +987,13 @@
         <h4 style="text-align: center">CEX</h4>
 
         <h4>Bittrex</h4>
-        <h5><a href="https://global.bittrex.com/Market/Index?MarketName=BTC-BURST">https://global.bittrex.com/Market/Index?MarketName=BTC-BURST</a></h5><br/>
+        <h5><a href="https://global.bittrex.com/Market/Index?MarketName=BTC-BURST" target="blank">https://global.bittrex.com/Market/Index?MarketName=BTC-BURST</a></h5><br/>
 
         <h4>Livecoin</h4>
-        <h5><a href="https://www.livecoinwatch.com/price/Burst-BURST">https://www.livecoinwatch.com/price/Burst-BURST</a></h5><br/>
+        <h5><a href="https://www.livecoinwatch.com/price/Burst-BURST" target="blank">https://www.livecoinwatch.com/price/Burst-BURST</a></h5><br/>
 
         <h4>Stex</h4>
-        <h5><a href="https://app.stex.com/en/trade/pair/BTC/BURST">https://app.stex.com/en/trade/pair/BTC/BURST</a></h5><br/>
+        <h5><a href="https://app.stex.com/en/trade/pair/BTC/BURST" target="blank">https://app.stex.com/en/trade/pair/BTC/BURST</a></h5><br/>
         <!--
         <h4>Eterbase</h4>
         <h5>Currently under maintenance<h5><br/>
@@ -694,14 +1022,12 @@
       </div>
       <div class="modal-body">
         <div class="tradingview-widget-container">
-          <div id="tradingview_37b32"></div>
+          <div id="tradingview"></div>
           <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
           <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
           <script type="text/javascript">
 					new TradingView.widget(
 					  {
-					  "width": 1000,
-					  "height": 600,
 					  "symbol": "BITTREX:BURSTBTC",
 					  "timezone": "Etc/UTC",
 					  "theme": "dark",
@@ -717,7 +1043,7 @@
 					  "show_popup_button": true,
 					  "popup_width": "1200",
 					  "popup_height": "800",
-					  "container_id": "tradingview_37b32"
+					  "container_id": "tradingview"
 					}
 					  );
 					  </script>
@@ -751,13 +1077,15 @@
   <div class="modal-dialog modal-xl" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="wonBlocksTitle">DOWNLOAD</h5>
+        <h5 class="modal-title">DOWNLOAD</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <a href="https://drive.google.com/file/d/1bBWsaaiKVW51HcAAGAQJ1vEJfDH1MPrw/view?usp=sharing" download><mark>burstcoin-2.5.3 with MariaDB</mark></a>
+        <p><a href="https://github.com/burst-apps-team/burstcoin" download><mark>BURST</mark></a></p>
+        <p><a href="https://github.com/btdex/btdex/releases" download><mark>BTDEX</mark></a></p>
+        <p><a href="https://downloads.mariadb.org/mariadb/+releases/https://github.com/btdex/btdex/releases" download><mark>MariaDB</mark></a></p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>

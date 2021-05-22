@@ -6,6 +6,10 @@ const genesisBaseTarget = 4398046511104 / 240;
 
 let maxSubmissions = "Unknown";
 
+var averageCommitmentNQT = 0;
+
+var effective_values = 0;
+
 /*
 Show the Wallet name g_name = true
 Show the Wallet address g_name = false
@@ -13,8 +17,8 @@ Show the Wallet address g_name = false
 var g_name = true;
 
 /*
-Show explorer link g_link = true
-Not show explorer link g_link = false
+Show expolorer link g_link = true
+Not show expolorer link g_link = false
 */
 var g_link = true;
 
@@ -52,6 +56,29 @@ const entityMap = {
     '`': '&#x60;',
     '=': '&#x3D;'
 };
+
+let infoModalClassic = 0;
+let infoModalPhoenix = 0;
+
+var size = 1000;
+var currentRoundDeadline = [];
+
+function infoModalLoad() {
+	document.getElementById("RA1").src="./img/BURST_Classic/RA1.png";
+	document.getElementById("RA2").src="./img/BURST_Classic/RA2.png";
+	document.getElementById("set_name1").src="./img/BURST_Classic/set_name1.png";
+	document.getElementById("set_name2").src="./img/BURST_Classic/set_name2.png";
+}
+
+function infoModalBTDEXLoad() {
+	document.getElementById("BTDEX_1").src="./img/BTDEX/1.png";
+	document.getElementById("BTDEX_2").src="./img/BTDEX/2.png";
+	document.getElementById("BTDEX_3").src="./img/BTDEX/3.png";
+	document.getElementById("BTDEX_4").src="./img/BTDEX/4.png";
+	document.getElementById("BTDEX_5").src="./img/BTDEX/5.png";
+	document.getElementById("BTDEX_6").src="./img/BTDEX/6.png";
+	document.getElementById("BTDEX_7").src="./img/BTDEX/7.png";
+}
 
 function escapeHtml(string) {
     return typeof string === 'string' ? String(string).replace(/[&<>"'`=\/]/g, function (s) {
@@ -127,9 +154,11 @@ function getCurrentRound() {
         return http.json();
     }).then(response => {
         roundStart = response.roundStart;
+		averageCommitmentNQT = Math.round(response.miningInfo.averageCommitmentNQT / 1e8);
         document.getElementById("blockHeight").innerText = response.miningInfo.height;
         document.getElementById("netDiff").innerText = formatBaseTarget(response.miningInfo.baseTarget);
-        document.getElementById("avComm").innerText = Math.round(response.miningInfo.averageCommitmentNQT / 1e8).toFixed(2) + ' BURST/TiB';
+        document.getElementById("avComm").innerText = Math.round(response.miningInfo.averageCommitmentNQT / 1e8).toFixed(2).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST/TiB';
+		document.getElementById("newtworkCommittedBalance").innerText = (parseFloat(genesisBaseTarget / response.miningInfo.baseTarget) * Math.round(response.miningInfo.averageCommitmentNQT / 1e8)).toFixed(2).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST';
 if (response.bestDeadline != null) {
             document.getElementById("bestDeadline").innerText = formatTime(response.bestDeadline.deadline);
             document.getElementById("bestMiner").innerHTML = formatMinerName(response.bestDeadline.explorer, response.bestDeadline.minerRS, response.bestDeadline.miner, response.bestDeadline.name, g_link, g_name);
@@ -229,71 +258,201 @@ function getTop10Miners() {
     });
 }
 
+function changeTable() {
+	effective_values++;
+	if(effective_values > 1) {
+		effective_values = 0;
+	}
+	redrawMinersTable();
+}
+
+let miner = [];
+let serverResponse;
+
 function getMiners() {
     fetch("/api/getMiners").then(http => {
         return http.json();
     }).then(response => {
-        let table = document.getElementById("miners");
-        table.innerHTML = "<tr><th>Miner</th><th class=\"d-none d-sm-table-cell\">Current Deadline</th><th>Pending Balance</th><th>Effective Total Capacity</th><th class=\"d-none d-sm-table-cell\">Effective Shared Capacity</th><th class=\"d-none d-sm-table-cell\">Committed Balance</th><th>Commitment</th><th class=\"d-none d-sm-table-cell\">Commitment Ratio</th><th class=\"d-none d-sm-table-cell\">Boost</th><th class=\"d-none d-sm-table-cell\">Share Model</th><th class=\"d-none d-sm-table-cell\">Donation Percent</th><th>Confirmed Deadlines</th><th>Pool Share</th><th class=\"d-none d-sm-table-cell\">Software</th></tr>";
-        for (let i = 0; i < response.miners.length; i++) {
-            let miner = response.miners[i];
-            let currentRoundDeadline = miner.currentRoundBestDeadline == null ? "" : formatTime(miner.currentRoundBestDeadline);
-            let minerAddress = formatMinerName(response.explorer, miner.addressRS, miner.address, miner.name, g_link, g_name);
-            let userAgent = escapeHtml(miner.userAgent == null? "Unknown" : miner.userAgent);
-            table.innerHTML += "<tr><td>"+minerAddress+"</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+currentRoundDeadline+"</td>"
-              +"<td>"+miner.pendingBalance+"</td>"
-              +"<td>"+formatCapacity(miner.totalCapacity)+"</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+formatCapacity(miner.sharedCapacity)+"</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+miner.committedBalance+"</td>"
-              +"<td>"+miner.commitment + '/TiB' + "</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+miner.commitmentRatio.toFixed(3)+"</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+miner.commitmentFactor.toFixed(3)+"</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+miner.sharePercent+" %</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+miner.donationPercent+" %</td>"
-              +"<td>"+miner.nConf+" / " + maxSubmissions+"</td>"
-              +"<td>"+(parseFloat(miner.share)*100).toFixed(3)+" %</td>"
-              +"<td class=\"d-none d-sm-table-cell\">"+userAgent+"</td>"
-              +"</tr>";
-        }
-        document.getElementById("minerCount").innerText = response.miners.length;
-        document.getElementById("poolTotalCapacity").innerText = formatCapacity(response.poolTotalCapacity);
-		document.getElementById("poolSharedCapacity").innerText = formatCapacity(response.poolSharedCapacity);
-        miners = response.miners;
-    });
+
+		serverResponse = response;
+
+		for (let i = 0; i < serverResponse.miners.length; i++) {
+				let deadlinefontStyle = "text";
+				miner[i] = serverResponse.miners[i];
+
+		}
+
+		redrawMinersTable();
+
+	});
 }
+
+	function redrawMinersTable() {
+
+        let tableHead = document.getElementById("minersThead");
+		let tableBody = document.getElementById("minersTbody");
+
+
+		switch (effective_values) {
+			case 0:
+			tableHead.innerHTML = "<tr> <th><p><button onclick=\"changeTable()\" style=\"border: 1px solid #dee2e6;\">Change Table View</button></p>Miner</th>"
+			+"<th>Current Deadline</th>"
+			+"<th>Pending Balance</th>"
+			+"<th>Total Capacity</th>"
+			+"<th>Shared Capacity</th>"
+			+"<th>Boosted Total Capacity</th>"
+			+"<th>Boosted Shared Capacity</th>"
+			+"<th>Committed Balance</th>"
+			+"<th>Average Commitment</th>"
+			+"<th>Commitment Ratio</th>"
+			+"<th>Average Boost</th>"
+			+"<th>Share Model</th>"
+			+"<th>Donation Percent</th>"
+			+"<th>Confirmed Deadlines</th>"
+			+"<th>Pool Share</th>"
+			+"<th>Software</th> </tr>";
+
+			tableBody.innerHTML = "";
+			for (let i = 0; i < serverResponse.miners.length; i++) {
+				let deadlinefontStyle = "text";
+
+				if(currentRoundDeadline[i] == "Loading...") {
+
+					deadlinefontStyle = "text";
+
+					if(miner[i].currentRoundBestDeadline != null) {
+						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+					}
+
+				}
+				else {
+
+					if(miner[i].currentRoundBestDeadline != null) {
+
+						deadlinefontStyle = "text";
+
+						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+
+					}
+					else {
+						deadlinefontStyle = "i";
+					}
+				}
+				/*let currentRoundDeadline = miner.currentRoundBestDeadline == null ? "" : formatTime(miner.currentRoundBestDeadline);*/
+				let minerAddress = formatMinerName(serverResponse.explorer, miner[i].addressRS, miner[i].address, miner[i].name, g_link, g_name);
+				let userAgent = escapeHtml(miner[i].userAgent == null? "Unknown" : miner[i].userAgent);
+				tableBody.innerHTML += "<tr><td>"+ (i+1) + ". " + minerAddress+"</td>"
+				  +"<td><"+deadlinefontStyle+">"+currentRoundDeadline[i]+"</"+deadlinefontStyle+"></td>"
+				  +"<td>"+miner[i].pendingBalance+"</td>"
+				  +"<td>"+formatCapacity(miner[i].totalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(miner[i].sharedCapacity)+"</td>"
+				  +"<td>"+formatCapacity(miner[i].boostedTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(miner[i].boostedSharedCapacity)+"</td>"
+				  +"<td>"+parseFloat(miner[i].committedBalance).toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+miner[i].averageCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+miner[i].commitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+miner[i].averageCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+miner[i].sharePercent+" %</td>"
+				  +"<td>"+miner[i].donationPercent+" %</td>"
+				  +"<td>"+miner[i].nConf+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(miner[i].share)*100).toFixed(3)+" %</td>"
+				  +"<td>"+userAgent+"</td>"
+				  +"</tr>";
+			}
+			poolCommitment = (serverResponse.poolTotalCapacity > 1) ? (serverResponse.poolCommittedBalance/serverResponse.poolTotalCapacity) : serverResponse.poolCommittedBalance;
+			document.getElementById("minerCount").innerText = serverResponse.miners.length;
+			document.getElementById("poolTotalCapacity").innerText = formatCapacity(serverResponse.poolTotalCapacity);
+			document.getElementById("poolSharedCapacity").innerText = formatCapacity(serverResponse.poolSharedCapacity);
+			document.getElementById("poolEffectiveTotalCapacity").innerText = formatCapacity(serverResponse.poolEffectiveTotalCapacity);
+			document.getElementById("poolEffectiveSharedCapacity").innerText = formatCapacity(serverResponse.poolEffectiveSharedCapacity);
+			document.getElementById("poolCommittedBalance").innerText = serverResponse.poolCommittedBalance.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST';
+			document.getElementById("poolCommitment").innerText = poolCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST/TiB';
+			document.getElementById("poolBoost").innerText = (serverResponse.poolEffectiveTotalCapacity/serverResponse.poolTotalCapacity).toFixed(3);
+			document.getElementById("poolCommitmentRatio").innerText = (poolCommitment/averageCommitmentNQT).toFixed(3);
+		break;
+
+		case 1:
+			tableHead.innerHTML = "<tr> <th><p><button onclick=\"changeTable()\" style=\"border: 1px solid #dee2e6;\">Change Table View</button></p>Miner</th>"
+			+"<th>Current Deadline</th>"
+			+"<th>Pending Balance</th>"
+			+"<th>Total Capacity</th>"
+			+"<th>Shared Capacity</th>"
+			+"<th>Eff. Total Capacity</th>"
+			+"<th>Eff. Shared Capacity</th>"
+			+"<th>Committed Balance</th>"
+			+"<th>Current Commitment</th>"
+			+"<th>Commitment Ratio</th>"
+			+"<th>Current Boost</th>"
+			+"<th>Share Model</th>"
+			+"<th>Donation Percent</th>"
+			+"<th>Confirmed Deadlines</th>"
+			+"<th>Pool Share</th>"
+			+"<th>Software</th> </tr>";
+
+			tableBody.innerHTML = "";
+			for (let i = 0; i < serverResponse.miners.length; i++) {
+				let deadlinefontStyle = "text";
+
+				if(currentRoundDeadline[i] == "Loading...") {
+
+					deadlinefontStyle = "text";
+
+					if(miner[i].currentRoundBestDeadline != null) {
+						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+					}
+
+				}
+				else {
+
+					if(miner[i].currentRoundBestDeadline != null) {
+
+						deadlinefontStyle = "text";
+
+						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+
+					}
+					else {
+						deadlinefontStyle = "i";
+					}
+				}
+				/*let currentRoundDeadline = miner.currentRoundBestDeadline == null ? "" : formatTime(miner.currentRoundBestDeadline);*/
+				let minerAddress = formatMinerName(serverResponse.explorer, miner[i].addressRS, miner[i].address, miner[i].name, g_link, g_name);
+				let userAgent = escapeHtml(miner[i].userAgent == null? "Unknown" : miner[i].userAgent);
+				tableBody.innerHTML += "<tr><td>"+ (i+1) + ". " + minerAddress+"</td>"
+				 +"<td><"+deadlinefontStyle+">"+currentRoundDeadline[i]+"</"+deadlinefontStyle+"></td>"
+				  +"<td>"+miner[i].pendingBalance+"</td>"
+				  +"<td>"+formatCapacity(miner[i].totalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(miner[i].sharedCapacity)+"</td>"
+				  +"<td>"+formatCapacity(miner[i].effectiveTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(miner[i].effectiveSharedCapacity)+"</td>"
+				  +"<td>"+parseFloat(miner[i].committedBalance).toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+miner[i].commitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+miner[i].commitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+miner[i].commitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+miner[i].sharePercent+" %</td>"
+				  +"<td>"+miner[i].donationPercent+" %</td>"
+				  +"<td>"+miner[i].nConf+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(miner[i].share)*100).toFixed(3)+" %</td>"
+				  +"<td>"+userAgent+"</td>"
+				  +"</tr>";
+			}
+			poolCommitment = (serverResponse.poolTotalCapacity > 1) ? (serverResponse.poolCommittedBalance/serverResponse.poolTotalCapacity) : serverResponse.poolCommittedBalance;
+			document.getElementById("minerCount").innerText = serverResponse.miners.length;
+			document.getElementById("poolTotalCapacity").innerText = formatCapacity(serverResponse.poolTotalCapacity);
+			document.getElementById("poolSharedCapacity").innerText = formatCapacity(serverResponse.poolSharedCapacity);
+			document.getElementById("poolEffectiveTotalCapacity").innerText = formatCapacity(serverResponse.poolEffectiveTotalCapacity);
+			document.getElementById("poolEffectiveSharedCapacity").innerText = formatCapacity(serverResponse.poolEffectiveSharedCapacity);
+			document.getElementById("poolCommittedBalance").innerText = serverResponse.poolCommittedBalance.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST';
+			document.getElementById("poolCommitment").innerText = poolCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST/TiB';
+			document.getElementById("poolBoost").innerText = (serverResponse.poolEffectiveTotalCapacity/serverResponse.poolTotalCapacity).toFixed(3);
+			document.getElementById("poolCommitmentRatio").innerText = (poolCommitment/averageCommitmentNQT).toFixed(3);
+		break;
+
+		}
+    }
 
 function prepareMinerInfo(address) {
     setCookie("getMinerLastValue", address);
-    let minerAddress = escapeHtml(document.getElementById("minerAddress"));
-    let minerName = escapeHtml(document.getElementById("minerName"));
-    let minerPending = escapeHtml(document.getElementById("minerPending"));
-    let minerMinimumPayout = escapeHtml(document.getElementById("minerMinimumPayout"));
-    let minerSharePercent = escapeHtml(document.getElementById("minerSharePercent"));
-    let minerDonationPercent = escapeHtml(document.getElementById("minerDonationPercent"));
-    let minerCapacity = escapeHtml(document.getElementById("minerCapacity"));
-	let minerCommitment = escapeHtml(document.getElementById("minerCommitment"));
-    let minerCommitmentRatio = escapeHtml(document.getElementById("minerCommitmentRatio"));
-    let minerCommitmentFactor = escapeHtml(document.getElementById("minerCommitmentFactor"));
-    let minerSharedCapacity = escapeHtml(document.getElementById("minerSharedCapacity"));
-    let minerNConf = escapeHtml(document.getElementById("minerNConf"));
-    let minerShare = escapeHtml(document.getElementById("minerShare"));
-    let minerSoftware = escapeHtml(document.getElementById("minerSoftware"));
-
-    minerAddress.innerText = address;
-    minerName.innerText = loading;
-    minerPending.innerText = loading;
-    minerMinimumPayout.innerText = loading;
-    minerSharePercent.innerText = loading;
-    minerDonationPercent.innerText = loading;
-    minerCapacity.innerText = loading;
-    minerCommitment.innerText = loading;
-    minerCommitmentRatio.innerText = loading;
-    minerCommitmentFactor.innerText = loading;
-    minerSharedCapacity.innerText = loading;
-    minerNConf.innerText = loading;
-    minerShare.innerText = loading;
-    minerSoftware.innerText = loading;
 
     let miner = null;
     miners.forEach(aMiner => {
@@ -322,20 +481,24 @@ function prepareMinerInfo(address) {
     let name = escapeHtml(miner.name == null ? "Not Set" : miner.name);
     let userAgent = miner.userAgent == null ? "Unknown" : miner.userAgent;
 
-    minerAddress.innerText = miner.addressRS;
-    minerName.innerText = name;
-    minerPending.innerText = miner.pendingBalance;
-    minerMinimumPayout.innerText = miner.minimumPayout;
-    minerSharePercent.innerText = parseFloat(miner.sharePercent).toFixed(2) + " %";
-    minerDonationPercent.innerText = parseFloat(miner.donationPercent).toFixed(2) + " %";
-    minerCapacity.innerText = formatCapacity(miner.totalCapacity);
-    minerCommitment.innerText = miner.commitment;
-    minerCommitmentRatio.innerText = miner.commitmentRatio;
-    minerCommitmentFactor.innerText = miner.commitmentFactor;
-    minerSharedCapacity.innerText = formatCapacity(miner.sharedCapacity);
-    minerNConf.innerText = miner.nConf;
-    minerShare.innerText = (parseFloat(miner.share)*100).toFixed(3) + " %";
-    minerSoftware.innerText = userAgent;
+	document.getElementById("minerAddress").innerText = miner.addressRS;
+	document.getElementById("minerName").innerText = name;
+	document.getElementById("minerPending").innerText = miner.pendingBalance;
+	document.getElementById("minerMinimumPayout").innerText = miner.minimumPayout;
+	document.getElementById("minerSharePercent").innerText = parseFloat(miner.sharePercent).toFixed(2) + " %";
+	document.getElementById("minerDonationPercent").innerText = parseFloat(miner.donationPercent).toFixed(2) + " %";
+	document.getElementById("minerTotalCapacity").innerText = formatCapacity(miner.totalCapacity);
+	document.getElementById("minerSharedCapacity").innerText = formatCapacity(miner.sharedCapacity);
+	document.getElementById("minerEffectiveTotalCapacity").innerText = formatCapacity(miner.effectiveTotalCapacity);
+	document.getElementById("minerEffectiveSharedCapacity").innerText = formatCapacity(miner.effectiveSharedCapacity);
+	document.getElementById("minerCommittedBalance").innerText = miner.committedBalance.replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'');
+	document.getElementById("minerCommitment").innerText = miner.commitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'') + ' BURST/TiB';
+	document.getElementById("minerCommitmentRatio").innerText = miner.commitmentRatio.toFixed(3);
+	document.getElementById("minerBoost").innerText = miner.commitmentFactor.toFixed(3);
+	document.getElementById("minerNConf").innerText = miner.nConf;
+	document.getElementById("minerShare").innerText = (parseFloat(miner.share)*100).toFixed(3) + " %";
+	document.getElementById("minerSoftware").innerText = userAgent;
+
 }
 
 function formatCapacity(capacity) {
@@ -346,10 +509,17 @@ function formatCapacity(capacity) {
 }
 
 function onPageLoad() {
+
+	for(var i = 0; i<size; i++) {
+		currentRoundDeadline[i] = "Loading...";
+	}
+
+	getPoolInfo();
+	getCurrentRound();
+	getMiners();
+	getTop10Miners();
+
     document.getElementById("addressInput").value = getCookie("getMinerLastValue");
-    $('#minerInfoModal').on('show.bs.modal', function (event) {
-        prepareMinerInfo(document.getElementById("addressInput").value);
-    });
     document.getElementById("addressInput").addEventListener("keyup", function (event) {
         if (event.keyCode === 13) {
             event.preventDefault();
@@ -367,15 +537,16 @@ function getWonBlocks() {
     }).then(response => {
         let wonBlocks = response.wonBlocks;
         let table = document.getElementById("wonBlocksTable");
-        table.innerHTML = "<tr><th>Height</th><th class=\"d-none d-sm-table-cell\">ID</th><th>Winner</th><th>Reward + Fees</th><th class=\"d-none d-sm-table-cell\">Pool Share</th></tr>";
+        table.innerHTML = "<tr><th>Count</th><th>Height</th><th class=\"d-none d-sm-table-cell\">ID</th><th>Winner</th><th>Reward + Fees</th><th class=\"d-none d-sm-table-cell\">Pool Share</th></tr>";
         for (let i = 0; i < wonBlocks.length; i++) {
             let wonBlock = wonBlocks[i];
+			let count = wonBlocks.length-i;
             let height = escapeHtml(wonBlock.height);
             let id = escapeHtml(wonBlock.id);
             let reward = escapeHtml(wonBlock.reward);
             let poolShare = escapeHtml(wonBlock.poolShare);
             let minerName = formatMinerName(wonBlock.explorer, wonBlock.generatorRS, wonBlock.generator, wonBlock.name, g_link, g_name);
-            table.innerHTML += "<tr><td>"+height+"</td><td class=\"d-none d-sm-table-cell\">"+id+"</td><td>"+minerName+"</td><td>"+reward+"</td><td class=\"d-none d-sm-table-cell\">"+poolShare+"</td></tr>";
+            table.innerHTML += "<tr><td>"+count+"</td><td>"+height+"</td><td class=\"d-none d-sm-table-cell\">"+id+"</td><td>"+minerName+"</td><td>"+reward+"</td><td class=\"d-none d-sm-table-cell\">"+poolShare+"</td></tr>";
         }
     });
 }
@@ -400,13 +571,8 @@ function getCookie(name) {
     return "";
 }
 
-getPoolInfo();
-getCurrentRound();
-getMiners();
-getTop10Miners();
-
 setInterval(updateRoundElapsed, 1000);
-setInterval(getCurrentRound, 10000);
-setInterval(getPoolInfo, 10000);
-setInterval(getMiners, 10000);
-setInterval(getTop10Miners, 10000);
+setInterval(getCurrentRound, 60000);
+setInterval(getPoolInfo, 60000);
+setInterval(getMiners, 60000);
+setInterval(getTop10Miners, 240000);
