@@ -9,12 +9,16 @@ import burst.pool.storage.persistent.MinerStore;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Miner implements Payable {
     private final MinerMaths minerMaths;
     private final PropertyService propertyService;
 
+    private static final Logger logger = LoggerFactory.getLogger(Miner.class);
     private final BurstAddress address;
     private final MinerStore store;
     private int commitmentHeight;
@@ -22,6 +26,10 @@ public class Miner implements Payable {
     private AtomicReference<BurstValue> committedBalance = new AtomicReference<>();
     private AtomicReference<Double> averageCommitmentFactor = new AtomicReference<>((double) 0);
     private AtomicReference<Double> averageCommitment = new AtomicReference<>((double) 0);
+    private AtomicReference<BigInteger> averageDeadline = new AtomicReference<>(BigInteger.ZERO);
+    private AtomicReference<BigInteger> averageDeadlineWithoutFactor = new AtomicReference<>(BigInteger.ZERO);
+
+    private Deadline lastDeadline;
 
     private double totalCapacity = 0;
     private double sharedCapacity = 0;
@@ -41,12 +49,14 @@ public class Miner implements Payable {
 
     public void recalculateCapacity(long currentBlockHeight) {
         // Prune older deadlines
+        AtomicLong maxHeight = new AtomicLong(0);
         store.getDeadlines().forEach(deadline -> {
             if (currentBlockHeight - deadline.getHeight() >= propertyService.getInt(Props.nAvg)) {
                 store.removeDeadline(deadline.getHeight());
             }
+            maxHeight.set(Math.max(maxHeight.get(), deadline.getHeight()));
         });
-        // Calculate hitSum
+
         AtomicReference<BigInteger> hitSumShared = new AtomicReference<>(BigInteger.ZERO);
         AtomicReference<BigInteger> hitSum = new AtomicReference<>(BigInteger.ZERO);
         AtomicReference<BigInteger> hitWithoutFactorSumShared = new AtomicReference<>(BigInteger.ZERO);
@@ -55,27 +65,66 @@ public class Miner implements Payable {
         List<Deadline> deadlines = store.getDeadlines();
         averageCommitmentFactor.set(0d);
         averageCommitment.set(0d);
+        averageDeadline.set(BigInteger.ZERO);
+        averageDeadlineWithoutFactor.set(BigInteger.ZERO);
         deadlines.forEach(deadline -> {
-            averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
-            averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
-            BigInteger hit = deadline.calculateHit();
-            BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
-            hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
-            hitSum.set(hitSum.get().add(hit));
-            if(deadline.getSharePercent() > 0) {
-                hit = hit.divide(BigInteger.valueOf(deadline.getSharePercent()))
-                    .multiply(BigInteger.valueOf(100L));
-                hitWithoutFactor = hitWithoutFactor.divide(BigInteger.valueOf(deadline.getSharePercent()))
-                    .multiply(BigInteger.valueOf(100L));
+
+                // Get last deadline
+                if (maxHeight.get() == deadline.getHeight()) {
+                    lastDeadline = deadline;
+                } else {
+                    averageDeadline.set(averageDeadline.get().add(deadline.getDeadline()));
+                    averageDeadlineWithoutFactor.set(averageDeadlineWithoutFactor.get().add(deadline.getDeadlineWithoutFactor()));
+                }
+        });
+
+        // Replace outlier deadline values
+        if(20 < deadlineCount.get()) {
+            // Calculate average deadline values
+            int filter = propertyService.getInt(Props.filter);
+            averageDeadline.set(averageDeadline.get().divide(BigInteger.valueOf(deadlineCount.get()-1)));
+            averageDeadlineWithoutFactor.set(averageDeadlineWithoutFactor.get().divide(BigInteger.valueOf(deadlineCount.get()-1)));
+            if(averageDeadline.get().multiply(BigInteger.valueOf(filter)).compareTo(lastDeadline.getDeadline()) < 0  || averageDeadlineWithoutFactor.get().multiply(BigInteger.valueOf(filter)).compareTo(lastDeadline.getDeadlineWithoutFactor()) < 0){
+                logger.info("Miner: " + this.address + " | Height: " + lastDeadline.getHeight() + " | Filter: " + filter + "| Average Deadline: " + averageDeadline.get() + " | Last Deadline: " + lastDeadline.getDeadline() + " | Average Deadline Without Factor: " + averageDeadlineWithoutFactor.get() + " | Last Deadline Without Factor: " + lastDeadline.getDeadlineWithoutFactor());
+                if(averageDeadline.get().multiply(BigInteger.valueOf(filter)).compareTo(lastDeadline.getDeadline()) < 0){
+                    lastDeadline.setDeadline(averageDeadline.get().multiply(BigInteger.valueOf(filter)));
+                    logger.info("Outlier deadline detected: " + " | Miner: " + this.address + " | Last Deadline set to: " + lastDeadline.getDeadline());
+                }
+                if(averageDeadlineWithoutFactor.get().multiply(BigInteger.valueOf(filter)).compareTo(lastDeadline.getDeadlineWithoutFactor()) < 0){
+                    lastDeadline.setDeadlineWithoutFactor(averageDeadlineWithoutFactor.get().multiply(BigInteger.valueOf(filter)));
+                    logger.info("Outlier deadline detected: " + " | Miner: " + this.address + " | Last Deadline Without Factor set to: " + lastDeadline.getDeadlineWithoutFactor());
+                }
+                store.setOrUpdateDeadline(lastDeadline.getHeight(),lastDeadline);
+                logger.info("Outlier deadline stored");
+            }
+        }
+
+        // Calculate hitSum
+        deadlines.forEach(deadline -> {
+            if (maxHeight.get() == deadline.getHeight()) {
+                deadline.setDeadline(lastDeadline.getDeadline());
+                deadline.setDeadlineWithoutFactor(lastDeadline.getDeadlineWithoutFactor());
             }
             else {
-                // Set a very high hit to produce a zero shared capacity
-                hit = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
-                hitWithoutFactor = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
+                averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
+                averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
+                BigInteger hit = deadline.calculateHit();
+                BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
+                hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
+                hitSum.set(hitSum.get().add(hit));
+                if (deadline.getSharePercent() > 0) {
+                    hit = hit.divide(BigInteger.valueOf(deadline.getSharePercent()))
+                        .multiply(BigInteger.valueOf(100L));
+                    hitWithoutFactor = hitWithoutFactor.divide(BigInteger.valueOf(deadline.getSharePercent()))
+                        .multiply(BigInteger.valueOf(100L));
+                } else {
+                    // Set a very high hit to produce a zero shared capacity
+                    hit = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
+                    hitWithoutFactor = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
+                }
+                hitSumShared.set(hitSumShared.get().add(hit));
+                hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
             }
-            hitSumShared.set(hitSumShared.get().add(hit));
-            hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
-
         });
 
         // Calculate estimated capacity

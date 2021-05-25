@@ -3,8 +3,8 @@ package burst.pool.miners;
 import java.math.BigInteger;
 
 public class Deadline {
-    private final BigInteger deadline;
-    private final BigInteger deadlineWithoutFactor;
+    private BigInteger deadline;
+    private BigInteger deadlineWithoutFactor;
     private final BigInteger baseTarget;
     private final int sharePercent;
     private final long height;
@@ -56,5 +56,13 @@ public class Deadline {
 
     public BigInteger calculateHitWithoutFactor() {
         return baseTarget.multiply(deadlineWithoutFactor);
+    }
+
+    public void setDeadline(BigInteger deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setDeadlineWithoutFactor(BigInteger deadlineWithoutFactor) {
+        this.deadlineWithoutFactor = deadlineWithoutFactor;
     }
 }

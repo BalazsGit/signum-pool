@@ -232,7 +232,7 @@ public class Pool {
                 onProcessedBlock(transactionalStorageService, true);
             } catch (Exception e) {
                 if (transactionalStorageService != null) {
-                    logger.warn("Error processing block " + transactionalStorageService.getLastProcessedBlock() + 1, e);
+                    logger.warn("Error processing block " + (transactionalStorageService.getLastProcessedBlock() + 1), e);
                     try {
                         transactionalStorageService.rollbackTransaction();
                         transactionalStorageService.close();
