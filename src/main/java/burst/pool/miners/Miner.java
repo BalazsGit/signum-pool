@@ -105,26 +105,24 @@ public class Miner implements Payable {
                 deadline.setDeadline(lastDeadline.getDeadline());
                 deadline.setDeadlineWithoutFactor(lastDeadline.getDeadlineWithoutFactor());
             }
-            else {
-                averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
-                averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
-                BigInteger hit = deadline.calculateHit();
-                BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
-                hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
-                hitSum.set(hitSum.get().add(hit));
-                if (deadline.getSharePercent() > 0) {
-                    hit = hit.divide(BigInteger.valueOf(deadline.getSharePercent()))
-                        .multiply(BigInteger.valueOf(100L));
-                    hitWithoutFactor = hitWithoutFactor.divide(BigInteger.valueOf(deadline.getSharePercent()))
-                        .multiply(BigInteger.valueOf(100L));
-                } else {
-                    // Set a very high hit to produce a zero shared capacity
-                    hit = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
-                    hitWithoutFactor = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
-                }
-                hitSumShared.set(hitSumShared.get().add(hit));
-                hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
+            averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
+            averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
+            BigInteger hit = deadline.calculateHit();
+            BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
+            hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
+            hitSum.set(hitSum.get().add(hit));
+            if (deadline.getSharePercent() > 0) {
+                hit = hit.divide(BigInteger.valueOf(deadline.getSharePercent()))
+                    .multiply(BigInteger.valueOf(100L));
+                hitWithoutFactor = hitWithoutFactor.divide(BigInteger.valueOf(deadline.getSharePercent()))
+                    .multiply(BigInteger.valueOf(100L));
+            } else {
+                // Set a very high hit to produce a zero shared capacity
+                hit = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
+                hitWithoutFactor = BigInteger.valueOf(MinerMaths.GENESIS_BASE_TARGET * 10000L);
             }
+            hitSumShared.set(hitSumShared.get().add(hit));
+            hitWithoutFactorSumShared.set(hitWithoutFactorSumShared.get().add(hitWithoutFactor));
         });
 
         // Calculate estimated capacity
