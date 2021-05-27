@@ -53,6 +53,7 @@ public class Props {
     public static final Prop<Integer> limitWonBlocks = new Prop<>("limitWonBlocks", 100);
     public static final Prop<Integer> paymentModel = new Prop<>("paymentModel", 2);
     public static final Prop<Integer> filter = new Prop<>("filter", 20);
+    public static final Prop<Integer> calculateAverageBoost = new Prop<>("calculateAverageBoost", 0);
 
     public static void validateProperties(PropertyService propertyService) {
         int serverPort = propertyService.getInt(Props.serverPort);

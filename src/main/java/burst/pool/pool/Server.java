@@ -330,12 +330,15 @@ public class Server extends NanoHTTPD {
         minerJson.addProperty("effectiveTotalCapacity", miner.getEffectiveTotalCapacity());
         minerJson.addProperty("boostedTotalCapacity", miner.getBoostedTotalCapacity());
         minerJson.addProperty("totalCapacity", miner.getTotalCapacity());
-        minerJson.addProperty("commitment", miner.getCommitment().doubleValue());
+        minerJson.addProperty("committedBalance", miner.getCommittedBalance().toBurst().doubleValue());
         minerJson.addProperty("averageCommitment", miner.getAverageCommitment());
-        minerJson.addProperty("committedBalance", miner.getCommittedBalance().toFormattedString());
+        minerJson.addProperty("averageCommitmentFactor", miner.getAverageCommitmentFactor());
+        minerJson.addProperty("calculatedCommitment", miner.getCalculatedCommitment());
+        minerJson.addProperty("calculatedCommitmentFactor", miner.getCalculatedCommitmentFactor());
+        minerJson.addProperty("calculatedCommitmentRatio", miner.getCalculatedCommitment() * 100000000 / miningInfo.getAverageCommitmentNQT());
+        minerJson.addProperty("commitment", miner.getCommitment().doubleValue());
         minerJson.addProperty("commitmentRatio", (double)miner.getCommitment().longValue() / miningInfo.getAverageCommitmentNQT());
         minerJson.addProperty("commitmentFactor", MinerTracker.getCommitmentFactor(miner.getCommitment(), miningInfo));
-        minerJson.addProperty("averageCommitmentFactor", miner.getAverageCommitmentFactor());
         minerJson.addProperty("effectiveSharedCapacity", miner.getEffectiveSharedCapacity());
         minerJson.addProperty("boostedSharedCapacity", miner.getBoostedSharedCapacity());
         minerJson.addProperty("sharedCapacity", miner.getSharedCapacity());

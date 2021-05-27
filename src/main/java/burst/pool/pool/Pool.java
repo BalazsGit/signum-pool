@@ -222,12 +222,12 @@ public class Pool {
                     }
                 }
                 if (won) {
-                    minerTracker.onBlockWon(transactionalStorageService, transactionalStorageService.getLastProcessedBlock() + 1, block.getId(), block.getNonce(), block.getGenerator(), block.getBlockReward().add(block.getTotalFee()));
+                    minerTracker.onBlockWon(transactionalStorageService, transactionalStorageService.getLastProcessedBlock() + 1, block.getId(), block.getNonce(), block.getGenerator(), block.getBlockReward().add(block.getTotalFee()), miningInfo.get());
                 } else {
                     if (myRewardRecipients.contains(block.getGenerator())) {
                         logger.error("Our miner forged but did not detect block won. Height " + block.getHeight());
                     }
-                    minerTracker.onBlockNotWon(transactionalStorageService, transactionalStorageService.getLastProcessedBlock() + 1);
+                    minerTracker.onBlockNotWon(transactionalStorageService, transactionalStorageService.getLastProcessedBlock() + 1, miningInfo.get());
                 }
                 onProcessedBlock(transactionalStorageService, true);
             } catch (Exception e) {

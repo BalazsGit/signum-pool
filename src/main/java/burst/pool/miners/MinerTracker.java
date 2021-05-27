@@ -94,7 +94,7 @@ public class MinerTracker {
         return miner;
     }
 
-    public void onBlockWon(StorageService transactionalStorageService, long blockHeight, BurstID blockId, BigInteger nonce, BurstAddress winner, BurstValue blockReward) {
+    public void onBlockWon(StorageService transactionalStorageService, long blockHeight, BurstID blockId, BigInteger nonce, BurstAddress winner, BurstValue blockReward, MiningInfo miningInfo) {
         logger.info("Block won! Block height: " + blockHeight + ", forger: " + winner.getFullAddress());
 
         BurstValue reward = blockReward;
@@ -118,7 +118,7 @@ public class MinerTracker {
 
         List<Miner> miners = transactionalStorageService.getMiners();
 
-        updateMiners(miners, blockHeight);
+        updateMiners(miners, blockHeight, miningInfo);
 
         // Update each miner's pending
         AtomicReference<BurstValue> amountTaken = new AtomicReference<>(BurstValue.fromBurst(0));
@@ -138,15 +138,15 @@ public class MinerTracker {
         logger.info("Finished processing winnings for block " + blockHeight + ". Reward ( + fees) is " + blockReward + ", pool fee is " + poolTake + ", forger take is " + winnerTake + ", miners took " + amountTaken.get());
     }
 
-    public void onBlockNotWon(StorageService transactionalStorageService, long blockHeight) {
-        updateMiners(transactionalStorageService.getMiners(), blockHeight);
+    public void onBlockNotWon(StorageService transactionalStorageService, long blockHeight, MiningInfo miningInfo) {
+        updateMiners(transactionalStorageService.getMiners(), blockHeight, miningInfo);
     }
 
-    private void updateMiners(List<Miner> miners, long blockHeight) {
+    private void updateMiners(List<Miner> miners, long blockHeight, MiningInfo miningInfo) {
 
 
                 // Update each miner's effective capacity
-                miners.forEach(miner -> miner.recalculateCapacity(blockHeight));
+                miners.forEach(miner -> miner.recalculateCapacity(blockHeight, miningInfo));
 
         switch (propertyService.getInt(Props.paymentModel)) {
 

@@ -2,6 +2,7 @@ package burst.pool.miners;
 
 import burst.kit.entity.BurstAddress;
 import burst.kit.entity.BurstValue;
+import burst.kit.entity.response.MiningInfo;
 import burst.pool.storage.config.PropertyService;
 import burst.pool.storage.config.Props;
 import burst.pool.storage.persistent.MinerStore;
@@ -29,6 +30,9 @@ public class Miner implements Payable {
     private AtomicReference<BigInteger> averageDeadline = new AtomicReference<>(BigInteger.ZERO);
     private AtomicReference<BigInteger> averageDeadlineWithoutFactor = new AtomicReference<>(BigInteger.ZERO);
 
+    double calculatedCommitment = 0;
+    double calculatedCommitmentFactor = 0;
+
     private Deadline lastDeadline;
 
     private double totalCapacity = 0;
@@ -47,7 +51,7 @@ public class Miner implements Payable {
         this.store = store;
     }
 
-    public void recalculateCapacity(long currentBlockHeight) {
+    public void recalculateCapacity(long currentBlockHeight, MiningInfo miningInfo) {
         // Prune older deadlines
         AtomicLong maxHeight = new AtomicLong(0);
         store.getDeadlines().forEach(deadline -> {
@@ -105,8 +109,10 @@ public class Miner implements Payable {
                 deadline.setDeadline(lastDeadline.getDeadline());
                 deadline.setDeadlineWithoutFactor(lastDeadline.getDeadlineWithoutFactor());
             }
-            averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
-            averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
+            if (propertyService.getInt(Props.calculateAverageBoost) == 1) {
+                averageCommitmentFactor.updateAndGet(v -> v + deadline.getCommitmentFactor());
+                averageCommitment.updateAndGet(v -> v + deadline.getCommitment());
+            }
             BigInteger hit = deadline.calculateHit();
             BigInteger hitWithoutFactor = deadline.calculateHitWithoutFactor();
             hitWithoutFactorSum.set(hitWithoutFactorSum.get().add(hitWithoutFactor));
@@ -128,11 +134,6 @@ public class Miner implements Payable {
         // Calculate estimated capacity
         try {
 
-            averageCommitmentFactor.set(averageCommitmentFactor.get()/deadlineCount.get());
-            averageCommitment.set(averageCommitment.get()/deadlineCount.get());
-
-            //Estimated capacity calculation
-
             totalCapacity = minerMaths.estimatedTotalPlotSize(deadlines.size(), hitWithoutFactorSum.get());
             sharedCapacity = minerMaths.estimatedSharedPlotSize(deadlines.size(), deadlineCount.get(), hitWithoutFactorSumShared.get());
 
@@ -145,14 +146,42 @@ public class Miner implements Payable {
             store.setEffectiveTotalCapacity(effectiveTotalCapacity);
             store.setEffectiveSharedCapacity(effectiveSharedCapacity);
 
-            boostedTotalCapacity = totalCapacity * averageCommitmentFactor.get();
-            boostedSharedCapacity = sharedCapacity * averageCommitmentFactor.get();
+            if (propertyService.getInt(Props.calculateAverageBoost) == 1) {
+                averageCommitment.set(averageCommitment.get()/deadlineCount.get());
+                averageCommitmentFactor.set(averageCommitmentFactor.get()/deadlineCount.get());
+                calculatedCommitment = averageCommitment.get();
+                calculatedCommitmentFactor = averageCommitmentFactor.get();
+            }
+            else {
+                calculatedCommitment = 1 < totalCapacity ? getCommittedBalance().toBurst().doubleValue()/totalCapacity : getCommittedBalance().toBurst().doubleValue();
+                calculatedCommitmentFactor = getCommitmentFactor(1 < totalCapacity ? getCommittedBalance().toPlanck().longValue()/totalCapacity : getCommittedBalance().toPlanck().longValue(), miningInfo);
+            }
+
+            boostedTotalCapacity = totalCapacity * calculatedCommitmentFactor;
+            boostedSharedCapacity = sharedCapacity * calculatedCommitmentFactor;
 
             store.setBoostedTotalCapacity(boostedTotalCapacity);
             store.setBoostedSharedCapacity(boostedSharedCapacity);
 
         } catch (ArithmeticException ignored) {
         }
+    }
+
+    public double getCalculatedCommitment() {
+        return calculatedCommitment;
+    }
+
+    public double getCalculatedCommitmentFactor() {
+        return calculatedCommitmentFactor;
+    }
+
+    public static double getCommitmentFactor(double commitment, MiningInfo miningInfo) {
+        double commitmentFactor = commitment/miningInfo.getAverageCommitmentNQT();
+        commitmentFactor = Math.pow(commitmentFactor, 0.4515449935);
+        commitmentFactor = Math.min(8.0, commitmentFactor);
+        commitmentFactor = Math.max(0.125, commitmentFactor);
+
+        return commitmentFactor;
     }
 
     public void recalculateShare(double poolCapacity, double sharedCapacity) {
@@ -322,5 +351,9 @@ public class Miner implements Payable {
     public BigInteger getBestDeadline(long height) {
         Deadline deadline = store.getDeadline(height);
         return deadline == null ? null : deadline.getDeadline();
+    }
+
+    public void setMiningInfo(MiningInfo miningInfo) {
+        miningInfo = miningInfo;
     }
 }
