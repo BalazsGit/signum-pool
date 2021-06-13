@@ -62,6 +62,7 @@ let infoModalPhoenix = 0;
 
 var size = 1000;
 var currentRoundDeadline = [];
+var currentRoundBestDeadline = [];
 
 function infoModalLoad() {
 	document.getElementById("RA1").src="./img/BURST_Classic/RA1.png";
@@ -277,9 +278,7 @@ function getMiners() {
 		serverResponse = response;
 
 		for (let i = 0; i < serverResponse.miners.length; i++) {
-				let deadlinefontStyle = "text";
 				miner[i] = serverResponse.miners[i];
-
 		}
 
 		redrawMinersTable();
@@ -292,20 +291,74 @@ function getMiners() {
         let tableHead = document.getElementById("minersThead");
 		let tableBody = document.getElementById("minersTbody");
 
+		let averageDeadline = 0;
+		let averagePendingBalance = 0;
+		let averageTotalCapacity = 0;
+		let averageSharedCapacity = 0;
+		let averageBoostedTotalCapacity = 0;
+		let averageBoostedSharedCapacity = 0;
+		let averageEffectiveTotalCapacity = 0;
+		let averageEffectiveSharedCapacity = 0;
+		let averageCommittedBalace = 0;
+		let averageCommitment = 0;
+		let averageCommitmentRatio = 0;
+		let averageCommitmentFactor = 0;
+		let averageShareModel = 0;
+		let averageDonationPercent = 0;
+		let averageConfirmedDeadlines = 0;
+		let averagePoolShare = 0;
+		let loadingCounter = 0;
+
+		let minDeadline = Number.MAX_VALUE;
+		let minPendingBalance = Number.MAX_VALUE;
+		let minTotalCapacity = Number.MAX_VALUE;
+		let minSharedCapacity = Number.MAX_VALUE;
+		let minBoostedTotalCapacity = Number.MAX_VALUE;
+		let minBoostedSharedCapacity = Number.MAX_VALUE;
+		let minEffectiveTotalCapacity = Number.MAX_VALUE;
+		let minEffectiveSharedCapacity = Number.MAX_VALUE;
+		let minCommittedBalace = Number.MAX_VALUE;
+		let minCommitment = Number.MAX_VALUE;
+		let minCommitmentRatio = Number.MAX_VALUE;
+		let minCommitmentFactor = Number.MAX_VALUE;
+		let minShareModel = Number.MAX_VALUE;
+		let minDonationPercent = Number.MAX_VALUE;
+		let minConfirmedDeadlines = Number.MAX_VALUE;
+		let minPoolShare = Number.MAX_VALUE;
+
+		let maxDeadline = 0;
+		let maxPendingBalance = 0;
+		let maxTotalCapacity = 0;
+		let maxSharedCapacity = 0;
+		let maxBoostedTotalCapacity = 0;
+		let maxBoostedSharedCapacity = 0;
+		let maxEffectiveTotalCapacity = 0;
+		let maxEffectiveSharedCapacity = 0;
+		let maxCommittedBalace = 0;
+		let maxCommitment = 0;
+		let maxCommitmentRatio = 0;
+		let maxCommitmentFactor = 0;
+		let maxShareModel = 0;
+		let maxDonationPercent = 0;
+		let maxConfirmedDeadlines = 0;
+		let maxPoolShare = 0;
 
 		switch (effective_values) {
 			case 0:
-			tableHead.innerHTML = "<tr> <th><p><button onclick=\"changeTable()\" style=\"border: 1px solid #dee2e6;\">Change Table View</button></p>Miner</th>"
+			tableHead.innerHTML = "<tr> <th><p><button onclick=\"changeTable()\" style=\"border: 1px solid #979a9a; background-color: #979a9a\">Change Table View</button></p>Miner</th>"
 			+"<th>Current Deadline</th>"
 			+"<th>Pending Balance</th>"
 			+"<th>Total Capacity</th>"
 			+"<th>Shared Capacity</th>"
 			+"<th>Boosted Total Capacity</th>"
 			+"<th>Boosted Shared Capacity</th>"
-			+"<th>Committed Balance</th>"
+			+"<th>Committed Balance</th>"/*
 			+"<th>Average Commitment</th>"
 			+"<th>Commitment Ratio</th>"
-			+"<th>Average Boost</th>"
+			+"<th>Average Boost</th>"*/
+			+"<th>Calculated Commitment</th>"
+			+"<th>Calculated Commitment Ratio</th>"
+			+"<th>Calculated Boost</th>"
 			+"<th>Share Model</th>"
 			+"<th>Donation Percent</th>"
 			+"<th>Confirmed Deadlines</th>"
@@ -322,6 +375,7 @@ function getMiners() {
 
 					if(miner[i].currentRoundBestDeadline != null) {
 						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+						currentRoundBestDeadline[i] = miner[i].currentRoundBestDeadline;
 					}
 
 				}
@@ -332,7 +386,7 @@ function getMiners() {
 						deadlinefontStyle = "text";
 
 						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
-
+						currentRoundBestDeadline[i] = miner[i].currentRoundBestDeadline;
 					}
 					else {
 						deadlinefontStyle = "i";
@@ -348,17 +402,172 @@ function getMiners() {
 				  +"<td>"+formatCapacity(miner[i].sharedCapacity)+"</td>"
 				  +"<td>"+formatCapacity(miner[i].boostedTotalCapacity)+"</td>"
 				  +"<td>"+formatCapacity(miner[i].boostedSharedCapacity)+"</td>"
-				  +"<td>"+parseFloat(miner[i].committedBalance).toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+parseFloat(miner[i].committedBalance).toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"/*
 				  +"<td>"+miner[i].averageCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
 				  +"<td>"+miner[i].commitmentRatio.toFixed(3)+"</td>"
-				  +"<td>"+miner[i].averageCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+miner[i].averageCommitmentFactor.toFixed(3)+"</td>"*/
+				  +"<td>"+miner[i].calculatedCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+miner[i].calculatedCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+miner[i].calculatedCommitmentFactor.toFixed(3)+"</td>"
 				  +"<td>"+miner[i].sharePercent+" %</td>"
 				  +"<td>"+miner[i].donationPercent+" %</td>"
 				  +"<td>"+miner[i].nConf+" / " + maxSubmissions+"</td>"
 				  +"<td>"+(parseFloat(miner[i].share)*100).toFixed(3)+" %</td>"
 				  +"<td>"+userAgent+"</td>"
 				  +"</tr>";
+
+				   if(currentRoundDeadline[i] != "Loading..."){
+					   averageDeadline += parseInt(currentRoundBestDeadline[i]);
+					   minDeadline = Math.min(minDeadline, currentRoundBestDeadline[i]);
+					   maxDeadline = Math.max(maxDeadline, currentRoundBestDeadline[i]);
+				   }
+				   else{
+					   loadingCounter++;
+				   }
+
+				averagePendingBalance += parseFloat(miner[i].pendingBalance);
+				averageTotalCapacity += miner[i].totalCapacity;
+				averageSharedCapacity += miner[i].sharedCapacity;
+				averageBoostedTotalCapacity += miner[i].boostedTotalCapacity;
+				averageBoostedSharedCapacity += miner[i].boostedSharedCapacity;
+				averageCommittedBalace += parseFloat(miner[i].committedBalance);
+				averageCommitment += miner[i].calculatedCommitment;
+				averageCommitmentRatio += miner[i].calculatedCommitmentRatio;
+				averageCommitmentFactor += miner[i].calculatedCommitmentFactor;
+				averageShareModel += miner[i].sharePercent;
+				averageDonationPercent += miner[i].donationPercent;
+				averageConfirmedDeadlines += miner[i].nConf;
+				averagePoolShare += miner[i].share;
+
+				minPendingBalance = Math.min(minPendingBalance, parseFloat(miner[i].pendingBalance));
+				minTotalCapacity = Math.min(minTotalCapacity, miner[i].totalCapacity);
+				minSharedCapacity = Math.min(minSharedCapacity, miner[i].sharedCapacity);
+				minBoostedTotalCapacity = Math.min(minBoostedTotalCapacity, miner[i].boostedTotalCapacity);
+				minBoostedSharedCapacity = Math.min(minBoostedSharedCapacity, miner[i].boostedSharedCapacity);
+				minCommittedBalace = Math.min(minCommittedBalace, miner[i].committedBalance);
+				minCommitment = Math.min(minCommitment, miner[i].calculatedCommitment);
+				minCommitmentRatio = Math.min(minCommitmentRatio, miner[i].calculatedCommitmentRatio);
+				minCommitmentFactor = Math.min(minCommitmentFactor, miner[i].calculatedCommitmentFactor);
+				minShareModel = Math.min(minShareModel, miner[i].sharePercent);
+				minDonationPercent = Math.min(minDonationPercent, miner[i].donationPercent);
+				minConfirmedDeadlines = Math.min(minConfirmedDeadlines, miner[i].nConf);
+				minPoolShare = Math.min(minPoolShare, miner[i].share);
+
+				maxPendingBalance = Math.max(maxPendingBalance, parseFloat(miner[i].pendingBalance));
+				maxTotalCapacity = Math.max(maxTotalCapacity, miner[i].totalCapacity);
+				maxSharedCapacity = Math.max(maxSharedCapacity, miner[i].sharedCapacity);
+				maxBoostedTotalCapacity = Math.max(maxBoostedTotalCapacity, miner[i].boostedTotalCapacity);
+				maxBoostedSharedCapacity = Math.max(maxBoostedSharedCapacity, miner[i].boostedSharedCapacity);
+				maxCommittedBalace = Math.max(maxCommittedBalace, miner[i].committedBalance);
+				maxCommitment = Math.max(maxCommitment, miner[i].calculatedCommitment);
+				maxCommitmentRatio = Math.max(maxCommitmentRatio, miner[i].calculatedCommitmentRatio);
+				maxCommitmentFactor = Math.max(maxCommitmentFactor, miner[i].calculatedCommitmentFactor);
+				maxShareModel = Math.max(maxShareModel, miner[i].sharePercent);
+				maxDonationPercent = Math.max(maxDonationPercent, miner[i].donationPercent);
+				maxConfirmedDeadlines = Math.max(maxConfirmedDeadlines, miner[i].nConf);
+				maxPoolShare = Math.max(maxPoolShare, miner[i].share);
+
 			}
+
+				tableBody.innerHTML += "<tr><td>Sum</td>"
+				  +"<td><hr/></td>"
+				  +"<td>"+averagePendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(averageTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageSharedCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageBoostedTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageBoostedSharedCapacity)+"</td>"
+				  +"<td>"+averageCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
+				averageDeadline /= (serverResponse.miners.length - loadingCounter);
+				averagePendingBalance /= serverResponse.miners.length;
+				averageTotalCapacity /= serverResponse.miners.length;
+				averageSharedCapacity /= serverResponse.miners.length;
+				averageBoostedTotalCapacity /= serverResponse.miners.length;
+				averageBoostedSharedCapacity /= serverResponse.miners.length;
+				averageCommittedBalace /= serverResponse.miners.length;
+				averageCommitment /= serverResponse.miners.length;
+				averageCommitmentRatio /= serverResponse.miners.length;
+				averageCommitmentFactor /= serverResponse.miners.length;
+				averageShareModel /= serverResponse.miners.length;
+				averageDonationPercent /= serverResponse.miners.length;
+				averageConfirmedDeadlines /= serverResponse.miners.length;
+				averagePoolShare /= serverResponse.miners.length;
+
+				  if(isNaN(averageDeadline))
+				  {
+					  averageDeadline = "Loading...";
+					  minDeadline = "Loading...";
+					  maxDeadline = "Loading...";
+				  }
+				  else{
+					  averageDeadline = formatTime(averageDeadline);
+					  minDeadline = formatTime(minDeadline);
+					  maxDeadline = formatTime(maxDeadline);
+				  }
+
+				  tableBody.innerHTML += "<tr><td>Average</td>"
+				  +"<td>"+averageDeadline+"</td>"
+				  +"<td>"+averagePendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(averageTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageSharedCapacity)+"</br></td>"
+				  +"<td>"+formatCapacity(averageBoostedTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageBoostedSharedCapacity)+"</td>"
+				  +"<td>"+averageCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+averageCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+averageCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+averageCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+parseInt(averageShareModel)+" %</td>"
+				  +"<td>"+averageDonationPercent+" %</td>"
+				  +"<td>"+parseInt(averageConfirmedDeadlines)+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(averagePoolShare)*100).toFixed(3)+" %</td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
+				  tableBody.innerHTML += "<tr><td>Min</td>"
+				  +"<td>"+minDeadline+"</td>"
+				  +"<td>"+minPendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(minTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(minSharedCapacity)+"</br></td>"
+				  +"<td>"+formatCapacity(minBoostedTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(minBoostedSharedCapacity)+"</td>"
+				  +"<td>"+minCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+minCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+minCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+minCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+parseInt(minShareModel)+" %</td>"
+				  +"<td>"+minDonationPercent+" %</td>"
+				  +"<td>"+parseInt(minConfirmedDeadlines)+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(minPoolShare)*100).toFixed(3)+" %</td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
+				  tableBody.innerHTML += "<tr><td>Max</td>"
+				  +"<td>"+maxDeadline+"</td>"
+				  +"<td>"+maxPendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(maxTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(maxSharedCapacity)+"</br></td>"
+				  +"<td>"+formatCapacity(maxBoostedTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(maxBoostedSharedCapacity)+"</td>"
+				  +"<td>"+maxCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+maxCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+maxCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+maxCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+parseInt(maxShareModel)+" %</td>"
+				  +"<td>"+maxDonationPercent+" %</td>"
+				  +"<td>"+parseInt(maxConfirmedDeadlines)+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(maxPoolShare)*100).toFixed(3)+" %</td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
 			poolCommitment = (serverResponse.poolTotalCapacity > 1) ? (serverResponse.poolCommittedBalance/serverResponse.poolTotalCapacity) : serverResponse.poolCommittedBalance;
 			document.getElementById("minerCount").innerText = serverResponse.miners.length;
 			document.getElementById("poolTotalCapacity").innerText = formatCapacity(serverResponse.poolTotalCapacity);
@@ -372,7 +581,7 @@ function getMiners() {
 		break;
 
 		case 1:
-			tableHead.innerHTML = "<tr> <th><p><button onclick=\"changeTable()\" style=\"border: 1px solid #dee2e6;\">Change Table View</button></p>Miner</th>"
+			tableHead.innerHTML = "<tr> <th><p><button onclick=\"changeTable()\" style=\"border: 1px solid #979a9a; background-color: #979a9a;\">Change Table View</button></p>Miner</th>"
 			+"<th>Current Deadline</th>"
 			+"<th>Pending Balance</th>"
 			+"<th>Total Capacity</th>"
@@ -381,7 +590,7 @@ function getMiners() {
 			+"<th>Eff. Shared Capacity</th>"
 			+"<th>Committed Balance</th>"
 			+"<th>Current Commitment</th>"
-			+"<th>Commitment Ratio</th>"
+			+"<th>Current Commitment Ratio</th>"
 			+"<th>Current Boost</th>"
 			+"<th>Share Model</th>"
 			+"<th>Donation Percent</th>"
@@ -399,6 +608,7 @@ function getMiners() {
 
 					if(miner[i].currentRoundBestDeadline != null) {
 						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+						currentRoundBestDeadline[i] = miner[i].currentRoundBestDeadline;
 					}
 
 				}
@@ -409,6 +619,7 @@ function getMiners() {
 						deadlinefontStyle = "text";
 
 						currentRoundDeadline[i] = formatTime(miner[i].currentRoundBestDeadline);
+						currentRoundBestDeadline[i] = miner[i].currentRoundBestDeadline;
 
 					}
 					else {
@@ -435,7 +646,159 @@ function getMiners() {
 				  +"<td>"+(parseFloat(miner[i].share)*100).toFixed(3)+" %</td>"
 				  +"<td>"+userAgent+"</td>"
 				  +"</tr>";
+
+				if(currentRoundDeadline[i] != "Loading..."){
+					   averageDeadline += parseInt(currentRoundBestDeadline[i]);
+					   minDeadline = Math.min(minDeadline, currentRoundBestDeadline[i]);
+					   maxDeadline = Math.max(maxDeadline, currentRoundBestDeadline[i]);
+				   }
+				   else{
+					   loadingCounter++;
+				   }
+
+				averagePendingBalance += parseFloat(miner[i].pendingBalance);
+				averageTotalCapacity += miner[i].totalCapacity;
+				averageSharedCapacity += miner[i].sharedCapacity;
+				averageEffectiveTotalCapacity += miner[i].effectiveTotalCapacity;
+				averageEffectiveSharedCapacity += miner[i].effectiveSharedCapacity;
+				averageCommittedBalace += parseFloat(miner[i].committedBalance);
+				averageCommitment += miner[i].commitment;
+				averageCommitmentRatio += miner[i].commitmentRatio;
+				averageCommitmentFactor += miner[i].commitmentFactor;
+				averageShareModel += miner[i].sharePercent;
+				averageDonationPercent += miner[i].donationPercent;
+				averageConfirmedDeadlines += miner[i].nConf;
+				averagePoolShare += miner[i].share;
+
+				minPendingBalance = Math.min(minPendingBalance, parseFloat(miner[i].pendingBalance));
+				minTotalCapacity = Math.min(minTotalCapacity, miner[i].totalCapacity);
+				minSharedCapacity = Math.min(minSharedCapacity, miner[i].sharedCapacity);
+				minEffectiveTotalCapacity = Math.min(minEffectiveTotalCapacity, miner[i].effectiveTotalCapacity);
+				minEffectiveSharedCapacity = Math.min(minEffectiveSharedCapacity, miner[i].effectiveSharedCapacity);
+				minCommittedBalace = Math.min(minCommittedBalace, miner[i].committedBalance);
+				minCommitment = Math.min(minCommitment, miner[i].calculatedCommitment);
+				minCommitmentRatio = Math.min(minCommitmentRatio, miner[i].calculatedCommitmentRatio);
+				minCommitmentFactor = Math.min(minCommitmentFactor, miner[i].calculatedCommitmentFactor);
+				minShareModel = Math.min(minShareModel, miner[i].sharePercent);
+				minDonationPercent = Math.min(minDonationPercent, miner[i].donationPercent);
+				minConfirmedDeadlines = Math.min(minConfirmedDeadlines, miner[i].nConf);
+				minPoolShare = Math.min(minPoolShare, miner[i].share);
+
+				maxPendingBalance = Math.max(maxPendingBalance, parseFloat(miner[i].pendingBalance));
+				maxTotalCapacity = Math.max(maxTotalCapacity, miner[i].totalCapacity);
+				maxSharedCapacity = Math.max(maxSharedCapacity, miner[i].sharedCapacity);
+				maxEffectiveTotalCapacity = Math.max(maxEffectiveTotalCapacity, miner[i].effectiveTotalCapacity);
+				maxEffectiveSharedCapacity = Math.max(maxEffectiveSharedCapacity, miner[i].effectiveSharedCapacity);
+				maxCommittedBalace = Math.max(maxCommittedBalace, miner[i].committedBalance);
+				maxCommitment = Math.max(maxCommitment, miner[i].calculatedCommitment);
+				maxCommitmentRatio = Math.max(maxCommitmentRatio, miner[i].calculatedCommitmentRatio);
+				maxCommitmentFactor = Math.max(maxCommitmentFactor, miner[i].calculatedCommitmentFactor);
+				maxShareModel = Math.max(maxShareModel, miner[i].sharePercent);
+				maxDonationPercent = Math.max(maxDonationPercent, miner[i].donationPercent);
+				maxConfirmedDeadlines = Math.max(maxConfirmedDeadlines, miner[i].nConf);
+				maxPoolShare = Math.max(maxPoolShare, miner[i].share);
+
 			}
+
+			tableBody.innerHTML += "<tr><td>Sum</td>"
+				  +"<td><hr/></td>"
+				  +"<td>"+averagePendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(averageTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageSharedCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageEffectiveTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageEffectiveSharedCapacity)+"</td>"
+				  +"<td>"+averageCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
+				averageDeadline /= (serverResponse.miners.length - loadingCounter);
+				averagePendingBalance /= serverResponse.miners.length;
+				averageTotalCapacity /= serverResponse.miners.length;
+				averageSharedCapacity /= serverResponse.miners.length;
+				averageEffectiveTotalCapacity /= serverResponse.miners.length;
+				averageEffectiveSharedCapacity /= serverResponse.miners.length;
+				averageCommittedBalace /= serverResponse.miners.length;
+				averageCommitment /= serverResponse.miners.length;
+				averageCommitmentRatio /= serverResponse.miners.length;
+				averageCommitmentFactor /= serverResponse.miners.length;
+				averageShareModel /= serverResponse.miners.length;
+				averageDonationPercent /= serverResponse.miners.length;
+				averageConfirmedDeadlines /= serverResponse.miners.length;
+				averagePoolShare /= serverResponse.miners.length;
+
+				  if(isNaN(averageDeadline))
+				  {
+					  averageDeadline = "Loading...";
+					  minDeadline = "Loading...";
+					  maxDeadline = "Loading...";
+				  }
+				  else{
+					  averageDeadline = formatTime(averageDeadline);
+					  minDeadline = formatTime(minDeadline);
+					  maxDeadline = formatTime(maxDeadline);
+				  }
+
+				  tableBody.innerHTML += "<tr><td>Average</td>"
+				  +"<td>"+averageDeadline+"</td>"
+				  +"<td>"+averagePendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(averageTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageSharedCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageEffectiveTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(averageEffectiveSharedCapacity)+"</td>"
+				  +"<td>"+averageCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+averageCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+averageCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+averageCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+parseInt(averageShareModel)+" %</td>"
+				  +"<td>"+averageDonationPercent+" %</td>"
+				  +"<td>"+parseInt(averageConfirmedDeadlines)+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(averagePoolShare)*100).toFixed(3)+" %</td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
+				tableBody.innerHTML += "<tr><td>Min</td>"
+				  +"<td>"+minDeadline+"</td>"
+				  +"<td>"+minPendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(minTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(minSharedCapacity)+"</br></td>"
+				  +"<td>"+formatCapacity(minEffectiveTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(minEffectiveSharedCapacity)+"</td>"
+				  +"<td>"+minCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+minCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+minCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+minCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+parseInt(minShareModel)+" %</td>"
+				  +"<td>"+minDonationPercent+" %</td>"
+				  +"<td>"+parseInt(minConfirmedDeadlines)+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(minPoolShare)*100).toFixed(3)+" %</td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
+				  tableBody.innerHTML += "<tr><td>Max</td>"
+				  +"<td>"+maxDeadline+"</td>"
+				  +"<td>"+maxPendingBalance.toFixed(3)+"</br>BURST</td>"
+				  +"<td>"+formatCapacity(maxTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(maxSharedCapacity)+"</br></td>"
+				  +"<td>"+formatCapacity(maxEffectiveTotalCapacity)+"</td>"
+				  +"<td>"+formatCapacity(maxEffectiveSharedCapacity)+"</td>"
+				  +"<td>"+maxCommittedBalace.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST</td>"
+				  +"<td>"+maxCommitment.toFixed(3).replace(/(?!^)(?=(?:\d{3})+(?:\.))/gm, '\'')+"</br> BURST/TiB</td>"
+				  +"<td>"+maxCommitmentRatio.toFixed(3)+"</td>"
+				  +"<td>"+maxCommitmentFactor.toFixed(3)+"</td>"
+				  +"<td>"+parseInt(maxShareModel)+" %</td>"
+				  +"<td>"+maxDonationPercent+" %</td>"
+				  +"<td>"+parseInt(maxConfirmedDeadlines)+" / " + maxSubmissions+"</td>"
+				  +"<td>"+(parseFloat(maxPoolShare)*100).toFixed(3)+" %</td>"
+				  +"<td><hr/></td>"
+				  +"</tr>";
+
 			poolCommitment = (serverResponse.poolTotalCapacity > 1) ? (serverResponse.poolCommittedBalance/serverResponse.poolTotalCapacity) : serverResponse.poolCommittedBalance;
 			document.getElementById("minerCount").innerText = serverResponse.miners.length;
 			document.getElementById("poolTotalCapacity").innerText = formatCapacity(serverResponse.poolTotalCapacity);
@@ -512,6 +875,7 @@ function onPageLoad() {
 
 	for(var i = 0; i<size; i++) {
 		currentRoundDeadline[i] = "Loading...";
+		currentRoundBestDeadline[i] = 0;
 	}
 
 	getPoolInfo();

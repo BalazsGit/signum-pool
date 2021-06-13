@@ -24,3 +24,47 @@ img {
 .mySlides {
 	display: none;
 }
+
+body {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+}
+
+hr{
+	height: 1px;
+	border-width: 0px;
+	background-color: grey;
+}
+
+.table-striped tbody tr:hover td,
+.table-striped tbody tr:hover th {
+  background-color: #641e16;
+}
+
+#miners {
+	border-top: 0px solid grey;
+	border-left: 0px solid grey;
+	border-right: 1px solid grey;
+	border-bottom: 0px solid grey;
+	border-collapse: separate;
+    border-spacing: 0;
+}
+
+#minersThead th {
+	border-top: 1px solid grey;
+	border-left: 1px solid grey;
+	border-right: 0px solid grey;
+	border-bottom: 1px solid grey;
+	background-color: #222;
+    position: sticky;
+    top:0;
+}
+
+#minersTbody td {
+	border-top: 0px solid grey;
+	border-left: 1px solid grey;
+	border-right: 0px solid grey;
+	border-bottom: 1px solid grey;
+	vertical-align: middle;
+}

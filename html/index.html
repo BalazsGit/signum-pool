@@ -63,16 +63,16 @@
         <a class="nav-link" href="#" data-toggle="modal" data-target="#confModal"><i class="fa fa-sliders"></i> CONFIGURE</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="{EXPLORER}" target="_blank"><i class="fa fa-external-link"></i> EXPLORER</a>
+        <a class="nav-link" href="{EXPLORER}" target="blank"><i class="fa fa-external-link"></i> EXPLORER</a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="#" data-toggle="modal" data-target="#faucetModal"><i class="fa fa-shower"></i> FAUCET</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="https://github.com/jjos2372/babel-pool" target="_blank"><i class="fa fa-github"></i> CODE</a>
+        <a class="nav-link" href="https://github.com/jjos2372/babel-pool" target="blank"><i class="fa fa-github"></i> CODE</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="{PUBLICNODE}" target="_blank">
+        <a class="nav-link" href="{PUBLICNODE}" target="blank">
           <i class="fa fa-money"></i> WALLET
         </a>
       </li>
@@ -146,12 +146,13 @@
     <div class="col-lg-6 p-3 nav-link">
       <h4>Pool address: BURST-HW9R-3VCP-Y46P-DA5W8</h4>
       <h3>Announcements</h3>
-      <h4>Pool updated to BRS 3.0.0!</h4>
+      <h4>Pool updated to BRS v3.0.1!</h4>
       <h4>Please restart your miner in case lost connection with pool!</h4>
       <p>
         Pool: <a href="http://openburstpool.ddns.net:8126" target="blank"><strong>http://openburstpool.ddns.net:8126</strong></a></br>
         Burstcoin wallet: <a href="https://burstcoinwallet.ddns.net:8128" target="blank"><strong>https://burstcoinwallet.ddns.net:8128</strong></a></br>
-        API calls: <a href="https://burstcoinwallet.ddns.net:8128/api-doc" target="blank"><strong>https://burstcoinwallet.ddns.net:8128/api-doc</strong></a>
+        API calls: <a href="https://burstcoinwallet.ddns.net:8128/api-doc" target="blank"><strong>https://burstcoinwallet.ddns.net:8128/api-doc</strong></a></br>
+        Discord: <a href="https://discord.gg/PmGrfHGGT7" target="blank"><strong>https://discord.gg/PmGrfHGGT7</strong></a>
       </p>
       <p>Pool fee is 1.00%<br/>
         Default donation to developers are 1% (you can change it between 0-100% any time)<br/>
@@ -184,7 +185,7 @@
         <div class="col-xl-12">
           <div class="tradingview-widget-container">
             <div id="tradingview_37b32"></div>
-            <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
+            <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
             <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
             <script type="text/javascript">
 							new TradingView.widget(
@@ -214,7 +215,7 @@
       <div class="row text-center">
         <div class="col-xl-12">
           <p><a href="https://hearthis.at/nivok-spilkommen/drop-zone/" target="blank">Music from Nivok</a></p>
-          <iframe scrolling="no" id="hearthis_at_user_nivok-spilkommen" width="100%" height="250" src="https://app.hearthis.at/nivok-spilkommen/embed/?hcolor=303030" frameborder="0" allowtransparency></iframe>
+          <iframe scrolling="no" id="hearthis_at_user_nivok-spilkommen" width="100%" height="250" src="https://app.hearthis.at/nivok-spilkommen/embed/?hcolor=303030" frameborder="0" allowtransparency="true" style="opacity: 0.5;"></iframe>
         </div>
       </div>
     </div>
@@ -252,7 +253,7 @@
           <div class="col-xl-12 bg-light border-top border-right border-left rounded-top p-2 overflow-auto">
             <p class="d-inline">Best Miner</p>
           </div>
-          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2 overflow-auto">
+          <div class="col-xl-12 border-bottom border-right border-left rounded-bottom p-2" style="overflow: hidden;">
             <p class="d-inline" id="bestMiner">Loading...</p>
           </div>
         </div>
@@ -377,7 +378,7 @@
               <!-- TradingView Widget BEGIN -->
               <div class="tradingview-widget-container" style="margin: 40px auto;">
                 <div class="tradingview-widget-container__widget"></div>
-                <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Rates</span></a> by TradingView</div>
+                <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="blank"><span class="blue-text">BURSTBTC Rates</span></a> by TradingView</div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
 							  {
 							  "symbol": "BITTREX:BURSTBTC",
@@ -420,19 +421,19 @@
     </thead>
     <tbody id="minersTbody">
     <tr>
-      <td style="border-top: 1px solid #dee2e6;">Loading...</td>
+      <td style="border-top: 1px solid gray;">Loading...</td>
     </tr>
     </tbody>
   </table>
-  <p><a href="https://github.com/burst-apps-team" target="_blank">Powered by the Burst Apps Team.</a></p>
-  <p>Copyright © 2019 <a href="https://github.com/harry1453" target="_blank">harry</a>; 2020-2021 <a href="https://github.com/jjos2372" target="_blank">jjos</a></p>
+  <p><a href="https://github.com/burst-apps-team" target="blank">Powered by the Burst Apps Team.</a></p>
+  <p>Copyright © 2019 <a href="https://github.com/harry1453" target="blank">harry</a>; 2020-2021 <a href="https://github.com/jjos2372" target="blank">jjos</a></p>
   <div>
     <!-- hitwebcounter Code START -->
-    <a href="https://www.hitwebcounter.com" target="_blank">Unique visitors<br/>
+    <a href="https://www.hitwebcounter.com" target="blank">Unique visitors<br/>
       <img src="https://hitwebcounter.com/counter/counter.php?page=7701950&style=0001&nbdigits=5&type=ip&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/>
     </a><br/>
     <!-- hitwebcounter Code START -->
-    <a href="https://www.hitwebcounter.com" target="_blank">All visitors<br/>
+    <a href="https://www.hitwebcounter.com" target="blank">All visitors<br/>
       <img src="https://hitwebcounter.com/counter/counter.php?page=7701951&style=0001&nbdigits=5&type=page&initCount=0" title="Total Website Hits" Alt="Web Hits"   border="0" style="opacity:20%"/>
     </a>
   </div>
@@ -633,7 +634,7 @@
         <p>If your deadline is the lowest you mine the new block and win the reward</p>
         <p>Deadline calculation is similar like winning the raffle where the lowest number win<br/>You have a bounch of raffle amoung others, but the chance to win depends how much raffle you have compare to the whole amount of raffle</p>
         <p>The more raffle you have the more chance to win</p>
-        <p>You can plott your HDD with <a href="https://blackpawn.com/tp/">TurboPlotter_0.10.1v</a></p> <br/><br/>https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0
+
         <p>You can plott your HDD with:</p>
         <ul>
           <li><a href="https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0" target="blank">Engraver 2.4.0</a></li>
@@ -641,13 +642,12 @@
         </ul><br/><br/>
 
         <h3>Mining</h3><br/>
-        <p>Download the latest scavenger 1.7.8 miner from here <br/><a href="https://github.com/PoC-Consortium/scavenger/releases">https://github.com/PoC-Consortium/scavenger/releases</a></p>
-        <p>Unzip it</p>
-        <p>Open config.yaml file with text editor (e.g. notepad++) and set the proper configuration</p>
+        <p>Download latest signum-miner and config.yaml from here <br/><a href="https://github.com/signum-network/signum-miner/releases" target="blank">https://github.com/signum-network/signum-miner/releases</a></p>
+        <p>Change the proper lines of config.yaml using text editor</p>
         <p>url: 'http://openburstpool.ddns.net:8126'</p>
         <p>target_deadline: 10000000000</p>
         <p>get_mining_info_interval: 30000</p>
-        <p>timeout: 50000</p>
+        <p>timeout: 240000</p>
         <p>Run miner</p>
 
       </div>
@@ -671,14 +671,14 @@
         <h3>Set Reward Assigment</h3><br/>
         <p>Before start pool mining you should set the pool recipient address to the official pool address <br/> <i>BURST-HW9R-3VCP-Y46P-DA5W8</i></p>
         <p>This is important regarding the reward distribution between pool miners and also precondition of pool mining</p> <br/>
-        <p>Open Your Burst Wallet <br/>Go to <strong>Reward Assigement</strong> <br/> <br/> <img src="./img/BURST_Classic/RA1.png"/> <br/> <br/> </p>
-        <p>Set <strong>Recipient</strong> to <br/> <strong class="poolBurstAddress">BURST-HW9R-3VCP-Y46P-DA5W8</strong> <br/> <br/> <img src="./img/BURST_Classic/RA2.png"/> <br/> </p>
+        <p>Open Your Burst Wallet <br/>Go to <strong>Reward Assigement</strong> <br/> <br/> <img/> <br/> <br/> </p>
+        <p>Set <strong>Recipient</strong> to <br/> <strong class="poolBurstAddress">BURST-HW9R-3VCP-Y46P-DA5W8</strong> <br/> <br/> <img/> <br/> </p>
         <p>Wait <strong>4</strong> blocks </p> <br/><br/>
 
         <h3>Set Name</h3><br/>
         <p>It is recommended to set the name of the account to customize it <br/> You can set it by clicking the No Name Set text on the upper left side of the wallet</p>
-        <img src="./img/BURST_Classic/set_name1.png"/> <br/><br/>
-        <img src="./img/BURST_Classic/set_name2.png"/> <br/><br/>
+        <img/> <br/><br/>
+        <img/> <br/><br/>
 
         <h3>Plotting</h3><br/>
         <p>Plotting free storage capacity on your HDD or SSD is essential for mining</p>
@@ -687,7 +687,7 @@
         <p>If your deadline is the lowest you mine the new block and win the reward</p>
         <p>Deadline calculation is similar like winning the raffle where the lowest number win<br/>You have a bounch of raffle amoung others, but the chance to win depends how much raffle you have compare to the whole amount of raffle</p>
         <p>The more raffle you have the more chance to win</p>
-        <p>You can plott your HDD with <a href="https://blackpawn.com/tp/">TurboPlotter_0.10.1v</a></p> <br/><br/>https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0
+
         <p>You can plott your HDD with:</p>
         <ul>
           <li><a href="https://github.com/PoC-Consortium/engraver/releases/tag/2.4.0" target="blank">Engraver 2.4.0</a></li>
@@ -695,11 +695,12 @@
         </ul><br/><br/>
 
         <h3>Mining</h3><br/>
-        <p>Download the latest scavenger 1.7.8 miner from here <br/><a href="https://github.com/PoC-Consortium/scavenger/releases">https://github.com/PoC-Consortium/scavenger/releases</a></p>
-        <p>Unzip it</p>
-        <p>Open config.yaml file with text editor (e.g. notepad++) and set the proper configuration</p>
+        <p>Download latest signum-miner and config.yaml from here <br/><a href="https://github.com/signum-network/signum-miner/releases">https://github.com/signum-network/signum-miner/releases</a></p>
+        <p>Change the proper lines of config.yaml using text editor</p>
         <p>url: 'http://openburstpool.ddns.net:8126'</p>
         <p>target_deadline: 10000000000</p>
+        <p>get_mining_info_interval: 30000</p>
+        <p>timeout: 240000</p>
         <p>Run miner</p>
 
       </div>
@@ -1023,7 +1024,7 @@
       <div class="modal-body">
         <div class="tradingview-widget-container">
           <div id="tradingview"></div>
-          <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="_blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
+          <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/?exchange=BITTREX" rel="noopener" target="blank"><span class="blue-text">BURSTBTC Chart</span></a> by TradingView</div>
           <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
           <script type="text/javascript">
 					new TradingView.widget(
@@ -1051,7 +1052,7 @@
 
         <div class="tradingview-widget-container" style="margin: 0 auto;">
           <div class="tradingview-widget-container__widget"></div>
-          <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/technicals/" rel="noopener" target="_blank"><span class="blue-text">Technical Analysis for BURSTBTC</span></a> by TradingView</div>
+          <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/BURSTBTC/technicals/" rel="noopener" target="blank"><span class="blue-text">Technical Analysis for BURSTBTC</span></a> by TradingView</div>
           <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
 				  {
 				  "interval": "1m",
