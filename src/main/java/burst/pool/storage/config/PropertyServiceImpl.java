@@ -13,13 +13,25 @@ public class PropertyServiceImpl implements PropertyService {
     private static final Logger logger = LoggerFactory.getLogger(PropertyServiceImpl.class);
 
     private final Properties properties;
+    private final String fileName = "";
 
     public PropertyServiceImpl(String fileName) {
         properties = new Properties();
+        fileName = fileName;
         try {
             properties.load(new FileInputStream(fileName));
         } catch (IOException e) {
             logger.error("Could not load properties from " +  fileName, e);
+        }
+        Props.validateProperties(this);
+    }
+
+    @Override
+    public void reload(String fileName){
+        try {
+            properties.load(new FileInputStream(fileName));
+        } catch (IOException e) {
+            logger.error("Could not load properties from reload() " +  fileName, e);
         }
         Props.validateProperties(this);
     }

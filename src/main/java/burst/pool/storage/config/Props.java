@@ -57,6 +57,7 @@ public class Props {
     public static final Prop<String> siteFaucetURL = new Prop<>("site.faucet", "http://faucet.burst-alliance.org/");
     public static final Prop<String> siteExplorerAccount = new Prop<>("site.explorerAccount", "?action=account&account=");
     public static final Prop<Boolean> siteDisableCache = new Prop<>("site.disableCache", false);
+    public static final Prop<Long> reload = new Prop<>("reload", 60000l);
     public static final Prop<String> apiAllowOrign = new Prop<>("api.allowOrign", "");
 
     public static void validateProperties(PropertyService propertyService) {
@@ -109,7 +110,7 @@ public class Props {
         if (donationRecipient == null) {
             throw new IllegalArgumentException("Illegal donationRecipient (not set)");
         }
-        
+
         int donationPercent = propertyService.getInt(Props.donationPercent);
         if (donationPercent < 1 || donationPercent > 100) {
             throw new IllegalArgumentException("Illegal donationPercent: " + donationPercent + " (Must be 1-100)");
