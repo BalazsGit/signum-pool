@@ -1,14 +1,14 @@
 // Global variables related to pool node connection
 // Test-net - pool node connection
-const TEST_NODE = "http://nivbox.co.uk:9000";
+const TEST_NODE = "http://opensignumpooltestnet.ddns.net:8136/";
 
 // Production - pool node connection
-const NODE = "";
+const NODE = "http://opensignumpool.ddns.net:8126/";
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Test-net - pool name connection
-const TEST_POOL_NAME = "Future Pool";
+const TEST_POOL_NAME = "Open Signum Future Pool Testnet";
 
 // Production - pool name connection
 const POOL_NAME = window.reactInit.globalPoolName;
@@ -40,7 +40,7 @@ const FAUCET_LINK = window.reactInit.globalFaucetLink;
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Test-net - online wallet link
-const TEST_ONLINE_WALLET_LINK = "http://nivbox.co.uk:6876/index.html";
+const TEST_ONLINE_WALLET_LINK = "http://signumwallet.ddns.net:8138/";
 
 // Production - online wallet link
 const ONLINE_WALLET_LINK = window.reactInit.globalNodeLink;
@@ -57,7 +57,7 @@ const PRICE_ENDPOINT_LINK = window.reactInit.signaPriceEndpoint;
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Test-net - pool url
-const TEST_MINING_ADDRESS = "http://nivbox.co.uk:9000";
+const TEST_MINING_ADDRESS = "http://opensignumpooltestnet.ddns.net:8136/";
 
 // Production - pool url
 const MINING_ADDRESS = window.reactInit.globalMiningAddress;
