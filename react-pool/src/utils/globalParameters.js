@@ -1,14 +1,14 @@
 // Global variables related to pool node connection
 // Test-net - pool node connection
-const TEST_NODE = "http://opensignumpooltestnet.ddns.net:8136/";
+const TEST_NODE = "http://nivbox.co.uk:9000";
 
 // Production - pool node connection
-const NODE = "http://opensignumpool.ddns.net:8126/";
+const NODE = "";
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Test-net - pool name connection
-const TEST_POOL_NAME = "Open Signum Future Pool Testnet";
+const TEST_POOL_NAME = "Future Pool";
 
 // Production - pool name connection
 const POOL_NAME = window.reactInit.globalPoolName;
@@ -40,7 +40,7 @@ const FAUCET_LINK = window.reactInit.globalFaucetLink;
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Test-net - online wallet link
-const TEST_ONLINE_WALLET_LINK = "http://signumwallet.ddns.net:8138/";
+const TEST_ONLINE_WALLET_LINK = "http://nivbox.co.uk:6876/index.html";
 
 // Production - online wallet link
 const ONLINE_WALLET_LINK = window.reactInit.globalNodeLink;
@@ -57,7 +57,7 @@ const PRICE_ENDPOINT_LINK = window.reactInit.signaPriceEndpoint;
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Test-net - pool url
-const TEST_MINING_ADDRESS = "http://opensignumpooltestnet.ddns.net:8136/";
+const TEST_MINING_ADDRESS = "http://nivbox.co.uk:9000";
 
 // Production - pool url
 const MINING_ADDRESS = window.reactInit.globalMiningAddress;
@@ -99,7 +99,7 @@ const LARGE_WIDGET_TRADING_LINK = window.reactInit.largeWidgetLink;
 // Global variables that are going to be used by the website
 
 // Set true or false if you wanna use the test-net (demo enviroment) or main-net enviroment of the pool node
-export const useTestNet = true;
+export const useTestNet = process.env.NODE_ENV === 'development'
 
 // Pool node which website will use
 export const NODEToUse = useTestNet && useTestNet === true ? TEST_NODE : NODE;
