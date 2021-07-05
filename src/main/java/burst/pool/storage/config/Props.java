@@ -52,7 +52,7 @@ public class Props {
     public static final Prop<String> siteIconIco = new Prop<>("site.icon.ico", "icon.ico");
     public static final Prop<String> siteIconPng = new Prop<>("site.icon.png", "icon.png");
     public static final Prop<String> siteNodeAddress = new Prop<>("site.nodeAddress", "https://europe.signum.network/");
-    public static final Prop<String> sitePrice = new Prop<>("site.price", "https://min-api.cryptocompare.com/data/price?fsym=BURST&tsyms=USD");
+    public static final Prop<String> sitePrice = new Prop<>("site.price", "https://min-api.cryptocompare.com/data/price?fsym=SIGNA&tsyms=USD");
     public static final Prop<String> siteDiscordLink = new Prop<>("site.discord", "https://discord.gg/ms6eagX");
     public static final Prop<String> siteExplorerURL = new Prop<>("site.explorer", "https://explorer.burstcoin.network/");
     public static final Prop<String> siteFaucetURL = new Prop<>("site.faucet", "");
@@ -133,8 +133,8 @@ public class Props {
         }
 
         float poolFeePercentage = propertyService.getFloat(Props.poolFeePercentage);
-        if (poolFeePercentage < 0f || poolFeePercentage > 1f) {
-            throw new IllegalArgumentException("Illegal poolFeePercentage: " + poolFeePercentage + " (Must be 0-1)");
+        if (poolFeePercentage < -0.1f || poolFeePercentage > 1f) {
+            throw new IllegalArgumentException("Illegal poolFeePercentage: " + poolFeePercentage + " (Must be between -0.1 and 1)");
         }
 
         float poolSoloFeePercentage = propertyService.getFloat(Props.poolSoloFeePercentage);
