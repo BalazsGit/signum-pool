@@ -320,6 +320,7 @@ public class Server extends NanoHTTPD {
                     .replace("{PRICEENDPOINT}", propertyService.getString(Props.sitePrice))
                     .replace("{PUBLICNODE}", propertyService.getString(Props.siteNodeAddress))
                     .replace("{DISCORD}", propertyService.getString(Props.siteDiscordLink))
+                    .replace("{INFO}", propertyService.getString(Props.siteInfo))
                     .replace("{POOL_ACCOUNT}", burstCrypto.getBurstAddressFromPassphrase(propertyService.getString(Props.passphrase)).getFullAddress())
                     .replace("{MININGADDRESS}", propertyService.getString(Props.miningURL))
                     .replace("{MININGGUIDE}", propertyService.getString(Props.miningGuide))
@@ -393,7 +394,10 @@ public class Server extends NanoHTTPD {
             minerJson.addProperty("currentRoundBestDeadline", deadline.toString());
         }
         if (!Objects.equals(miner.getName(), "")) {
-            minerJson.addProperty("name", miner.getName());
+            String name = miner.getName();
+            if(name.length() > 24)
+                name = name.substring(24) + "...";
+            minerJson.addProperty("name", name);
         }
         if (!Objects.equals(miner.getUserAgent(), "")) {
             minerJson.addProperty("userAgent", miner.getUserAgent());
