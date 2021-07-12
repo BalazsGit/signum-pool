@@ -21,10 +21,10 @@ const Footer = () => {
       className={styles.footerContainer}
       component="footer"
     >
-    <Grid item container justify="center" alignItems="center">
+    <Grid item container justifyContent="center" alignItems="center">
             <p><a href="https://hearthis.at/nivok-spilkommen/drop-zone/" target="blank">Music from Nivok</a></p>
          </Grid>
-         <Grid item container justify="center" alignItems="center">
+         <Grid item container justifyContent="center" alignItems="center">
             <iframe
               scrolling="no"
               allowtransparency="true"
