@@ -62,6 +62,7 @@ public class Pool {
     private final AtomicReference<MiningInfo> miningInfo = new AtomicReference<>();
     private final AtomicReference<SignumValue> transactionFee = new AtomicReference<>();
     private final Set<SignumAddress> myRewardRecipients = new HashSet<>();
+    private final AtomicReference<ArrayList<Block>> recentlyForged = new AtomicReference<>();
     private final Set<?> secondaryRewardRecipients[] = new HashSet<?>[Props.passphraseSecondary.length];
 
     public Pool(NodeService nodeService, StorageService storageService, PropertyService propertyService, MinerTracker minerTracker) {
@@ -98,7 +99,7 @@ public class Pool {
     }
 
     private Disposable refreshMiningInfoThread() {
-        return nodeService.getMiningInfo().subscribeOn(SignumUtils.defaultBurstNodeServiceScheduler())
+        return nodeService.getMiningInfo().subscribeOn(SignumUtils.defaultNodeServiceScheduler())
                 .retry()
                 .subscribeOn(Schedulers.io())
                 .subscribe(this::onMiningInfo, e -> onMiningInfoError(e, true));
@@ -226,6 +227,19 @@ public class Pool {
                         }
                     }
                 }
+                
+                ArrayList<Block> ourNewBlocks = new ArrayList<>();
+                try {
+                    Block[] blocks = nodeService.getBlocks(1, propertyService.getInt(Props.processLag) - 1).blockingGet();
+                    for(Block b : blocks) {
+                        if(myRewardRecipients.contains(b.getGenerator()))
+                            ourNewBlocks.add(b);
+                    }
+                }
+                catch (Exception e) {
+                    logger.error("Could not get the list of recent blocks", e);
+                }
+                recentlyForged.set(ourNewBlocks);
 
                 List<? extends Submission> submissions = transactionalStorageService.getBestSubmissionsForBlock(block.getHeight());
                 boolean won = false;
@@ -259,6 +273,13 @@ public class Pool {
                 processBlockSemaphore.release();
             }
         });
+    }
+    
+    /**
+     * @return the recently forged blocks, not yet processed
+     */
+    public ArrayList<Block> getRecentlyForged(){
+        return recentlyForged.get();
     }
 
     private void onProcessedBlock(StorageService transactionalStorageService, boolean actuallyProcessed) {
@@ -295,6 +316,16 @@ public class Pool {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return;
+        }
+        
+        if(newMiningInfo == null) {
+            // we are booting the pool, lets get one
+            try {
+                newMiningInfo = nodeService.getMiningInfoSingle().blockingGet();
+            }
+            catch (Exception e) {
+                logger.error("Could not get the mining info from node", e);
+            }
         }
         
         bestSubmission.set(null);

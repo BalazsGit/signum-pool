@@ -136,5 +136,7 @@
   "configurable": "Konfigurowalny",
   "minersSharingLess": "Górnicy dzielący mniej niż 20%",
   "languageName": "Polskie",
-  "chooseLanguage": "Wybierz język"
+  "chooseLanguage": "Wybierz język",
+  "noBlocksWon": "Nie ma wygranych bloków, zdobądź je!",
+  "processing": "Przetwarzanie..."
 }
