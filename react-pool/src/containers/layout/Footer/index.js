@@ -34,8 +34,13 @@ const Footer = () => {
           <WidgetBot
              server="777095251806388249"
              channel="777104740626464829"
-             height={500}
-             width="50%"
+             style={{
+                opacity: "0.5",
+                boxSizing: "border-box",
+                height: "500px",
+                width: "50%",
+                minWidth: "800px",
+             }}
           />
         </Grid>
       </Grid>
@@ -56,6 +61,7 @@ const Footer = () => {
                   boxSizing: "border-box",
                   height: "250px",
                   width: "50%",
+                  minWidth: "800px",
                  }}
               ></iframe>
         </Grid>
