@@ -12,6 +12,7 @@
     "@testing-library/jest-dom": "^5.13.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
+    "@widgetbot/react-embed": "^1.4.0",
     "axios": "^0.21.1",
     "clsx": "^1.1.1",
     "copy-to-clipboard": "^3.3.1",
