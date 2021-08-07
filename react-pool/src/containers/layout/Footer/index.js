@@ -18,12 +18,11 @@ const Footer = () => {
   return (
     <Grid
       direction="column"
-      justifyContent="flex-start"
-      alignItems="flex-start"
+      justifyContent="center"
+      alignItems="center"
       container
       className={styles.footerContainer}
       component="footer"
-      spacing={2}
     >
 
       <Grid item container justifyContent="center" alignItems="center">
@@ -38,8 +37,9 @@ const Footer = () => {
                 opacity: "0.5",
                 boxSizing: "border-box",
                 height: "500px",
-                width: "50%",
-                minWidth: "800px",
+                width: "100%",
+                maxWidth: "600px",
+                marginBottom: "25px",
              }}
           />
         </Grid>
@@ -60,8 +60,9 @@ const Footer = () => {
                   opacity: "0.5",
                   boxSizing: "border-box",
                   height: "250px",
-                  width: "50%",
-                  minWidth: "800px",
+                  width: "100%",
+                  maxWidth: "600px",
+                  marginBottom: "25px",
                  }}
               ></iframe>
         </Grid>
