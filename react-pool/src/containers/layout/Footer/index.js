@@ -38,7 +38,7 @@ const Footer = () => {
                 boxSizing: "border-box",
                 height: "500px",
                 width: "100%",
-                maxWidth: "600px",
+                maxWidth: "1000px",
                 marginBottom: "25px",
              }}
           />
@@ -61,7 +61,7 @@ const Footer = () => {
                   boxSizing: "border-box",
                   height: "250px",
                   width: "100%",
-                  maxWidth: "600px",
+                  maxWidth: "1000px",
                   marginBottom: "25px",
                  }}
               ></iframe>
