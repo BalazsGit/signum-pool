@@ -30,8 +30,8 @@ public class Miner implements Payable {
     private AtomicReference<Double> boost = new AtomicReference<>();
     private AtomicReference<Double> boostPool = new AtomicReference<>();
     private AtomicReference<Double> totalCapacityEffective = new AtomicReference<>();
-    private BigInteger SumDeadline = BigInteger.ZERO;
-    private BigInteger AvgDeadline = BigInteger.ZERO;
+    private BigInteger sumDeadline = BigInteger.ZERO;
+    private BigInteger avgDeadline = BigInteger.ZERO;
 
     public Miner(MinerMaths minerMaths, PropertyService propertyService, SignumAddress address, MinerStore store) {
         this.minerMaths = minerMaths;
@@ -104,10 +104,10 @@ public class Miner implements Payable {
                 if(0 < deadlinesCount){
 
                     int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
-                    BigInteger maxDeadlineThreshold = AvgDeadline.multiply(BigInteger.valueOf(deadlineThresholdFactor));
+                    BigInteger maxDeadlineThreshold = avgDeadline.multiply(BigInteger.valueOf(deadlineThresholdFactor));
 
-                    AvgDeadline = SumDeadline.divide(BigInteger.valueOf(deadlinesCount));
-                    if(AvgDeadline.compareTo(BigInteger.ZERO) == 1) {
+                    avgDeadline = sumDeadline.divide(BigInteger.valueOf(deadlinesCount));
+                    if(avgDeadline.compareTo(BigInteger.ZERO) == 1) {
                         if(deadline.getDeadline().compareTo(maxDeadlineThreshold) == 1) {
                             deadline.setDeadline(maxDeadlineThreshold);
                         }
@@ -116,7 +116,7 @@ public class Miner implements Payable {
                 deadlineToSave = deadline;
             }
             else{
-                SumDeadline = SumDeadline.add(deadline.getDeadline());
+                sumDeadline = sumDeadline.add(deadline.getDeadline());
             }
         }
         nconf.set(Math.min(nAvg+processLag, deadlinesCount));
