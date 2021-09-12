@@ -57,7 +57,7 @@ Donations are very welcome at [S-JJQS-MMA4-GHB4-4ZNZU](https://explorer.burstcoi
 
 -   https://pool.signumcoin.ro
 -   http://signa.voiplanparty.com:8124
--   http://openburstpool.ddns.net:8126
+-   http://opensignumpool.ddns.net:8126
 -   http://signumpool.de:8080
 -   https://signumpool.com
 -   https://signapool.notallmine.net
