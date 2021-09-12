@@ -47,7 +47,6 @@ public class Miner implements Payable {
             Deadline latestDeadline = storeDeadlines.get(storeDeadlines.size()-1);
             boost.set(latestDeadline.getBoost());
             boostPool.set(latestDeadline.getBoostPool());
-            SumDeadline.add(SumDeadline);
         }
         else {
             boost.set(0.125);
@@ -115,6 +114,9 @@ public class Miner implements Payable {
                     }
                 }
                 deadlineToSave = deadline;
+            }
+            else{
+                SumDeadline = SumDeadline.add(deadline.getDeadline());
             }
         }
         nconf.set(Math.min(nAvg+processLag, deadlinesCount));
