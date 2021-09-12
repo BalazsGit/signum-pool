@@ -122,6 +122,11 @@ public class Props {
             throw new IllegalArgumentException("Illegal maxDeadline: " + maxDeadline + " (Must be > 0)");
         }
 
+        int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
+        if (deadlineThresholdFactor < 1) {
+            throw new IllegalArgumentException("Illegal deadlineThresholdFactor: " + deadlineThresholdFactor + " (Must be > 0)");
+        }
+
         int processLag = propertyService.getInt(Props.processLag);
         if (processLag < 1) {
             throw new IllegalArgumentException("Illegal processLag: " + processLag + " (Must be > 1)");
