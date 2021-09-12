@@ -62,6 +62,8 @@ public class Miner implements Payable {
         sumDeadline = BigInteger.ZERO;
         avgDeadline = BigInteger.ZERO;
 
+        int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
+
         BigInteger hitSum = BigInteger.ZERO;
         BigInteger hitSumBoost = BigInteger.ZERO;
         Deadline deadlineToSave = null;
@@ -106,7 +108,6 @@ public class Miner implements Payable {
             if(deadline.getHeight() == lastBlockHeight - 1) {
                 if(0 < deadlinesCount-1) {
 
-                    int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
                     BigInteger maxDeadlineThreshold = avgDeadline.multiply(BigInteger.valueOf(deadlineThresholdFactor));
 
                     avgDeadline = sumDeadline.divide(BigInteger.valueOf(deadlinesCount-1));
