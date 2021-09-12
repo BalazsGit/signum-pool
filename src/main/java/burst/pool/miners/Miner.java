@@ -109,7 +109,7 @@ public class Miner implements Payable {
                     int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
                     BigInteger maxDeadlineThreshold = avgDeadline.multiply(BigInteger.valueOf(deadlineThresholdFactor));
 
-                    avgDeadline = sumDeadline.divide(BigInteger.valueOf(deadlinesCount));
+                    avgDeadline = sumDeadline.divide(BigInteger.valueOf(deadlinesCount-1));
                     if(avgDeadline.compareTo(BigInteger.ZERO) == 1) {
                         if(deadline.getDeadline().compareTo(maxDeadlineThreshold) == 1) {
                             deadline.setDeadline(maxDeadlineThreshold);
