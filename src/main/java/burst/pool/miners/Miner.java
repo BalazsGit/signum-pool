@@ -65,7 +65,7 @@ public class Miner implements Payable {
         int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
         BigInteger maxDeadlineThreshold = BigInteger.ZERO;
 
-            BigInteger hitSum = BigInteger.ZERO;
+        BigInteger hitSum = BigInteger.ZERO;
         BigInteger hitSumBoost = BigInteger.ZERO;
         Deadline deadlineToSave = null;
 
