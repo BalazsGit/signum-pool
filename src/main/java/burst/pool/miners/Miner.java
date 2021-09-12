@@ -62,16 +62,15 @@ public class Miner implements Payable {
         sumDeadline = BigInteger.ZERO;
         avgDeadline = BigInteger.ZERO;
 
-        int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
         BigInteger maxDeadlineThreshold = BigInteger.ZERO;
-
         BigInteger hitSum = BigInteger.ZERO;
         BigInteger hitSumBoost = BigInteger.ZERO;
+        BigInteger hitSumShared = BigInteger.ZERO;
+
         Deadline deadlineToSave = null;
 
-        BigInteger hitSumShared = BigInteger.ZERO;
         int deadlinesSharedCount = 0;
-
+        int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
         int nAvg = propertyService.getInt(Props.nAvg);
         int processLag = propertyService.getInt(Props.processLag);
         long lastBlockHeight = processBlockHeight + processLag;
@@ -87,10 +86,12 @@ public class Miner implements Payable {
                 // their miner even on the first submitted deadline.
                 continue;
             }
+
             if(deadline.getHeight() < processBlockHeight - nAvg) {
                 it.remove();
                 continue;
             }
+
             deadlinesCount++;
             BigInteger hit = deadline.calculateHit();
 
@@ -107,15 +108,14 @@ public class Miner implements Payable {
             }
 
             if(deadline.getHeight() == lastBlockHeight - 1) {
+                // limit max deadline value to prevent capacity drop in case of statistically too high deadline value
                 if(0 < deadlinesCount-1) {
 
                     avgDeadline = sumDeadline.divide(BigInteger.valueOf(deadlinesCount-1));
                     maxDeadlineThreshold = avgDeadline.multiply(BigInteger.valueOf(deadlineThresholdFactor));
 
-                    if(avgDeadline.compareTo(BigInteger.ZERO) == 1) {
-                        if(deadline.getDeadline().compareTo(maxDeadlineThreshold) == 1) {
+                    if(maxDeadlineThreshold.compareTo(BigInteger.ZERO) == 1 && deadline.getDeadline().compareTo(maxDeadlineThreshold) == 1) {
                             deadline.setDeadline(maxDeadlineThreshold);
-                        }
                     }
                 }
                 deadlineToSave = deadline;
