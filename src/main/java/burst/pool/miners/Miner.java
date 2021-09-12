@@ -59,6 +59,9 @@ public class Miner implements Payable {
 
         long processBlockHeight = block.getHeight();
 
+        sumDeadline = BigInteger.ZERO;
+        avgDeadline = BigInteger.ZERO;
+
         BigInteger hitSum = BigInteger.ZERO;
         BigInteger hitSumBoost = BigInteger.ZERO;
         Deadline deadlineToSave = null;
