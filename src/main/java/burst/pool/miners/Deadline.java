@@ -3,7 +3,7 @@ package burst.pool.miners;
 import java.math.BigInteger;
 
 public class Deadline {
-    private final BigInteger deadline;
+    private BigInteger deadline;
     private final BigInteger baseTarget;
     private final int sharePercent;
     private final long height;
@@ -30,11 +30,11 @@ public class Deadline {
     public long getHeight() {
         return height;
     }
-    
+
     public int getSharePercent() {
       return sharePercent;
     }
-    
+
     public double getBoost() {
         if(boost == 0.0)
             return 1.0;
@@ -46,9 +46,13 @@ public class Deadline {
             return getBoost();
         return boostPool;
     }
-    
+
     public void setBoostPool(double boostPool) {
         this.boostPool = boostPool;
+    }
+
+    public void setDeadline(BigInteger deadline) {
+        this.deadline = deadline;
     }
 
     public BigInteger calculateHit() {

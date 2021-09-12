@@ -5,11 +5,11 @@ import signumj.entity.SignumAddress;
 import java.util.Objects;
 
 public class Props {
-    public static final Prop<Integer> serverPort = new Prop<>("serverPort", 80); // Must be > 0, < 2^16    
+    public static final Prop<Integer> serverPort = new Prop<>("serverPort", 80); // Must be > 0, < 2^16
     public static final Prop<String> letsencryptPath = new Prop<>("letsencryptPath", "");
     public static final Prop<String> keyStorePath = new Prop<>("keystorePath", "cert");
     public static final Prop<String> keyStorePass = new Prop<>("keystorePass", "certpass");
-    
+
     public static final Prop<String> nodeAddresses = new Prop<>("nodeAddresses", ""); // Must be non-empty
     public static final Prop<String> poolName = new Prop<>("poolName", "");
 
@@ -46,6 +46,7 @@ public class Props {
     public static final Prop<Integer> minPayoutsPerTransaction = new Prop<>("minPayoutsPerTransaction", 10); // Must be 1-64
     public static final Prop<Integer> payoutRetryCount = new Prop<>("payoutRetryCount", 3);
     public static final Prop<Integer> submitNonceRetryCount = new Prop<>("submitNonceRetryCount", 3);
+    public static final Prop<Integer> deadlineThresholdFactor = new Prop<>("deadlineThresholdFactor", 15);
 
     public static final Prop<String> miningURL = new Prop<>("miningURL", "http://nivbox.co.uk:9000");
     public static final Prop<String> miningGuide = new Prop<>("site.miningGuide", "https://signum.network/mining.html");
@@ -63,7 +64,7 @@ public class Props {
     public static final Prop<String> siteExplorerURL = new Prop<>("site.explorer", "https://explorer.signum.network/");
     public static final Prop<String> siteFaucetURL = new Prop<>("site.faucet", "");
     public static final Prop<String> siteExplorerAccount = new Prop<>("site.explorerAccount", "?action=account&account=");
-    
+
     public static final Prop<String> sitePrimaryColor = new Prop<>("site.primaryColor", "#0099ff");
     public static final Prop<String> sitePrimaryLightColor = new Prop<>("site.primaryLightColor", "#5fb8ff");
     public static final Prop<String> sitePrimaryDarkColor = new Prop<>("site.primaryDarkColor", "#0066ff");
@@ -71,7 +72,7 @@ public class Props {
     public static final Prop<String> siteSecondaryLightColor = new Prop<>("site.secondaryLightColor", "#274187");
     public static final Prop<String> siteSecondaryDarkColor = new Prop<>("site.secondaryDarkColor", "#021851");
     public static final Prop<String> siteGraphColor = new Prop<>("site.graphColor", "#2451B7");
-    
+
     public static final Prop<String> siteSeoDescription = new Prop<>("site.seoDescription", "");
     public static final Prop<String> siteSeoImageUrl = new Prop<>("site.seoImageUrl", "");
 
@@ -82,7 +83,7 @@ public class Props {
     public static final Prop<String> siteMiniTradingLink = new Prop<>("site.miniTradingLink", "https://bit.ly/2UEd4RB");
     public static final Prop<String> siteLargeTradingLink = new Prop<>("site.largeTradingLink", "https://bit.ly/3A5BIep");
     public static final Prop<String> siteGoogleTracking = new Prop<>("site.googleTrackingID", "https://bit.ly/3A5BIep");
-    
+
     public static final Prop<Boolean> siteDisableCache = new Prop<>("site.disableCache", false);
     public static final Prop<String> apiAllowOrign = new Prop<>("api.allowOrign", "");
     public static void validateProperties(PropertyService propertyService) {
@@ -140,7 +141,7 @@ public class Props {
         if (donationRecipient == null) {
             throw new IllegalArgumentException("Illegal donationRecipient (not set)");
         }
-        
+
         int donationPercent = propertyService.getInt(Props.donationPercent);
         if (donationPercent < 1 || donationPercent > 100) {
             throw new IllegalArgumentException("Illegal donationPercent: " + donationPercent + " (Must be 1-100)");
