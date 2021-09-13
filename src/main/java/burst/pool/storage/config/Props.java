@@ -46,7 +46,7 @@ public class Props {
     public static final Prop<Integer> minPayoutsPerTransaction = new Prop<>("minPayoutsPerTransaction", 10); // Must be 1-64
     public static final Prop<Integer> payoutRetryCount = new Prop<>("payoutRetryCount", 3);
     public static final Prop<Integer> submitNonceRetryCount = new Prop<>("submitNonceRetryCount", 3);
-    public static final Prop<Integer> deadlineThresholdFactor = new Prop<>("deadlineThresholdFactor", 15);
+    public static final Prop<Integer> deadlineThresholdFactor = new Prop<>("deadlineThresholdFactor", 18);
 
     public static final Prop<String> miningURL = new Prop<>("miningURL", "http://nivbox.co.uk:9000");
     public static final Prop<String> miningGuide = new Prop<>("site.miningGuide", "https://signum.network/mining.html");
