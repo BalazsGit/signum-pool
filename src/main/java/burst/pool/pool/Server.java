@@ -66,6 +66,7 @@ public class Server extends NanoHTTPD {
         mimeTypesAllowed.put("json", "application/json");
         mimeTypesAllowed.put("map", "application/json");
         mimeTypesAllowed.put("txt", "text/plain");
+        mimeTypesAllowed.put("xml", "application/xml");
     }
 
     private final StorageService storageService;
@@ -222,17 +223,23 @@ public class Server extends NanoHTTPD {
         if (session.getUri().startsWith("/api/getMiners")) {
             JsonArray minersJson = new JsonArray();
             AtomicReference<Double> poolCapacity = new AtomicReference<>(0d);
+            AtomicReference<Double> poolSharedCapacity = new AtomicReference<>(0d);
+            AtomicReference<Double> poolTotalEffecitveCapacity = new AtomicReference<>(0d);
             storageService.getMinersFiltered()
             .stream()
             .sorted(Comparator.comparing(Miner::getSharedCapacity).reversed())
             .forEach(miner -> {
                 poolCapacity.updateAndGet(v -> v + miner.getTotalCapacity());
+                poolSharedCapacity.updateAndGet(v -> v + miner.getSharedCapacity());
+                poolTotalEffecitveCapacity.updateAndGet(v -> v + miner.getTotalEffectiveCapacity());
                 minersJson.add(minerToJson(miner, false));
             });
             JsonObject jsonObject = new JsonObject();
             jsonObject.add("miners", minersJson);
             jsonObject.addProperty("explorer", propertyService.getString(Props.siteExplorerURL) + propertyService.getString(Props.siteExplorerAccount));
             jsonObject.addProperty("poolCapacity", poolCapacity.get());
+            jsonObject.addProperty("poolSharedCapacity", poolSharedCapacity.get());
+            jsonObject.addProperty("poolTotalEffectiveCapacity", poolTotalEffecitveCapacity.get());
             return jsonObject.toString();
         } else if (session.getUri().startsWith("/api/getMiner/")) {
             SignumAddress minerAddress = SignumAddress.fromEither(session.getUri().substring(14));
@@ -286,7 +293,7 @@ public class Server extends NanoHTTPD {
             return response.toString();
         } else if (session.getUri().startsWith("/api/getWonBlocks")) {
             JsonArray wonBlocks = new JsonArray();
-            
+
             // Get possible pending blocks
             ArrayList<Block> recentlyForged = pool.getRecentlyForged();
             if(recentlyForged != null) {
@@ -306,7 +313,7 @@ public class Server extends NanoHTTPD {
                     wonBlocks.add(wonBlockJson);
                 }
             }
-            
+
             storageService.getWonBlocks(100)
             .forEach(wonBlock -> {
 
@@ -346,7 +353,7 @@ public class Server extends NanoHTTPD {
             isPath = true;
             mimeType = MIME_HTML;
         }
-        else {        
+        else {
             for (String extension : mimeTypesAllowed.keySet()) {
                 if (uri.endsWith(extension)) {
                     mimeType = mimeTypesAllowed.get(extension);
@@ -457,7 +464,7 @@ public class Server extends NanoHTTPD {
 
         return httpResponse;
     }
-    
+
     private String getMinerName(Miner miner) {
         if (miner != null && miner.getName() != null && miner.getName().length() > 0) {
             String name = miner.getName();
