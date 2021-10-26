@@ -34,7 +34,7 @@ public class MinerTracker {
     private final SignumCrypto signumCrypto = SignumCrypto.getInstance();
     private final NodeService nodeService;
     private final AtomicBoolean currentlyProcessingBlock = new AtomicBoolean(false);
-    
+
     private final Semaphore payoutSemaphore = new Semaphore(1);
 
     public MinerTracker(NodeService nodeService, PropertyService propertyService) {
@@ -46,10 +46,10 @@ public class MinerTracker {
         // waitUntilNotProcessingBlock();
         Miner miner = getOrCreate(storageService, minerAddress);
         miner.setUserAgent(userAgent);
-        
+
         long baseTarget = miningInfo.getBaseTarget();
         int blockHeight = (int) miningInfo.getHeight();
-        
+
         if(miner.getCommitmentHeight() != blockHeight) {
             try {
                 // Get the latest available and not an explicit block height because this can generate exceptions
@@ -62,30 +62,30 @@ public class MinerTracker {
                 onMinerAccountError(e);
             }
         }
-        
+
         double commitmentFactor = 1.0;
         if(blockHeight >= propertyService.getInt(Props.pocPlusBlock)) {
             // PoC+ logic
             SignumValue commitment = miner.getCommitment();
-            
-            commitmentFactor = getCommitmentFactor(commitment, miningInfo.getAverageCommitmentNQT());            
+
+            commitmentFactor = getCommitmentFactor(commitment, miningInfo.getAverageCommitmentNQT());
         }
         miner.processNewDeadline(new Deadline(deadline, BigInteger.valueOf(baseTarget), miner.getSharePercent(), blockHeight,
                 commitmentFactor, commitmentFactor));
-        
-        // Now the effective deadline 
+
+        // Now the effective deadline
         double newDeadline = deadline.longValue()/commitmentFactor;
         deadline = BigInteger.valueOf((long)newDeadline);
-        
+
         return deadline;
     }
-    
+
     public static double getCommitmentFactor(SignumValue commitment, long averageCommitment) {
         double commitmentFactor = ((double)commitment.longValue())/averageCommitment;
         commitmentFactor = Math.pow(commitmentFactor, 0.4515449935);
         commitmentFactor = Math.min(8.0, commitmentFactor);
         commitmentFactor = Math.max(0.125, commitmentFactor);
-        
+
         return commitmentFactor;
     }
 
@@ -101,7 +101,7 @@ public class MinerTracker {
         logger.info("Block won! Block height: " + block.getHeight() + ", forger: " + block.getGenerator().getFullAddress());
 
         SignumValue reward = blockReward;
-        
+
         Miner winningMiner = getOrCreate(transactionalStorageService, block.getGenerator());
 
         // Take pool fee
@@ -110,12 +110,12 @@ public class MinerTracker {
             // charge the solo fee
             feePercentage = propertyService.getFloat(Props.poolSoloFeePercentage);
         }
-        
+
         SignumValue poolTake = reward.multiply(feePercentage);
         reward = reward.subtract(poolTake);
         PoolFeeRecipient poolFeeRecipient = transactionalStorageService.getPoolFeeRecipient();
         poolFeeRecipient.increasePending(poolTake, null);
-        
+
         PoolFeeRecipient donationRecipient = transactionalStorageService.getPoolDonationRecipient();
 
         // Take winner share
@@ -123,7 +123,7 @@ public class MinerTracker {
         SignumValue winnerTake = reward.multiply(winnerShare);
         winningMiner.increasePending(winnerTake, donationRecipient);
         reward = reward.subtract(winnerTake);
-        
+
         transactionalStorageService.addWonBlock(new WonBlock((int) block.getHeight(), block.getId(), block.getGenerator(), block.getNonce(), blockReward, reward));
 
         List<Miner> miners = transactionalStorageService.getMiners();
@@ -153,14 +153,14 @@ public class MinerTracker {
     }
 
     private void updateMiners(StorageService transactionalStorageService, Block block) {
-        
+
         // prune old deadlines from the DB
         long blockHeight = block.getHeight();
         long lastHeight = blockHeight - propertyService.getInt(Props.nAvg);
         transactionalStorageService.removeDeadlinesBefore(lastHeight);
-        
+
         List<Miner> miners = transactionalStorageService.getMiners();
-        
+
         double poolCapacity = 0d;
         for(Miner miner : miners) {
             // Update each miner's effective capacity
@@ -176,7 +176,7 @@ public class MinerTracker {
         }
     }
 
-    public void payoutIfNeeded(StorageService storageService, SignumValue transactionFee) {
+    public void payoutIfNeeded(StorageService storageService, SignumValue baseTxFee, SignumValue appendageFee) {
         logger.info("Attempting payout...");
         if (payoutSemaphore.availablePermits() == 0) {
             logger.info("Cannot payout - payout is already in progress.");
@@ -200,7 +200,7 @@ public class MinerTracker {
         if (poolFeeRecipient.getMinimumPayout().compareTo(poolFeeRecipient.getPending()) <= 0) {
             payableMinersSet.add(poolFeeRecipient);
         }
-        
+
         PoolFeeRecipient poolDonationRecipient = storageService.getPoolDonationRecipient();
         if (poolDonationRecipient.getMinimumPayout().compareTo(poolDonationRecipient.getPending()) <= 0) {
             payableMinersSet.add(poolDonationRecipient);
@@ -213,6 +213,8 @@ public class MinerTracker {
         }
 
         Payable[] payableMiners = payableMinersSet.size() <= 64 ? payableMinersSet.toArray(new Payable[0]) : Arrays.copyOfRange(payableMinersSet.toArray(new Payable[0]), 0, 64);
+
+        SignumValue transactionFee = baseTxFee.add(appendageFee.multiply(payableMiners.length / 10));
 
         SignumValue transactionFeePaidPerMiner = transactionFee.divide(payableMiners.length);
         logger.info("TFPM is {}", transactionFeePaidPerMiner.toNQT());
@@ -242,7 +244,7 @@ public class MinerTracker {
         else {
             transaction = nodeService.generateMultiOutTransaction(publicKey, transactionFee, 1440, recipients);
         }
-        
+
         compositeDisposable.add(transaction
         .retry(propertyService.getInt(Props.payoutRetryCount))
         .map(response -> signumCrypto.signTransaction(propertyService.getString(Props.passphrase), response))

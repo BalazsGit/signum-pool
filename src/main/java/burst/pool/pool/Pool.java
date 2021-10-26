@@ -5,6 +5,8 @@ import signumj.entity.SignumAddress;
 import signumj.entity.SignumValue;
 import signumj.entity.response.Account;
 import signumj.entity.response.Block;
+import signumj.entity.response.Constants.TransactionType;
+import signumj.entity.response.Constants.TransactionType.Subtype;
 import signumj.entity.response.FeeSuggestion;
 import signumj.entity.response.MiningInfo;
 import signumj.entity.response.Transaction;
@@ -41,7 +43,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Pool {
     private static final Logger logger = LoggerFactory.getLogger(Pool.class);
-    
+
     public static final double LN_FACTOR =  240.0/Math.log(240.0);
 
     private final NodeService nodeService;
@@ -62,6 +64,7 @@ public class Pool {
     private final AtomicReference<BigInteger> bestDeadline = new AtomicReference<>();
     private final AtomicReference<MiningInfo> miningInfo = new AtomicReference<>();
     private final AtomicReference<SignumValue> transactionFee = new AtomicReference<>();
+    private final AtomicReference<SignumValue> appendageFee = new AtomicReference<>();
     private final Set<SignumAddress> myRewardRecipients = new HashSet<>();
     private final AtomicReference<ArrayList<Block>> recentlyForged = new AtomicReference<>();
     private final Set<?> secondaryRewardRecipients[] = new HashSet<?>[Props.passphraseSecondary.length];
@@ -73,6 +76,7 @@ public class Pool {
         this.nodeService = nodeService;
         this.version = version;
         this.transactionFee.set(SignumValue.fromSigna(0.1));
+        this.appendageFee.set(SignumValue.fromNQT(0));
         disposables.add(refreshMiningInfoThread());
         disposables.add(processBlocksThread());
         for (int i = 0; i < secondaryRewardRecipients.length; i++) {
@@ -132,16 +136,16 @@ public class Pool {
                 if (miningInfo.get() == null || processBlockSemaphore.availablePermits() == 0 || miningInfo.get().getHeight() - 1 <= storageService.getLastProcessedBlock() + propertyService.getInt(Props.processLag)) {
                     return;
                 }
-                
+
                 // Leave the process blocks only a minute after starting a new round
                 // TODO: add a configuration for this
                 Duration roundDuration = Duration.between(roundStartTime.get(), Instant.now());
                 if(roundDuration.toMillis() < 60000) {
                     return;
                 }
-                
+
                 propertyService.reloadIfModified();
-                
+
                 logger.info("Started processing block {}", storageService.getLastProcessedBlock() + 1);
 
                 try {
@@ -159,18 +163,30 @@ public class Pool {
                 }
 
                 minerTracker.setCurrentlyProcessingBlock(true);
-                
+
                 FeeSuggestion feeSuggestion = nodeService.suggestFee().blockingGet();
                 this.transactionFee.set(feeSuggestion.getStandardFee());
+
+                TransactionType[] txTypes = nodeService.getConstants().blockingGet().getTransactionTypes();
+                for(TransactionType type : txTypes) {
+                    if(type.getType() == 0) {
+                        for(Subtype subtype : type.getSubtypes()) {
+                            if(subtype.getSubtype() == 1) {
+                                this.appendageFee.set(subtype.getMinimumFeeAppendages());
+                                break;
+                            }
+                        }
+                    }
+                }
 
                 List<StoredSubmission> storedSubmissions = transactionalStorageService.getBestSubmissionsForBlock(transactionalStorageService.getLastProcessedBlock() + 1);
                 if (storedSubmissions == null || storedSubmissions.isEmpty()) {
                     onProcessedBlock(transactionalStorageService, false);
                     return;
                 }
-                
+
                 Block block = nodeService.getBlock(transactionalStorageService.getLastProcessedBlock() + 1).blockingGet();
-                
+
                 // Check for commands from miners (always to the primary address)
                 SignumAddress poolAddress = burstCrypto.getAddressFromPassphrase(propertyService.getString(Props.passphrase));
                 // Having 100 should be enough to not get past it
@@ -182,7 +198,7 @@ public class Pool {
                     Miner miner = storageService.getMiner(tx.getSender());
                     if(miner == null)
                         continue;
-                    
+
                     if(tx.getAppendages()!=null && tx.getAppendages().length > 0 && tx.getRecipient().equals(poolAddress)) {
                         try {
                             String message = null;
@@ -196,7 +212,7 @@ public class Pool {
                                 StringTokenizer tokens = new StringTokenizer(message, " ");
                                 while(tokens.hasMoreElements()) {
                                     String cmd = tokens.nextToken();
-                                    
+
                                     if(cmd.equals("share") && tokens.hasMoreTokens()) {
                                         // Allows to configure the amount a miner wants to "share" with the pool
                                         int sharePercent = Integer.parseInt(tokens.nextToken());
@@ -229,7 +245,7 @@ public class Pool {
                         }
                     }
                 }
-                
+
                 ArrayList<Block> ourNewBlocks = new ArrayList<>();
                 try {
                     Block[] blocks = nodeService.getBlocks(1, propertyService.getInt(Props.processLag) - 1).blockingGet();
@@ -276,7 +292,7 @@ public class Pool {
             }
         });
     }
-    
+
     /**
      * @return the recently forged blocks, not yet processed
      */
@@ -297,14 +313,14 @@ public class Pool {
         minerTracker.setCurrentlyProcessingBlock(false);
         processBlockSemaphore.release();
         if (actuallyProcessed) {
-            minerTracker.payoutIfNeeded(storageService, transactionFee.get());
+            minerTracker.payoutIfNeeded(storageService, transactionFee.get(), appendageFee.get());
         }
-        
+
         logger.info("Finished processing block {}", storageService.getLastProcessedBlock());
     }
 
     private void resetRound(MiningInfo newMiningInfo) {
-        
+
         // Traffic flow - we want to stop new requests but let old ones finish before we go ahead.
         try {
             // Lock the reset round semaphore to stop accepting new requests
@@ -319,7 +335,7 @@ public class Pool {
             Thread.currentThread().interrupt();
             return;
         }
-        
+
         if(newMiningInfo == null) {
             // we are booting the pool, lets get one
             try {
@@ -329,7 +345,7 @@ public class Pool {
                 logger.error("Could not get the mining info from node", e);
             }
         }
-        
+
         bestSubmission.set(null);
         bestDeadline.set(BigInteger.valueOf(Long.MAX_VALUE));
         roundStartTime.set(Instant.now());
@@ -342,7 +358,7 @@ public class Pool {
             SignumAddress[] rewardRecipients = nodeService.getAccountsWithRewardRecipient(primaryAddress).blockingGet();
             myRewardRecipients.clear();
             myRewardRecipients.addAll(Arrays.asList(rewardRecipients));
-            
+
             // Next for the secondary accounts (if any)
             for (int i = 0; i < Props.passphraseSecondary.length; i++) {
                 @SuppressWarnings("unchecked")
@@ -350,15 +366,15 @@ public class Pool {
                 String passphrase = propertyService.getString(passphraseProp);
                 if(passphrase == null || passphrase.length() == 0)
                     break;
-                
+
                 SignumAddress secondaryAddress = burstCrypto.getAddressFromPassphrase(passphrase);
                 rewardRecipients = nodeService.getAccountsWithRewardRecipient(secondaryAddress).blockingGet();
-                
+
                 @SuppressWarnings("unchecked")
                 Set<SignumAddress> mySecondaryRewardRecipients = (Set<SignumAddress>) secondaryRewardRecipients[i];
                 mySecondaryRewardRecipients.clear();
                 mySecondaryRewardRecipients.addAll(Arrays.asList(rewardRecipients));
-                
+
                 // Check for balances on the secondary pools and transfer to the primary one, every processLag/2 blocks
                 int transferBlocks = propertyService.getInt(Props.processLag)/2;
                 if(miningInfo.get()!=null) {
@@ -380,7 +396,7 @@ public class Pool {
         catch (Exception e) {
             logger.error("Error fetching pool's reward recipients or transfering from secondary pools", e);
         }
-        
+
         // Unlock to signal we have finished modifying bestSubmission
         processDeadlineSemaphore.release();
         // Unlock to start accepting requests again
@@ -396,7 +412,7 @@ public class Pool {
         for (int i = 0; i < secondaryRewardRecipients.length; i++) {
             if(recipientSet)
                 break;
-            
+
             @SuppressWarnings("unchecked")
             Set<SignumAddress> mySecondaryRewardRecipients = (Set<SignumAddress>) secondaryRewardRecipients[i];
             recipientSet = mySecondaryRewardRecipients.contains(submission.getMiner());
@@ -430,7 +446,7 @@ public class Pool {
                 Thread.currentThread().interrupt();
                 throw new SubmissionException("Server Interrupted");
             }
-            
+
             BigInteger newDeadline = minerTracker.onMinerSubmittedDeadline(storageService, submission.getMiner(), deadline, miningInfo.get(), userAgent);
 
             if (bestSubmission.get() != null) {
@@ -462,19 +478,19 @@ public class Pool {
     @SuppressWarnings("unchecked")
     private void submitDeadline(Submission submission) {
         String passphrase = null;
-        
+
         if(myRewardRecipients.contains(submission.getMiner()))
             passphrase = propertyService.getString(Props.passphrase);
-        
+
         for (int i = 0; i < secondaryRewardRecipients.length; i++) {
             if(passphrase != null)
                 break;
-            
+
             Set<SignumAddress> mySecondaryRewardRecipients = (Set<SignumAddress>) secondaryRewardRecipients[i];
             if(mySecondaryRewardRecipients.contains(submission.getMiner()))
                 passphrase = propertyService.getString((Prop<String>) Props.passphraseSecondary[i]);
         }
-        
+
         disposables.add(nodeService.submitNonce(passphrase, submission.getNonce().toString(), submission.getMiner().getSignumID()) // TODO burstkit4j accept nonce as bigint
                 .retry(propertyService.getInt(Props.submitNonceRetryCount))
                 .subscribe(this::onNonceSubmitted, this::onSubmitNonceError));
@@ -499,7 +515,7 @@ public class Pool {
         if (bestSubmission.get() != null) {
         	BigInteger deadline = bestDeadline.get();
        		deadline = BigInteger.valueOf((long)(Math.log(deadline.doubleValue()) * LN_FACTOR));
-       		
+
             JsonObject bestDeadlineJson = new JsonObject();
             bestDeadlineJson.addProperty("explorer", propertyService.getString(Props.siteExplorerURL) + propertyService.getString(Props.siteExplorerAccount));
             bestDeadlineJson.addProperty("miner", bestSubmission.get().getMiner().getID());
@@ -529,11 +545,11 @@ public class Pool {
     public SignumAddress getAccount() {
         return burstCrypto.getAddressFromPassphrase(propertyService.getString(Props.passphrase));
     }
-    
+
     public SignumValue getTransactionFee() {
         return transactionFee.get();
     }
-    
+
     public String getVersion() {
         return version;
     }
