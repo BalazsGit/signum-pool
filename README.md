@@ -55,6 +55,7 @@ Donations are very welcome at [S-JJQS-MMA4-GHB4-4ZNZU](https://explorer.burstcoi
 
 ## Pools using the software
 
+-   http://spacepool.btfg.space
 -   https://pool.signumcoin.ro
 -   http://signa.voiplanparty.com:8124
 -   http://opensignumpool.ddns.net:8126
