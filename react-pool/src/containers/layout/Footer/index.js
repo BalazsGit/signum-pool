@@ -27,12 +27,12 @@ const Footer = () => {
 
       <Grid item container justifyContent="center" alignItems="center">
         <Grid item container justifyContent="center" alignItems="center">
-          <a href="https://discord.gg/PmGrfHGGT7" target="blank">Discord</a>
+          <a href="https://discordapp.com/channels/969599083801104395/969600979974635600" target="blank">Discord</a>
         </Grid>
         <Grid item container justifyContent="center" alignItems="center">
           <WidgetBot
-             server="777095251806388249"
-             channel="777104740626464829"
+             server="969599083801104395"
+             channel="969600979974635600"
              style={{
                 opacity: "0.5",
                 boxSizing: "border-box",
