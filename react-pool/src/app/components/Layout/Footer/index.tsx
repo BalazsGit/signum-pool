@@ -4,6 +4,9 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import GitHubIcon from "@mui/icons-material/GitHub";
 
+import * as React from "react";
+import WidgetBot from "@widgetbot/react-embed";
+
 export const Footer = () => {
     const { t } = useTranslation();
     const currentYear = new Date().getFullYear();
@@ -18,6 +21,50 @@ export const Footer = () => {
             alignItems="center"
             spacing={1}
         >
+
+            <Grid item container justifyContent="center" alignItems="center">
+                <Grid item container justifyContent="center" alignItems="center">
+                    <a href="https://discordapp.com/channels/969599083801104395/969600979974635600" target="blank">Discord</a>
+                </Grid>
+                <Grid item container justifyContent="center" alignItems="center">
+                    <WidgetBot
+                        server="969599083801104395"
+                        channel="969600979974635600"
+                        style={{
+                            opacity: "0.5",
+                            boxSizing: "border-box",
+                            height: "500px",
+                            width: "100%",
+                            maxWidth: "1000px",
+                            marginBottom: "25px",
+                        }}
+                    />
+                </Grid>
+            </Grid>
+
+            <Grid item container justifyContent="center" alignItems="center">
+                <Grid item container justifyContent="center" alignItems="center">
+                    <p><a href="https://hearthis.at/nivok-spilkommen/drop-zone/" target="blank">Music from Nivok</a></p>
+                </Grid>
+                <Grid item container justifyContent="center" alignItems="center">
+                    <iframe
+                        scrolling="no"
+                        background-color="transparent"
+                        frameBorder="0"
+                        title="Mini widget"
+                        src="https://app.hearthis.at/nivok-spilkommen/embed/?hcolor=303030"
+                        style={{
+                            opacity: "0.5",
+                            boxSizing: "border-box",
+                            height: "250px",
+                            width: "100%",
+                            maxWidth: "1000px",
+                            marginBottom: "25px",
+                            }}
+                    ></iframe>
+                </Grid>
+            </Grid>
+
             <Grid
                 container
                 item
