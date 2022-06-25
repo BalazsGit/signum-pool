@@ -30,14 +30,15 @@ public class Miner implements Payable {
     private AtomicReference<Double> boost = new AtomicReference<>();
     private AtomicReference<Double> boostPool = new AtomicReference<>();
     private AtomicReference<Double> totalCapacityEffective = new AtomicReference<>();
-    private BigInteger deadlineAverage;
+    private BigInteger sumDeadline = BigInteger.ZERO;
+    private BigInteger avgDeadline = BigInteger.ZERO;
 
     public Miner(MinerMaths minerMaths, PropertyService propertyService, SignumAddress address, MinerStore store) {
         this.minerMaths = minerMaths;
         this.propertyService = propertyService;
         this.address = address;
         this.store = store;
-        
+
         // Read the deadline history from the DB the first time and then keep on memory
         List<Deadline> storeDeadlines = store.getDeadlines();
         deadlines.addAll(storeDeadlines);
@@ -55,61 +56,76 @@ public class Miner implements Payable {
     }
 
     public void recalculateCapacity(Block block) {
-        
+
         long processBlockHeight = block.getHeight();
-        
+
+        sumDeadline = BigInteger.ZERO;
+        avgDeadline = BigInteger.ZERO;
+
+        BigInteger maxDeadlineThreshold = BigInteger.ZERO;
         BigInteger hitSum = BigInteger.ZERO;
         BigInteger hitSumBoost = BigInteger.ZERO;
-        Deadline deadlineToSave = null;
-        
         BigInteger hitSumShared = BigInteger.ZERO;
+
+        Deadline deadlineToSave = null;
+
         int deadlinesSharedCount = 0;
-        
+        int deadlineThresholdFactor = propertyService.getInt(Props.deadlineThresholdFactor);
         int nAvg = propertyService.getInt(Props.nAvg);
         int processLag = propertyService.getInt(Props.processLag);
         long lastBlockHeight = processBlockHeight + processLag;
-        
+
         // First loop will calculate the average for the physical capacity
         int deadlinesCount = 0;
-        deadlineAverage = BigInteger.ZERO;
         Iterator<Deadline> it = deadlines.iterator();
         while(it.hasNext()) {
             Deadline deadline = it.next();
-            
+
             if (deadline.getHeight() >= lastBlockHeight) {
                 // We use all deadlines except the current one, so users have a best experience being able to see
                 // their miner even on the first submitted deadline.
                 continue;
             }
+
             if(deadline.getHeight() < processBlockHeight - nAvg) {
                 it.remove();
                 continue;
             }
+
             deadlinesCount++;
             BigInteger hit = deadline.calculateHit();
-            
+
             hitSum = hitSum.add(hit);
-            deadlineAverage = deadlineAverage.add(deadline.getDeadline());
-            
+
             double hitBoost = hit.doubleValue()/deadline.getBoostPool();
             hitSumBoost = hitSumBoost.add(BigInteger.valueOf((long)hitBoost));
-            
+
             if(deadline.getSharePercent() > 0) {
                 double hitShared = hitBoost*100.0/(deadline.getSharePercent());
                 hitSumShared = hitSumShared.add(BigInteger.valueOf((long)hitShared));
-                
+
                 deadlinesSharedCount++;
             }
 
             if(deadline.getHeight() == lastBlockHeight - 1) {
+                // limit max deadline value to prevent capacity drop in case of statistically too high deadline value
+                if(0 < deadlinesCount-1) {
+
+                    avgDeadline = sumDeadline.divide(BigInteger.valueOf(deadlinesCount-1));
+                    maxDeadlineThreshold = avgDeadline.multiply(BigInteger.valueOf(deadlineThresholdFactor));
+
+                    if(maxDeadlineThreshold.compareTo(BigInteger.ZERO) == 1 && deadline.getDeadline().compareTo(maxDeadlineThreshold) == 1) {
+                            deadline.setDeadline(maxDeadlineThreshold);
+                    }
+                }
                 deadlineToSave = deadline;
             }
-        }
-        if(deadlines.size() > 0) {
-            deadlineAverage = deadlineAverage.divide(BigInteger.valueOf(deadlines.size()));
+            else {
+                sumDeadline = sumDeadline.add(deadline.getDeadline());
+            }
         }
         nconf.set(Math.min(nAvg+processLag, deadlinesCount));
-        
+
         double estimatedCapacity = minerMaths.estimatedTotalPlotSize(deadlinesCount, hitSum);
         double estimatedCapacityWithBoost = minerMaths.estimatedTotalPlotSize(deadlinesCount, hitSumBoost);
         totalCapacityEffective.set(estimatedCapacityWithBoost);
@@ -123,7 +139,7 @@ public class Miner implements Payable {
                 double boostPool = MinerTracker.getCommitmentFactor(commitmentPool, block.getAverageCommitmentNQT());
                 deadlineToSave.setBoostPool(boostPool);
             }
-            
+
             // store in the database
             store.setOrUpdateDeadline(deadlineToSave.getHeight(), deadlineToSave);
             this.boost.set(deadlineToSave.getBoost());
@@ -191,19 +207,10 @@ public class Miner implements Payable {
                 }
             }
         }
+        if(previousDeadline != null)
+            deadlines.remove(previousDeadline);
 
-        // check if this is not an outlier, if so we should not all it to our list
-        int nAvg = propertyService.getInt(Props.nAvg);
-        if(deadlineAverage != null && deadlineAverage.longValue() > 0 &&
-                deadlines.size() > nAvg/2 && deadline.getDeadline().longValue() > deadlineAverage.longValue()*1000) {
-            deadline = null;
-        }
-        
-        if(deadline!=null) {
-            deadlines.add(deadline);
-            if(previousDeadline != null)
-                deadlines.remove(previousDeadline);
-        }
+        deadlines.add(deadline);
     }
 
     public double getSharedCapacity() {
@@ -213,7 +220,7 @@ public class Miner implements Payable {
     public double getTotalCapacity() {
         return store.getTotalCapacity();
     }
-    
+
     public double getTotalEffectiveCapacity() {
         if(totalCapacityEffective.get()!=null)
             return totalCapacityEffective.get();
@@ -226,7 +233,7 @@ public class Miner implements Payable {
     public void setSharePercent(int sharePercent) {
         store.setSharePercent(sharePercent);
     }
-    
+
     public int getDonationPercent() {
         return store.getDonationPercent();
     }
@@ -251,7 +258,7 @@ public class Miner implements Payable {
     public int getNConf() {
         return nconf.get();
     }
-    
+
     public double getBoost() {
         return boost.get();
     }
@@ -267,31 +274,31 @@ public class Miner implements Payable {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public void setCommitment(SignumValue commitment, SignumValue comittedBalance, int height) {
         this.commitment.set(commitment);
         this.committedBalance.set(comittedBalance);
         this.commitmentHeight = height;
     }
-    
+
     public SignumValue getCommitment() {
         SignumValue value = commitment.get();
         if(value == null)
             value = SignumValue.fromSigna(0);
         return value;
     }
-    
+
     public SignumValue getCommittedBalance() {
         SignumValue value = committedBalance.get();
         if(value == null)
             value = SignumValue.fromSigna(0);
         return value;
     }
-    
+
     public int getCommitmentHeight() {
         return this.commitmentHeight;
     }
-    
+
     public String getUserAgent() {
         return userAgent;
     }
@@ -311,7 +318,7 @@ public class Miner implements Payable {
         }
         return null;
     }
-    
+
     public List<Deadline> getDeadlines() {
         return new ArrayList<>(deadlines);
     }
