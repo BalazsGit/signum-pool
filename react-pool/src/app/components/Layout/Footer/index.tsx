@@ -42,29 +42,6 @@ export const Footer = () => {
                 </Grid>
             </Grid>
 
-            <Grid item container justifyContent="center" alignItems="center">
-                <Grid item container justifyContent="center" alignItems="center">
-                    <p><a href="https://hearthis.at/nivok-spilkommen/drop-zone/" target="blank">Music from Nivok</a></p>
-                </Grid>
-                <Grid item container justifyContent="center" alignItems="center">
-                    <iframe
-                        scrolling="no"
-                        background-color="transparent"
-                        frameBorder="0"
-                        title="Mini widget"
-                        src="https://app.hearthis.at/nivok-spilkommen/embed/?hcolor=303030"
-                        style={{
-                            opacity: "0.5",
-                            boxSizing: "border-box",
-                            height: "250px",
-                            width: "100%",
-                            maxWidth: "1000px",
-                            marginBottom: "25px",
-                            }}
-                    ></iframe>
-                </Grid>
-            </Grid>
-
             <Grid
                 container
                 item
