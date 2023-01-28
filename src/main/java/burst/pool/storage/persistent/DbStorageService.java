@@ -106,7 +106,7 @@ public class DbStorageService implements StorageService {
             flyway = Flyway.configure()
                     .locations("classpath:/db/migration_h2")
                     .dataSource(url, username, password).load();
-            
+
             hikariConfig.addDataSourceProperty("cachePrepStmts", "true");
             hikariConfig.addDataSourceProperty("prepStmtCacheSize", "250");
             hikariConfig.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
@@ -406,7 +406,7 @@ public class DbStorageService implements StorageService {
         // Won blocks are not cached. TODO cache!
         useDslContextVoid(context -> context.insertInto(WON_BLOCKS, WON_BLOCKS.BLOCK_HEIGHT, WON_BLOCKS.BLOCK_ID, WON_BLOCKS.GENERATOR_ID, WON_BLOCKS.NONCE, WON_BLOCKS.FULL_REWARD, WON_BLOCKS.POOL_SHARE)
             .values((long) wonBlock.getBlockHeight(), wonBlock.getBlockId().getSignedLongId(), wonBlock.getGeneratorId().getSignumID().getSignedLongId(), wonBlock.getNonce().toString(), wonBlock.getFullReward().toNQT().longValue(), wonBlock.getPoolShare().toNQT().longValue())
-            .execute()); 
+            .execute());
     }
 
     @Override
@@ -424,7 +424,7 @@ public class DbStorageService implements StorageService {
                 .values(payout.getTransactionId().getSignedLongId(), payout.getSenderPublicKey(), payout.getFee().toNQT().longValue(), (long) payout.getDeadline(), payout.getAttachment())
                 .execute());
     }
-    
+
     @Override
     public void removeDeadlinesBefore(long height) {
         useDslContextVoid(context -> context.delete(MINER_DEADLINES)
@@ -487,7 +487,7 @@ public class DbStorageService implements StorageService {
                     .execute());
             storeInCache(MINERS, accountIdStr + "sharedCapacity", sharedCapacity);
         }
-        
+
         @Override
         public double getTotalCapacity() {
             return getFromCacheOr(MINERS, accountIdStr + "estimated", () -> useDslContext(context -> context.select(MINERS.ESTIMATED_CAPACITY)
@@ -505,7 +505,7 @@ public class DbStorageService implements StorageService {
                     .execute());
             storeInCache(MINERS, accountIdStr + "estimated", estimatedCapacity);
         }
-        
+
 
         @Override
         public int getSharePercent() {
@@ -606,9 +606,9 @@ public class DbStorageService implements StorageService {
     }
 
     private final class DbRecipientStore implements MinerStore.FeeRecipientStore {
-        
+
         private final String key;
-        
+
         public DbRecipientStore(String key) {
             this.key = key;
         }

@@ -3,7 +3,7 @@ import * as prodProperties from "./enviroment.prod";
 
 const isDevelopmentMode = process.env.NODE_ENV === "development";
 
-const isTestNet = process.env.NODE_ENV === "development";
+const isTestNet = true;
 
 const dAppNetwork = isTestNet ? "Signum-TESTNET" : "Signum";
 
