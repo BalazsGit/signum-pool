@@ -197,7 +197,7 @@ public class Server extends NanoHTTPD {
                 if (submission.getNonce() == null) {
                     throw new SubmissionException("Nonce not set or invalid");
                 }
-                
+
                 String blockheightParam = params.get("blockheight");
                 if(blockheightParam != null) {
                     try {
@@ -309,7 +309,7 @@ public class Server extends NanoHTTPD {
             return response.toString();
         } else if (session.getUri().startsWith("/api/getWonBlocks")) {
             JsonArray wonBlocks = new JsonArray();
-            
+
             // Get possible pending blocks
             ArrayList<Block> recentlyForged = pool.getRecentlyForged();
             if(recentlyForged != null) {
@@ -329,7 +329,7 @@ public class Server extends NanoHTTPD {
                     wonBlocks.add(wonBlockJson);
                 }
             }
-            
+
             storageService.getWonBlocks(100)
             .forEach(wonBlock -> {
 
@@ -369,7 +369,7 @@ public class Server extends NanoHTTPD {
             isPath = true;
             mimeType = MIME_HTML;
         }
-        else {        
+        else {
             for (String extension : mimeTypesAllowed.keySet()) {
                 if (uri.endsWith(extension)) {
                     mimeType = mimeTypesAllowed.get(extension);
@@ -423,8 +423,6 @@ public class Server extends NanoHTTPD {
                     response = response
                             // Replace the TAGS
                             .replace("{TITLE}", propertyService.getString(Props.siteTitle))
-                            .replace("{HOMEFIRSTLINETITLE}", propertyService.getString(Props.siteHomeFirstLine))
-                            .replace("{HOMESECONDLINETITLE}", propertyService.getString(Props.siteHomeSecondLine))
                             .replace("{PRICEENDPOINT}", propertyService.getString(Props.sitePrice))
                             .replace("{PUBLICNODE}", propertyService.getString(Props.siteNodeAddress))
                             .replace("{DISCORD}", propertyService.getString(Props.siteDiscordLink))
@@ -437,6 +435,7 @@ public class Server extends NanoHTTPD {
                             .replace("{MIN_PAYOUT}", SignumValue.fromSigna(propertyService.getFloat(Props.minimumMinimumPayout)).toUnformattedString())
                             .replace("{FAUCET}", propertyService.getString(Props.siteFaucetURL))
                             .replace("{EXPLORER}", propertyService.getString(Props.siteExplorerURL))
+                            .replace("{NETWORK_NAME}", propertyService.getBoolean(Props.testnet) ? "Signum-TESTNET" : "Signum")
 
                             .replace("\"*{PRIMARYCOLOR}*\"", propertyService.getString(Props.sitePrimaryColor))
                             .replace("\"*{PRIMARYLIGHTCOLOR}*\"", propertyService.getString(Props.sitePrimaryLightColor))
@@ -480,7 +479,7 @@ public class Server extends NanoHTTPD {
 
         return httpResponse;
     }
-    
+
     private String getMinerName(Miner miner) {
         if (miner != null && miner.getName() != null && miner.getName().length() > 0) {
             String name = miner.getName();
