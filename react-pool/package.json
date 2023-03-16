@@ -8,14 +8,14 @@
     "@mui/icons-material": "^5.5.1",
     "@mui/lab": "^5.0.0-alpha.78",
     "@mui/material": "^5.5.2",
-    "@reduxjs/toolkit": "^1.8.2",
-    "@signumjs/contracts": "^1.0.0-rc.17",
-    "@signumjs/core": "^1.0.0-rc.17",
-    "@signumjs/crypto": "^1.0.0-rc.17",
-    "@signumjs/http": "^1.0.0-rc.17",
-    "@signumjs/util": "^1.0.0-rc.17",
-    "@signumjs/wallets": "^1.0.0-rc.17",
-    "@testing-library/jest-dom": "^5.16.3",
+    "@reduxjs/toolkit": "^1.8.0",
+    "@signumjs/contracts": "^1.0.0-rc.60",
+    "@signumjs/core": "^1.0.0-rc.60",
+    "@signumjs/crypto": "^1.0.0-rc.60",
+    "@signumjs/http": "^1.0.0-rc.60",
+    "@signumjs/util": "^1.0.0-rc.60",
+    "@signumjs/wallets": "^1.0.0-rc.60",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.1",
@@ -41,8 +41,8 @@
     "react-i18next": "^11.16.1",
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.2",
-    "react-scripts": "5.0.0",
-    "recharts": "^2.1.9",
+    "react-scripts": "^5.0.1",
+    "recharts": "^2.4.3",
     "swr": "^1.2.2",
     "typescript": "^4.6.2",
     "web-vitals": "^2.1.4"
@@ -70,5 +70,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }
