@@ -17,7 +17,8 @@ set APP_HOME=%DIRNAME%
 set DEFAULT_JVM_OPTS=
 
 @rem Find java.exe
-if defined JAVA_HOME goto findJavaFromJavaHome
+@rem don't want to use java_home
+@rem if defined JAVA_HOME goto findJavaFromJavaHome
 
 set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
@@ -33,7 +34,8 @@ goto fail
 
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
-set JAVA_EXE=C:/Program Files/Java/jdk/openlogic-openjdk-11.0.21+9-windows-x64/bin/java.exe
+@rem set JAVA_EXE=C:/Program Files/Java/jdk/openlogic-openjdk-11.0.21+9-windows-x64/bin/java.exe
+set JAVA_EXE=C:/Program Files (x86)/Java/jre-1.8/bin/java.exe
 
 if exist "%JAVA_EXE%" goto init
 
