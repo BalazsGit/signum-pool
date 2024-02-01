@@ -20,11 +20,16 @@ set DEFAULT_JVM_OPTS=
 @rem don't want to use java_home
 @rem if defined JAVA_HOME goto findJavaFromJavaHome
 
-set JAVA_EXE=java.exe
+@rem set JAVA_EXE=java.exe
+@rem set "JAVA_EXE=D:\java\jre-1.8\bin\java.exe"
+@rem set JAVA_EXE=D:/java/jdk/openlogic-openjdk-8u392-b08-windows-64/bin/java.exe
+set JAVA_EXE=D:/java/jdk/openlogic-openjdk-11.0.21+9-windows-x64/bin/java.exe
 %JAVA_EXE% -version >NUL 2>&1
 if "%ERRORLEVEL%" == "0" goto init
 
 echo.
+echo JAVA_EXE: %JAVA_EXE%
+echo Error Level: %ERRORLEVEL%
 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 echo.
 echo Please set the JAVA_HOME variable in your environment to match the
@@ -35,7 +40,7 @@ goto fail
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
 @rem set JAVA_EXE=C:/Program Files/Java/jdk/openlogic-openjdk-11.0.21+9-windows-x64/bin/java.exe
-set JAVA_EXE=C:/Program Files (x86)/Java/jre-1.8/bin/java.exe
+@rem set JAVA_EXE=C:/Program Files (x86)/Java/jre-1.8/bin/java.exe
 
 if exist "%JAVA_EXE%" goto init
 
