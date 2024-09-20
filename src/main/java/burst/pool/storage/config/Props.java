@@ -11,6 +11,7 @@ public class Props {
     public static final Prop<String> keyStorePass = new Prop<>("keystorePass", "certpass");
 
     public static final Prop<String> nodeAddresses = new Prop<>("nodeAddresses", ""); // Must be non-empty
+    public static final Prop<Integer> nodeTimeout = new Prop<>("nodeTimeout", 60);
     public static final Prop<String> poolName = new Prop<>("poolName", "");
 
     public static final Prop<String> passphrase = new Prop<>("passphrase", ""); // Must be non-empty

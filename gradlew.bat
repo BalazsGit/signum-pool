@@ -23,7 +23,7 @@ set DEFAULT_JVM_OPTS=
 @rem set JAVA_EXE=java.exe
 @rem set "JAVA_EXE=D:\java\jre-1.8\bin\java.exe"
 @rem set JAVA_EXE=D:/java/jdk/openlogic-openjdk-8u392-b08-windows-64/bin/java.exe
-set JAVA_EXE=D:/java/jdk/openlogic-openjdk-11.0.21+9-windows-x64/bin/java.exe
+set JAVA_EXE=D:/java/jdk/openlogic-openjdk-11.0.24+8-windows-x64/bin/java.exe
 %JAVA_EXE% -version >NUL 2>&1
 if "%ERRORLEVEL%" == "0" goto init
 
